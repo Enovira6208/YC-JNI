@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.5.1)   #cmake版本
+project(DEPTHLIB)#工程名字
+
+
+include_directories(
+    Protocol
+    public
+        ./
+) #包含的路径
+
+SET(LIBDEPTH_SRC interface.c cJSON.c JYR_20s.c public.c)
+ADD_LIBRARY(interface SHARED ${LIBDEPTH_SRC}) #生成动态库
+
+
