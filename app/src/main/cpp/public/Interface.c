@@ -3,7 +3,7 @@
  * @Author:  chuhouzhong
  * @Copyright: 福建省亿鑫海信息科技有限公司
  * @Date: 2022-06-28 15:33:44
- * @LastEditTime: 2022-11-17 20:21:54
+ * @LastEditTime: 2023-05-18 16:33:47
  * @LastEditors:
  */
 #include "interface.h"
@@ -36,7 +36,8 @@
 //#include "../Protocol/JYW6400_DC.h"
 //#include "../Protocol/JYW6400_IM.h"
 #include "../Protocol/JYR_40C.h"
-
+#include "../Protocol/JHLK_100.h"
+//#include "../Protocol/JHMD3.h""
 
 INTERFACE_InfoType INTERFACE_Info;
 
@@ -104,6 +105,10 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYW6400_IM;
     } else if (NULL != strstr((char *)jsonBuff, "JYR_40C")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40C;
+    } else if (NULL != strstr((char *)jsonBuff, "JHLK_100")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JHLK_100;
+    }   else if (NULL != strstr((char *)jsonBuff, "JHMD3")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JHMD3;
     } else {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_NULL;
     }
@@ -141,7 +146,6 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
     memset(INTERFACE_Info.sendDataBuff, 0, sizeof(INTERFACE_Info.sendDataBuff));
 
     InterfaceJsonBuff(jsonBuff);
-
     switch (INTERFACE_Info.DeviceCode) {
         case INTERFACE_DEVICE_CODE_NULL:
             return NULL;
@@ -282,6 +286,17 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             size = JYR_40CReadData(INTERFACE_Info.sendMsg.dataMsg);
             break;
 
+        case INTERFACE_DEVICE_CODE_JHLK_100:
+            /* 要先获取数据条数 */
+            size = JHLK_100_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = 115200;
+            break;
+
+//        case INTERFACE_DEVICE_CODE_JHMD3:
+//            /* 要先获取数据条数 */
+//            size = JHMD3_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+//            INTERFACE_Info.sendMsg.baud = 115200;
+//            break;
         default:
             return NULL;
     }
@@ -358,7 +373,6 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
 
-
     switch (INTERFACE_Info.DeviceCode) {
         case INTERFACE_DEVICE_CODE_NULL:
             return NULL;
@@ -370,13 +384,13 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
             return FH_ai_6106sRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6310LD:
-//      return Loop_ResistanceRecvMessage(dataBuff, size);
+        //      return Loop_ResistanceRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6301:
             return FH_ai_6301RecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6000K:
-//      return FH_ai_6000kRecvMessage(dataBuff, size);
+        //      return FH_ai_6000kRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6000HL:
             return FH_ai_6000hlRecvMessage(dataBuff, size);
@@ -453,6 +467,11 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
         case INTERFACE_DEVICE_CODE_JYR_40C:
             return JYR_40CRecvMessage(hexbuff, size);
 
+        case INTERFACE_DEVICE_CODE_JHLK_100:
+            return JHLK_100_RecvMessage(hexbuff, size);
+
+//        case INTERFACE_DEVICE_CODE_JHMD3:
+//            return JHMD3_RecvMessage(hexbuff, size);
         default:
             break;
     }

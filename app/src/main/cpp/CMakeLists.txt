@@ -36,6 +36,7 @@ add_library(
         Protocol/HCYZ_iv.c
         Protocol/HLC5501.c
         Protocol/jh6000.c
+        Protocol/JHLK_100.c
         Protocol/JYK_I.c
         Protocol/JYL_100B.c
         Protocol/JYR_20s.c

@@ -54,6 +54,8 @@ typedef enum {
     INTERFACE_DEVICE_CODE_JYW6400_DC,                   /* 保定金源JYW6400变压器(直流电阻测试仪) */
     INTERFACE_DEVICE_CODE_JYW6400_IM,                   /* 保定金源JYW6400变压器(阻抗测试) */
     INTERFACE_DEVICE_CODE_JYR_40C,                      /* 保定金源直流电阻 */
+    INTERFACE_DEVICE_CODE_JHLK_100,                       /* 加华 JH6000不同版本 jh6000 1.05版本 */
+    INTERFACE_DEVICE_CODE_JHMD3,                        /* 厦门加华*/
 } INTERFACE_DeviceCodeEnum;
 
 
