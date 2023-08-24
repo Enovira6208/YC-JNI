@@ -33,6 +33,11 @@ add_library(
         Protocol/FH_ai_6301.c
         Protocol/FH_ai_6310B.c
         Protocol/FH_ai_6310L.c
+        Protocol/FH_ai_6600C.c
+        Protocol/JHMD3_jh6000.c
+        Protocol/TD_3310C_YZFJ.c
+        Protocol/TD_3310C_ZK.c
+        Protocol/TD_3310C_ZLDZ.c
         Protocol/HCYZ_iv.c
         Protocol/HLC5501.c
         Protocol/jh6000.c

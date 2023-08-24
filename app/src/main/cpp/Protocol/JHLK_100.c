@@ -12,15 +12,10 @@
 #include "JHLK_100.h"
 #include "../public/mycrc16.h"
 
-char *JHLK_100_SendData(void);
-
 JHLK_100_DataValueType JHLK_100_Value;
 
 FunctionalState JHLK_100_GetDataFlag = DISABLE;
 uint16_t JHLK_100_DataCnt = 0;
-uint8_t SerialNumber_int = 0;
-uint8_t TestEncoding_int = 0;
-uint8_t JobNumber_int = 0;
 /**
  *  @breif 获取数据
  */
@@ -47,7 +42,7 @@ uint16_t JHLK_100_ReadData(uint8_t *ascllBuff, uint8_t cnt)
         hexBuff[6] = (uint8_t)(crc >> 8);
         hexBuff[7] = 0x56;
 
-        PUBLIC_HexToAscll(ascllBuff, hexBuff, 8);
+        PUBLIC_HexToAscll((char *)ascllBuff, hexBuff, 8);
         return 8;
 
     }
@@ -65,7 +60,7 @@ uint16_t JHLK_100_ReadData(uint8_t *ascllBuff, uint8_t cnt)
         hexBuff[6] = (uint8_t)(crc >> 8);
         hexBuff[7] = 0x56;
 
-        PUBLIC_HexToAscll(ascllBuff, hexBuff, 8);
+        PUBLIC_HexToAscll((char *)ascllBuff, hexBuff, 8);
         return 10;
     }
     return 0;
@@ -87,11 +82,56 @@ char *JHLK_100_AnalyDataCnt(uint8_t *buff, uint16_t size)
 /**
  *  @ brief 数据解析
  */
+/**
+ *  @brief 发送JHLK_100数据
+ */
+char *JHLK_100_SendData(uint8_t SerialNumber_int, uint8_t TestEncoding_int, uint8_t JobNumber_int)
+{
+    char *str;
+    char sendData[20];
+    cJSON *cjson_data = NULL;
+    cJSON *cjson_array = NULL;
+
+    for (uint8_t i = 0; i < 6; i++) {
+        sprintf(&sendData[i * 2], "%02X", JHLK_100_Value.TestEncoding[i]);
+    }
+
+    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
+    cjson_data = cJSON_CreateObject();
+    cjson_array = cJSON_CreateArray();
+
+    cJSON_AddStringToObject(cjson_data, "device", "JHLK_100");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "SerialNumber", "int", "null", SerialNumber_int, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "TestEncoding", "int", "null",   TestEncoding_int, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "JobNumber", "int", "null", JobNumber_int, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "SF6", "double", "null",  JHLK_100_Value.SF6, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "temperature", "double", "null",  JHLK_100_Value.temperature, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "humidity", "int", "null", JHLK_100_Value.humidity, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "max", "double", "null",  JHLK_100_Value.max, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "min", "double", "null",  JHLK_100_Value.min, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 8, "electric_quantity", "double", "null",  JHLK_100_Value.electric_quantity, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 9, "status", "int", "null", JHLK_100_Value.status, "null");
+
+    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
+
+    str = cJSON_PrintUnformatted(cjson_data);
+//    printf("%s\r\n", str);
+    memcpy(returnJsonDataBuff, str, strlen(str));
+
+    /* 一定要释放内存 */
+    free(str);
+    cJSON_Delete(cjson_data);
+
+    return returnJsonDataBuff;
+}
 
 char *JHLK_100_DataAnalysis(uint8_t *buffer, uint16_t size)
 {
     JHLK_100_DataAnalysisType *recv = (JHLK_100_DataAnalysisType *)buffer;
-
+    uint8_t SerialNumber_int = 0;
+    uint8_t TestEncoding_int = 0;
+    uint8_t JobNumber_int = 0;
 
     for (int i = 0; i < 48; i++) {
         JHLK_100_Value.SerialNumber[i] = recv->SerialNumber[i];
@@ -134,7 +174,7 @@ char *JHLK_100_DataAnalysis(uint8_t *buffer, uint16_t size)
 
     JHLK_100_Value.status = JHLK_100_Value.status;
     /* 发送数据 */
-    return JHLK_100_SendData();
+    return JHLK_100_SendData(SerialNumber_int, TestEncoding_int, JobNumber_int);
 }
 
 /**
@@ -176,46 +216,4 @@ char *JHLK_100_RecvMessage(uint8_t *buff, uint16_t size)
     }
 }
 
-/**
- *  @brief 发送JHLK_100数据
- */
-char *JHLK_100_SendData(void)
-{
-    char *str;
-    char sendData[20];
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
 
-    for (uint8_t i = 0; i < 6; i++) {
-        sprintf(&sendData[i * 2], "%02X", JHLK_100_Value.TestEncoding[i]);
-    }
-
-    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-
-    cJSON_AddStringToObject(cjson_data, "device", "JHLK_100");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "SerialNumber", "int", "null", SerialNumber_int, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "TestEncoding", "int", "null",   TestEncoding_int, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "JobNumber", "int", "null", JobNumber_int, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "SF6", "double", "null",  JHLK_100_Value.SF6, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "temperature", "double", "null",  JHLK_100_Value.temperature, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "humidity", "int", "null", JHLK_100_Value.humidity, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "max", "double", "null",  JHLK_100_Value.max, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "min", "double", "null",  JHLK_100_Value.min, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "electric_quantity", "double", "null",  JHLK_100_Value.electric_quantity, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "status", "int", "null", JHLK_100_Value.status, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
-//    printf("%s\r\n", str);
-    memcpy(returnJsonDataBuff, str, strlen(str));
-
-    /* 一定要释放内存 */
-    free(str);
-    cJSON_Delete(cjson_data);
-
-    return returnJsonDataBuff;
-}

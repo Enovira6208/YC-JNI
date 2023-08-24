@@ -1,8 +1,8 @@
 /*
  * @Author       : wulongwei (longweisky@foxmail.com)
  * @Date         : 2023-02-03 15:15:45
- * @LastEditors  : wulongwei (longweisky@foxmail.com)
- * @LastEditTime : 2023-04-12 14:57:51
+ * @LastEditors:
+ * @LastEditTime: 2023-07-28 17:11:32
  * @Copyright    : Copyright (c) 2020  福建省亿鑫海信息科技有限公司
  * @Descripttion :
  * @version      : 1.0
@@ -54,8 +54,12 @@ typedef enum {
     INTERFACE_DEVICE_CODE_JYW6400_DC,                   /* 保定金源JYW6400变压器(直流电阻测试仪) */
     INTERFACE_DEVICE_CODE_JYW6400_IM,                   /* 保定金源JYW6400变压器(阻抗测试) */
     INTERFACE_DEVICE_CODE_JYR_40C,                      /* 保定金源直流电阻 */
-    INTERFACE_DEVICE_CODE_JHLK_100,                       /* 加华 JH6000不同版本 jh6000 1.05版本 */
+    INTERFACE_DEVICE_CODE_JHLK_100,                     /* 加华 JH6000不同版本 jh6000 1.05版本 */
     INTERFACE_DEVICE_CODE_JHMD3,                        /* 厦门加华*/
+    INTERFACE_DEVICE_CODE_JYC,                          /*金源*/
+    INTERFACE_DEVICE_CODE_TD_3310C_YZFJ,                /*泰达变压器综合测试仪有载分接实验*/
+    INTERFACE_DEVICE_CODE_TD_3310C_ZK,                  /*泰达变压器综合测试仪阻抗实验*/
+    INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ,                /*泰达变压器综合测试仪直流电阻实验*/
 } INTERFACE_DeviceCodeEnum;
 
 

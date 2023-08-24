@@ -3,8 +3,8 @@
  * @Author:  chuhouzhong
  * @Copyright: 福建省亿鑫海信息科技有限公司
  * @Date: 2022-06-28 15:33:44
- * @LastEditTime: 2023-05-18 16:33:47
- * @LastEditors:
+ * @LastEditTime: 2023-07-28 17:20:40
+ * @LastEditors:  
  */
 #include "interface.h"
 
@@ -30,14 +30,18 @@
 #include "../Protocol/JYT_A_V1.h"
 #include "../Protocol/JYT_A_V2.h"
 #include "../Protocol/BBC6638.h"
-//#include "../Protocol/SD_HVM_5000.h"
-//#include "../Protocol/SD_Z_VI.h"
-//#include "../Protocol/FH_ai_6600C.h"
-//#include "../Protocol/JYW6400_DC.h"
-//#include "../Protocol/JYW6400_IM.h"
+#include "../Protocol/SD_HVM_5000.h"
+#include "../Protocol/SD_Z_VI.h"
+#include "../Protocol/FH_ai_6600C.h"
+#include "../Protocol/JYW6400_DC.h"
+#include "../Protocol/JYW6400_IM.h"
 #include "../Protocol/JYR_40C.h"
 #include "../Protocol/JHLK_100.h"
-//#include "../Protocol/JHMD3.h""
+#include "../Protocol/JHMD3_jh6000.h"
+#include "../Protocol/JYC.h"
+#include "../Protocol/TD_3310C_YZFJ.h"
+#include "../Protocol/TD_3310C_ZK.h"
+#include "../Protocol/TD_3310C_ZLDZ.h"
 
 INTERFACE_InfoType INTERFACE_Info;
 
@@ -109,6 +113,14 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JHLK_100;
     }   else if (NULL != strstr((char *)jsonBuff, "JHMD3")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JHMD3;
+    } else if (NULL != strstr((char *)jsonBuff, "JYC")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYC;
+    } else if (NULL != strstr((char *)jsonBuff, "TD_3310C_YZFJ")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_TD_3310C_YZFJ;
+    } else if (NULL != strstr((char *)jsonBuff, "TD_3310C_ZK")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_TD_3310C_ZK;
+    }  else if (NULL != strstr((char *)jsonBuff, "TD_3310C_ZLDZ")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ;
     } else {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_NULL;
     }
@@ -261,18 +273,18 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             INTERFACE_Info.sendMsg.baud = 4800;
             break;
 
-//        case INTERFACE_DEVICE_CODE_SD_HVM_5000:
+        case INTERFACE_DEVICE_CODE_SD_HVM_5000:
 //            size = SD_HVM_5000ReadData(INTERFACE_Info.sendMsg.dataMsg);
-//            break;
-//
-//        case INTERFACE_DEVICE_CODE_SD_Z_VI:
+            break;
+
+        case INTERFACE_DEVICE_CODE_SD_Z_VI:
 //            size = SD_Z_VIReadData(INTERFACE_Info.sendMsg.dataMsg);
-//            break;
-//
-//        case INTERFACE_DEVICE_CODE_FH_AI_6600C:
-//            size = FH_ai_6600CReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-//            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
-//            break;
+            break;
+
+        case INTERFACE_DEVICE_CODE_FH_AI_6600C:
+            size = FH_ai_6600CReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            break;
 
         case INTERFACE_DEVICE_CODE_JYW6400_DC:
             //size = FH_ai_6600CReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);/
@@ -292,11 +304,27 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             INTERFACE_Info.sendMsg.baud = 115200;
             break;
 
-//        case INTERFACE_DEVICE_CODE_JHMD3:
-//            /* 要先获取数据条数 */
-//            size = JHMD3_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-//            INTERFACE_Info.sendMsg.baud = 115200;
-//            break;
+        case INTERFACE_DEVICE_CODE_JHMD3:
+            /* 要先获取数据条数 */
+            size = JHMD3_jh6000_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = 115200;
+            break;
+        case INTERFACE_DEVICE_CODE_JYC:
+//            size = JYC_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+//            INTERFACE_Info.sendMsg.baud = 9600;
+            break;
+        case INTERFACE_DEVICE_CODE_TD_3310C_YZFJ:
+            size = TD_3310C_YZFJ_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = 9600;
+            break;
+        case INTERFACE_DEVICE_CODE_TD_3310C_ZK:
+            size = TD_3310C_ZK_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = 9600;
+            break;
+        case INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ:
+            size = TD_3310C_ZLDZ_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = 9600;
+            break;
         default:
             return NULL;
     }
@@ -449,19 +477,19 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
         case INTERFACE_DEVICE_CODE_BBC6638:
             return BBC6638RecvMessage(hexbuff, size);
 
-//        case INTERFACE_DEVICE_CODE_SD_HVM_5000:
+        case INTERFACE_DEVICE_CODE_SD_HVM_5000:
 //            return SD_HVM_5000RecvMessage(hexbuff, size);
-//
-//        case INTERFACE_DEVICE_CODE_SD_Z_VI:
+
+        case INTERFACE_DEVICE_CODE_SD_Z_VI:
 //            return SD_Z_VIRecvMessage(hexbuff, size);
-//
-//        case INTERFACE_DEVICE_CODE_FH_AI_6600C:
-//            return FH_ai_6600CRecvMessage(hexbuff, size);
-//
-//        case INTERFACE_DEVICE_CODE_JYW6400_DC:
+
+        case INTERFACE_DEVICE_CODE_FH_AI_6600C:
+            return FH_ai_6600CRecvMessage(hexbuff, size);
+
+        case INTERFACE_DEVICE_CODE_JYW6400_DC:
 //            return JYW6400_DCRecvMessage(hexbuff, size);
-//
-//        case INTERFACE_DEVICE_CODE_JYW6400_IM:
+
+        case INTERFACE_DEVICE_CODE_JYW6400_IM:
 //            return JYW6400_IMRecvMessage(hexbuff, size);
 
         case INTERFACE_DEVICE_CODE_JYR_40C:
@@ -470,8 +498,11 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
         case INTERFACE_DEVICE_CODE_JHLK_100:
             return JHLK_100_RecvMessage(hexbuff, size);
 
-//        case INTERFACE_DEVICE_CODE_JHMD3:
-//            return JHMD3_RecvMessage(hexbuff, size);
+        case INTERFACE_DEVICE_CODE_JHMD3:
+            return JHMD3_jh6000_RecvMessage(hexbuff, size);
+
+        case INTERFACE_DEVICE_CODE_JYC:
+            return JYR_40CRecvMessage(hexbuff, size);
         default:
             break;
     }

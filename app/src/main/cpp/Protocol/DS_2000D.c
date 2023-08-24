@@ -104,9 +104,9 @@ char *DS_2000DRecvMessage(uint8_t *buff, uint16_t size)
     DS_2000DValue.ukj_b = DS_2000DStr_8_Analy((uint8_t *)index + 3 + 6);
     DS_2000DValue.ukj_c = DS_2000DStr_8_Analy((uint8_t *)index + 3 + 6 + 6);
 
-    DS_2000DValue.power_a = DS_2000DStr_8_Analy2((uint8_t *)index2 + 5);
-    DS_2000DValue.power_b = DS_2000DStr_8_Analy2((uint8_t *)index2 + 5 + 7);
-    DS_2000DValue.power_c = DS_2000DStr_8_Analy2((uint8_t *)index2  + 5 + 7 + 7);
+    DS_2000DValue.power_a = DS_2000DStr_8_Analy2((uint8_t *)index2 + 4);
+    DS_2000DValue.power_b = DS_2000DStr_8_Analy2((uint8_t *)index2 + 4 + 7);
+    DS_2000DValue.power_c = DS_2000DStr_8_Analy2((uint8_t *)index2  + 4 + 7 + 7);
 
     printf("DS_2000DRecvMessage \n");
     /* 发送数据 */

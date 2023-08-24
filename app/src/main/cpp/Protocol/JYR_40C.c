@@ -9,7 +9,6 @@
 
 /* 金源回路电阻 */
 #include "JYR_40C.h"
-#include <stdint.h>
 
 JYR_40CValueType JYL_100BValue;
 
