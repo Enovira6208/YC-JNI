@@ -484,7 +484,7 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
 //            return SD_Z_VIRecvMessage(hexbuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6600C:
-            return FH_ai_6600CRecvMessage(hexbuff, size);
+            return FH_ai_6600CRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_JYW6400_DC:
 //            return JYW6400_DCRecvMessage(hexbuff, size);
