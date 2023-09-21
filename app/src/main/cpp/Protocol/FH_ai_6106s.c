@@ -12,7 +12,7 @@
 /* 泛华避雷器 */
 #include "FH_ai_6106s.h"
 
-
+static char returnJsonDataBuff[1000];
 char *FH_ai_6106sBleSend(void);
 
 FH_ai_6106s_Part1ValueType FH_ai_6106s_Part1Value;
@@ -26,8 +26,7 @@ FH_ai_6106s_Part4ValueType FH_ai_6106s_Part4Value;
  */
 uint16_t FH_ai_6106sReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -38,9 +37,7 @@ uint16_t FH_ai_6106sReadData(uint8_t *buff, uint8_t cnt)
         buff[7] = '\r';
         buff[8] = '\n';
         return 9;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -86,8 +83,7 @@ void FH_ai_6106s1Analy(uint8_t *buff)
     time.Minutes = (uint8_t)((value & 0x00000FC0) >> 6);
     time.Seconds = (uint8_t)(value & 0x0000003F);
     memcpy(array, &time.Year, sizeof(FH_ai_6106s_TimeType));
-    for (uint8_t i = 0; i < 6; i++)
-    {
+    for (uint8_t i = 0; i < 6; i++) {
         sprintf((char *)&FH_ai_6106s_Part1Value.Time[i * 2], "%02d", array[i]);
     }
     memset(array, 0, sizeof(array));
@@ -114,12 +110,9 @@ void FH_ai_6106s1Analy(uint8_t *buff)
     FH_ai_6106s_Part1Value.Freq = value / 10000.00;
     value = 0;
 
-    if ((Part1.Temp & 0x80) == 0x80)
-    {
+    if ((Part1.Temp & 0x80) == 0x80) {
         FH_ai_6106s_Part1Value.Temp = (Part1.Temp & 0x7F) * (-1);
-    }
-    else
-    {
+    } else {
         FH_ai_6106s_Part1Value.Temp = Part1.Temp & 0x7F;
     }
 
@@ -127,8 +120,7 @@ void FH_ai_6106s1Analy(uint8_t *buff)
     FH_ai_6106s_Part1Value.MP = Part1.Byte29 & 0x03;
 
     /* 补偿角计算  手动补偿 */
-    for ( uint8_t n = 0; n < 3; n++)
-    {
+    for ( uint8_t n = 0; n < 3; n++) {
         memset(str, 0, sizeof(str));
         temporary = 0;
 
@@ -139,8 +131,7 @@ void FH_ai_6106s1Analy(uint8_t *buff)
         angleTemp = Part1.Angle[n].A[2];
         sprintf((char *)&str[4], "%02X", angleTemp);
 
-        for (uint8_t i = 0; i < 6;)
-        {
+        for (uint8_t i = 0; i < 6;) {
             temporary = str[i];
             str[i] = str[i + 1];
             str[i + 1] = temporary;
@@ -151,31 +142,22 @@ void FH_ai_6106s1Analy(uint8_t *buff)
         temporary = 0;
         sign = 1;
         cnt = 0;
-        for (uint8_t i = 0; i < 6; i++)
-        {
-            if (str[i] == 'C')
-            {
+        for (uint8_t i = 0; i < 6; i++) {
+            if (str[i] == 'C') {
                 temporary++;
-            }
-            else if (str[i] == 'B')
-            {
+            } else if (str[i] == 'B') {
                 sign = -1;
                 temporary++;
-            }
-            else if (str[i] == 'A')
-            {
+            } else if (str[i] == 'A') {
                 cnt = i - temporary;
-            }
-            else if (str[i] >= '0' && str[i] <= '9')
-            {
+            } else if (str[i] >= '0' && str[i] <= '9') {
                 array[j] = str[i] - 0x30;
                 j++;
             }
         }
 
         FH_ai_6106s_Part1Value.Angle[n].A = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part1Value.Angle[n].A += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part1Value.Angle[n].A = FH_ai_6106s_Part1Value.Angle[n].A * sign;
@@ -183,10 +165,8 @@ void FH_ai_6106s1Analy(uint8_t *buff)
     }
 
     /* 禁用补偿 */
-    if (FH_ai_6106s_Part1Value.MC == 0)
-    {
-        switch (FH_ai_6106s_Part1Value.RP)
-        {
+    if (FH_ai_6106s_Part1Value.MC == 0) {
+        switch (FH_ai_6106s_Part1Value.RP) {
             /* A */
             case 0:
                 FH_ai_6106s_Part1Value.Angle[0].A = 0;
@@ -233,30 +213,20 @@ void FH_ai_6106s1Analy(uint8_t *buff)
     }
 
 
-    if ((Part1.Byte39 & 0x01) == 0x01)
-    {
+    if ((Part1.Byte39 & 0x01) == 0x01) {
         FH_ai_6106s_Part1Value.REF = 0;
-    }
-    else if (((Part1.Byte39 & 0x0E) >> 1) != 0)
-    {
+    } else if (((Part1.Byte39 & 0x0E) >> 1) != 0) {
         FH_ai_6106s_Part1Value.REF = 1;
-    }
-    else
-    {
+    } else {
         FH_ai_6106s_Part1Value.REF = 2;
     }
 
 
-    if ((Part1.Byte39 & 0x10) == 0x10)
-    {
+    if ((Part1.Byte39 & 0x10) == 0x10) {
         FH_ai_6106s_Part1Value.DUT = 0;
-    }
-    else if (((Part1.Byte39 & 0xE0) >> 1) != 0)
-    {
+    } else if (((Part1.Byte39 & 0xE0) >> 1) != 0) {
         FH_ai_6106s_Part1Value.DUT = 1;
-    }
-    else
-    {
+    } else {
         FH_ai_6106s_Part1Value.DUT = 2;
     }
 }
@@ -279,24 +249,18 @@ void FH_ai_6106s3Analy(uint8_t *buff)
     uint8_t cnt, temporary = 0;
 
     /* 参考幅度 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
-        for (uint8_t i = 0; i < 5; i++)
-        {
-            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 5; i++) {
+            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9')) {
                 array[j] = recv->REF[n].str[i] - 0x30;
                 j++;
-            }
-            else if (recv->REF[n].str[i] == '.')
-            {
+            } else if (recv->REF[n].str[i] == '.') {
                 cnt = i;
             }
         }
         FH_ai_6106s_Part3Value.Data[n].Range = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part3Value.Data[n].Range += array[i] * pow(10, cnt - i - 1);
         }
         memset(array, 0, sizeof(array));
@@ -304,29 +268,21 @@ void FH_ai_6106s3Analy(uint8_t *buff)
 
 
     /* 电压谐波1 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
-        for (uint8_t i = 6; i < 10; i++)
-        {
-            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9'))
-            {
+        for (uint8_t i = 6; i < 10; i++) {
+            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9')) {
                 array[j] = recv->REF[n].str[i] - 0x30;
                 j++;
-            }
-            else if (recv->REF[n].str[i] == ' ')
-            {
+            } else if (recv->REF[n].str[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->REF[n].str[i] == '.')
-            {
+            } else if (recv->REF[n].str[i] == '.') {
                 cnt = i - 6 - temporary;
             }
         }
         FH_ai_6106s_Part3Value.Data[n].Harmonic1 = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part3Value.Data[n].Harmonic1 += array[i] * pow(10, cnt - i - 1);
         }
         memset(array, 0, sizeof(array));
@@ -334,29 +290,21 @@ void FH_ai_6106s3Analy(uint8_t *buff)
 
 
     /* 电压谐波2 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
-        for (uint8_t i = 10; i < 14; i++)
-        {
-            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9'))
-            {
+        for (uint8_t i = 10; i < 14; i++) {
+            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9')) {
                 array[j] = recv->REF[n].str[i] - 0x30;
                 j++;
-            }
-            else if (recv->REF[n].str[i] == ' ')
-            {
+            } else if (recv->REF[n].str[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->REF[n].str[i] == '.')
-            {
+            } else if (recv->REF[n].str[i] == '.') {
                 cnt = i - 10 - temporary;
             }
         }
         FH_ai_6106s_Part3Value.Data[n].Harmonic2 = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part3Value.Data[n].Harmonic2 += array[i] * pow(10, cnt - i - 1);
         }
         memset(array, 0, sizeof(array));
@@ -364,58 +312,42 @@ void FH_ai_6106s3Analy(uint8_t *buff)
 
 
     /* 电压谐波3 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
-        for (uint8_t i = 14; i < 18; i++)
-        {
-            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9'))
-            {
+        for (uint8_t i = 14; i < 18; i++) {
+            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9')) {
                 array[j] = recv->REF[n].str[i] - 0x30;
                 j++;
-            }
-            else if (recv->REF[n].str[i] == ' ')
-            {
+            } else if (recv->REF[n].str[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->REF[n].str[i] == '.')
-            {
+            } else if (recv->REF[n].str[i] == '.') {
                 cnt = i - 14 - temporary;
             }
         }
         FH_ai_6106s_Part3Value.Data[n].Harmonic3 = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part3Value.Data[n].Harmonic3 += array[i] * pow(10, cnt - i - 1);
         }
         memset(array, 0, sizeof(array));
     }
 
     /* 角度 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
-        for (uint8_t i = 18; i < 23; i++)
-        {
-            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9'))
-            {
+        for (uint8_t i = 18; i < 23; i++) {
+            if ((recv->REF[n].str[i] >= '0') && (recv->REF[n].str[i] <= '9')) {
                 array[j] = recv->REF[n].str[i] - 0x30;
                 j++;
-            }
-            else if (recv->REF[n].str[i] == ' ')
-            {
+            } else if (recv->REF[n].str[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->REF[n].str[i] == '.')
-            {
+            } else if (recv->REF[n].str[i] == '.') {
                 cnt = i - 18 - temporary;
             }
         }
         FH_ai_6106s_Part3Value.Data[n].Angle = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part3Value.Data[n].Angle += array[i] * pow(10, cnt - i - 1);
         }
         memset(array, 0, sizeof(array));
@@ -433,35 +365,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     int sign = 1;
 
     /* ix */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].ix[i] >= '0') && (recv->MOA[n].ix[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].ix[i] >= '0') && (recv->MOA[n].ix[i] <= '9')) {
                 array[j] = recv->MOA[n].ix[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].ix[i] == ' ')
-            {
+            } else if (recv->MOA[n].ix[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].ix[i] == '.')
-            {
+            } else if (recv->MOA[n].ix[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].ix[i] == '-')
-            {
+            } else if (recv->MOA[n].ix[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].ix = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].ix += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].ix = FH_ai_6106s_Part4Value.Data[n].ix * sign;
@@ -470,35 +392,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* ixp */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].ixp[i] >= '0') && (recv->MOA[n].ixp[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].ixp[i] >= '0') && (recv->MOA[n].ixp[i] <= '9')) {
                 array[j] = recv->MOA[n].ixp[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].ixp[i] == ' ')
-            {
+            } else if (recv->MOA[n].ixp[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].ixp[i] == '.')
-            {
+            } else if (recv->MOA[n].ixp[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].ixp[i] == '-')
-            {
+            } else if (recv->MOA[n].ixp[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].ixp = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].ixp += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].ixp = FH_ai_6106s_Part4Value.Data[n].ixp * sign;
@@ -506,35 +418,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* ir */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].ir[i] >= '0') && (recv->MOA[n].ir[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].ir[i] >= '0') && (recv->MOA[n].ir[i] <= '9')) {
                 array[j] = recv->MOA[n].ir[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].ir[i] == ' ')
-            {
+            } else if (recv->MOA[n].ir[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].ir[i] == '.')
-            {
+            } else if (recv->MOA[n].ir[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].ir[i] == '-')
-            {
+            } else if (recv->MOA[n].ir[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].ir = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].ir += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].ir = FH_ai_6106s_Part4Value.Data[n].ir * sign;
@@ -542,35 +444,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* irp */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].irp[i] >= '0') && (recv->MOA[n].irp[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].irp[i] >= '0') && (recv->MOA[n].irp[i] <= '9')) {
                 array[j] = recv->MOA[n].irp[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].irp[i] == ' ')
-            {
+            } else if (recv->MOA[n].irp[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].irp[i] == '.')
-            {
+            } else if (recv->MOA[n].irp[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].irp[i] == '-')
-            {
+            } else if (recv->MOA[n].irp[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].irp = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].irp += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].irp = FH_ai_6106s_Part4Value.Data[n].irp * sign;
@@ -578,35 +470,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* irlp */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].irlp[i] >= '0') && (recv->MOA[n].irlp[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].irlp[i] >= '0') && (recv->MOA[n].irlp[i] <= '9')) {
                 array[j] = recv->MOA[n].irlp[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].irlp[i] == ' ')
-            {
+            } else if (recv->MOA[n].irlp[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].irlp[i] == '.')
-            {
+            } else if (recv->MOA[n].irlp[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].irlp[i] == '-')
-            {
+            } else if (recv->MOA[n].irlp[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].irlp = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].irlp += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].irlp = FH_ai_6106s_Part4Value.Data[n].irlp * sign;
@@ -615,35 +497,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* iclp */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].iclp[i] >= '0') && (recv->MOA[n].iclp[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].iclp[i] >= '0') && (recv->MOA[n].iclp[i] <= '9')) {
                 array[j] = recv->MOA[n].iclp[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].iclp[i] == ' ')
-            {
+            } else if (recv->MOA[n].iclp[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].iclp[i] == '.')
-            {
+            } else if (recv->MOA[n].iclp[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].iclp[i] == '-')
-            {
+            } else if (recv->MOA[n].iclp[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].iclp = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].iclp += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].iclp = FH_ai_6106s_Part4Value.Data[n].iclp * sign;
@@ -652,35 +524,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* pl */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].pl[i] >= '0') && (recv->MOA[n].pl[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].pl[i] >= '0') && (recv->MOA[n].pl[i] <= '9')) {
                 array[j] = recv->MOA[n].pl[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].pl[i] == ' ')
-            {
+            } else if (recv->MOA[n].pl[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].pl[i] == '.')
-            {
+            } else if (recv->MOA[n].pl[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].pl[i] == '-')
-            {
+            } else if (recv->MOA[n].pl[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].pl = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].pl += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].pl = FH_ai_6106s_Part4Value.Data[n].pl * sign;
@@ -688,35 +550,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* cx */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].cx[i] >= '0') && (recv->MOA[n].cx[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].cx[i] >= '0') && (recv->MOA[n].cx[i] <= '9')) {
                 array[j] = recv->MOA[n].cx[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].cx[i] == ' ')
-            {
+            } else if (recv->MOA[n].cx[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].cx[i] == '.')
-            {
+            } else if (recv->MOA[n].cx[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].cx[i] == '-')
-            {
+            } else if (recv->MOA[n].cx[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].cx = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].cx += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].cx = FH_ai_6106s_Part4Value.Data[n].cx * sign;
@@ -724,35 +576,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* i3 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].i3[i] >= '0') && (recv->MOA[n].i3[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].i3[i] >= '0') && (recv->MOA[n].i3[i] <= '9')) {
                 array[j] = recv->MOA[n].i3[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].i3[i] == ' ')
-            {
+            } else if (recv->MOA[n].i3[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].i3[i] == '.')
-            {
+            } else if (recv->MOA[n].i3[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].i3[i] == '-')
-            {
+            } else if (recv->MOA[n].i3[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].i3 = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].i3 += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].i3 = FH_ai_6106s_Part4Value.Data[n].i3 * sign;
@@ -761,35 +603,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* i5 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].i5[i] >= '0') && (recv->MOA[n].i5[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].i5[i] >= '0') && (recv->MOA[n].i5[i] <= '9')) {
                 array[j] = recv->MOA[n].i5[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].i5[i] == ' ')
-            {
+            } else if (recv->MOA[n].i5[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].i5[i] == '.')
-            {
+            } else if (recv->MOA[n].i5[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].i5[i] == '-')
-            {
+            } else if (recv->MOA[n].i5[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].i5 = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].i5 += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].i5 = FH_ai_6106s_Part4Value.Data[n].i5 * sign;
@@ -797,35 +629,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* i7 */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 7; i++)
-        {
-            if ((recv->MOA[n].i7[i] >= '0') && (recv->MOA[n].i7[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 7; i++) {
+            if ((recv->MOA[n].i7[i] >= '0') && (recv->MOA[n].i7[i] <= '9')) {
                 array[j] = recv->MOA[n].i7[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].i7[i] == ' ')
-            {
+            } else if (recv->MOA[n].i7[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].i7[i] == '.')
-            {
+            } else if (recv->MOA[n].i7[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].i7[i] == '-')
-            {
+            } else if (recv->MOA[n].i7[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].i7 = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].i7 += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].i7 = FH_ai_6106s_Part4Value.Data[n].i7 * sign;
@@ -833,35 +655,25 @@ uint16_t FH_ai_6106s4Analy(uint8_t *buff)
     }
 
     /* A */
-    for (uint8_t n = 0; n < 3; n++)
-    {
+    for (uint8_t n = 0; n < 3; n++) {
         uint8_t j = 0;
         temporary = 0;
         sign = 1;
-        for (uint8_t i = 0; i < 6; i++)
-        {
-            if ((recv->MOA[n].A[i] >= '0') && (recv->MOA[n].A[i] <= '9'))
-            {
+        for (uint8_t i = 0; i < 6; i++) {
+            if ((recv->MOA[n].A[i] >= '0') && (recv->MOA[n].A[i] <= '9')) {
                 array[j] = recv->MOA[n].A[i] - 0x30;
                 j++;
-            }
-            else if (recv->MOA[n].A[i] == ' ')
-            {
+            } else if (recv->MOA[n].A[i] == ' ') {
                 temporary++;
-            }
-            else if (recv->MOA[n].A[i] == '.')
-            {
+            } else if (recv->MOA[n].A[i] == '.') {
                 cnt = i - temporary;
-            }
-            else if (recv->MOA[n].A[i] == '-')
-            {
+            } else if (recv->MOA[n].A[i] == '-') {
                 temporary++;
                 sign = -1;
             }
         }
         FH_ai_6106s_Part4Value.Data[n].A = 0;
-        for (uint8_t i = 0; i < j; i++)
-        {
+        for (uint8_t i = 0; i < j; i++) {
             FH_ai_6106s_Part4Value.Data[n].A += array[i] * pow(10, cnt - i - 1);
         }
         FH_ai_6106s_Part4Value.Data[n].A = FH_ai_6106s_Part4Value.Data[n].A * sign;
@@ -878,12 +690,9 @@ char *FH_ai_6106sRecvMessage(uint8_t *buff, uint16_t size)
     uint8_t byte[40];
     FH_ai_6106s_MessageType *recv;
 
-    if (buff[0] == '#')
-    {
+    if (buff[0] == '#') {
         recv = (FH_ai_6106s_MessageType *) buff;
-    }
-    else if (buff[1] == '#')
-    {
+    } else if (buff[1] == '#') {
         recv = (FH_ai_6106s_MessageType *) (buff + 1);
     }
 
@@ -921,8 +730,7 @@ char *FH_ai_6106sBleSend(void)
     cJSON_AddStringToObject(cjson_data, "device", "AI_6106S");
 
     /* 自动边补 */
-    if (FH_ai_6106s_Part1Value.MC == 2)
-    {
+    if (FH_ai_6106s_Part1Value.MC == 2) {
         FH_ai_6106s_Part1Value.Angle[0].A = (FH_ai_6106s_Part4Value.Data[0].A - 120) / 2;
         FH_ai_6106s_Part1Value.Angle[1].A = 0;
         FH_ai_6106s_Part1Value.Angle[2].A = -((FH_ai_6106s_Part4Value.Data[2].A - 120) / 2);
@@ -962,6 +770,7 @@ char *FH_ai_6106sBleSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

@@ -10,7 +10,7 @@
 
 /* 保定华创  有载分接开关   仪器主动上报数据*/
 #include "HCYZ_iv.h"
-
+static char returnJsonDataBuff[1000];
 HCYZ_ivMessageValueType HCYZ_ivMessageValue[3];
 
 char *HCYZ_ivBleSend(void);
@@ -33,8 +33,7 @@ char *HCYZ_ivRecvMessage(uint8_t *buff, uint16_t size)
     if (recv->Tail != 0x16)
         return NULL;
 
-    for (uint8_t i = 0; i < 3; i++)
-    {
+    for (uint8_t i = 0; i < 3; i++) {
 
         HCYZ_ivMessageValue[i].PhasePosition = (recv->APDU[i].Obj[0].Value[0] << 24)
                                                | (recv->APDU[i].Obj[0].Value[1] << 18) | (recv->APDU[i].Obj[0].Value[2] << 8)
@@ -86,6 +85,7 @@ char *HCYZ_ivBleSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 
     str = cJSON_PrintUnformatted(cjson_data);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);

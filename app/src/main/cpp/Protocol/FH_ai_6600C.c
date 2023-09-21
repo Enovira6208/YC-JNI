@@ -11,7 +11,7 @@
 
 #include "FH_ai_6600C.h"
 
-
+static char returnJsonDataBuff[1000];
 uint8_t FH_ai_6600C_ParamCnt = 0;
 FH_ai_6600CValueType FH_ai_6600CValue;
 
@@ -23,8 +23,7 @@ char *FH_ai_6600CWifiSend(void);
  */
 uint16_t FH_ai_6600CReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -35,9 +34,7 @@ uint16_t FH_ai_6600CReadData(uint8_t *buff, uint8_t cnt)
         buff[7] = '\r';
         buff[8] = '\n';
         return 9;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -62,30 +59,22 @@ double FH_ai_6600CStr_8_Analy(uint8_t *buff)
     int sign;
     double value = 0;
 
-    if (buff[0] == '-')
-    {
+    if (buff[0] == '-') {
         sign = -1;
-    }
-    else
-    {
+    } else {
         sign = 1;
     }
 
-    for (uint8_t i = 1; i <= 5; i++)
-    {
-        if (buff[i] == '.')
-        {
+    for (uint8_t i = 1; i <= 5; i++) {
+        if (buff[i] == '.') {
             cnt = i - 1;
-        }
-        else
-        {
+        } else {
             array[j++] = buff[i] - 48;
         }
     }
 
     value = 0;
-    for (uint8_t i = 0; i < 4; i++)
-    {
+    for (uint8_t i = 0; i < 4; i++) {
         value += array[i] * pow(10, cnt - 1 - i);
     }
 
@@ -156,6 +145,7 @@ char *FH_ai_6600CWifiSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 
     str = cJSON_PrintUnformatted(cjson_data);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);

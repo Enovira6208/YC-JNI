@@ -10,6 +10,8 @@
 /* 保定金源变比V1.0 */
 #include "JYT_A_V1.h"
 
+static char returnJsonDataBuff[1000];
+
 JYT_A_V1ValueType JYT_A_V1Value;
 
 char *JYT_A_V1Send(void);
@@ -49,33 +51,25 @@ double JYT_A_V1Count(uint8_t *buff, uint8_t cnt)
 
     decimal = cnt;
     memset(ascll, 0, 10);
-    for (uint8_t i = 0; i < cnt; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < cnt; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
             /* 最后一个数字 */
             num = i;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
-        }
-        else
-        {
+        } else {
             temp++;
             /* 最后一个字符 */
             letter = i;
         }
     }
 
-    if (letter > num)
-    {
+    if (letter > num) {
         temp = temp - (letter - num);
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1 - temp);
     }
     return vlaue;
@@ -100,31 +94,24 @@ char *JYT_A_V1RecvMessage(uint8_t *buff, uint16_t size)
     if (recv->Addr[1] != 0x31)
         return NULL;
 
-    if (recv->Status == 0x10)
-    {
+    if (recv->Status == 0x10) {
         JYT_A_V1Value.voltageRatio_A = JYT_A_V1Count(&recv->Data[0], 6);
         /* 7位的电流 */
         JYT_A_V1Value.tranches = recv->Data[6 + 7] - 0x30;
-    }
-    else if ((recv->Status == 0x20) || (recv->Status == 0x31))
-    {
+    } else if ((recv->Status == 0x20) || (recv->Status == 0x31)) {
         JYT_A_V1Value.voltageRatio_A = JYT_A_V1Count(&recv->Data[0], 6);
         JYT_A_V1Value.difference_A = JYT_A_V1Count(&recv->Data[6], 6);
         /* 7位的电流 */
         JYT_A_V1Value.tranches = recv->Data[12 + 7] - 0x30;
         JYT_A_V1Value.branching = ((recv->Data[20] - 0x30) << 8) | (recv->Data[21] - 0x30);
-    }
-    else if (recv->Status == 0x40)
-    {
+    } else if (recv->Status == 0x40) {
         JYT_A_V1Value.voltageRatio_A = JYT_A_V1Count(&recv->Data[0], 6);
         JYT_A_V1Value.voltageRatio_B = JYT_A_V1Count(&recv->Data[6], 6);
         JYT_A_V1Value.voltageRatio_C = JYT_A_V1Count(&recv->Data[12], 6);
         /* 3 * 7  21位的电流 */
         //JYT_A_V1Value.tranches = recv->Data[18 + 21] - 0x30;
         //JYT_A_V1Value.branching = ((recv->Data[34] - 0x30) << 8) | (recv->Data[35] - 0x30);
-    }
-    else if ((recv->Status == 0x50) || (recv->Status == 0x61))
-    {
+    } else if ((recv->Status == 0x50) || (recv->Status == 0x61)) {
         JYT_A_V1Value.voltageRatio_A = JYT_A_V1Count(&recv->Data[0], 6);
         JYT_A_V1Value.voltageRatio_B = JYT_A_V1Count(&recv->Data[6], 6);
         JYT_A_V1Value.voltageRatio_C = JYT_A_V1Count(&recv->Data[12], 6);
@@ -168,6 +155,7 @@ char *JYT_A_V1Send(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

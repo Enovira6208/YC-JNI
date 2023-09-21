@@ -11,6 +11,8 @@
 /* 苏州海沃直流高压发生器 */
 #include "SD_Z_VI.h"
 
+static char returnJsonDataBuff[1000];
+
 SD_Z_VIValueType SD_Z_VIValue;
 
 char *SD_Z_VISend(void);
@@ -72,8 +74,7 @@ char *SD_Z_VIRecvMessage(uint8_t *buff, uint16_t size)
 
 
     sprintf((char *)&SD_Z_VIValue.testTime[0], "%04d", (recv->Data[0] | (recv->Data[1] << 8)));
-    for (uint8_t i = 2; i < 7; i++)
-    {
+    for (uint8_t i = 2; i < 7; i++) {
         sprintf((char *)&SD_Z_VIValue.testTime[i * 2], "%02d", recv->Data[i]);
     }
 
@@ -122,6 +123,7 @@ char *SD_Z_VISend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

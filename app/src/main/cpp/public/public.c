@@ -3,7 +3,7 @@
  * @Author:  chuhouzhong
  * @Copyright: 福建省亿鑫海信息科技有限公司
  * @Date: 2022-06-28 16:13:20
- * @LastEditTime: 2022-08-17 17:45:00
+ * @LastEditTime: 2022-11-17 17:00:38
  * @LastEditors:
  */
 
@@ -113,7 +113,7 @@ double PUBLIC_IEEE754_32(uint8_t value3, uint8_t value2, uint8_t value1, uint8_t
 
     valueU = (value0 << 24) | (value1 << 16) | (value2 << 8) | (value3);
     if (valueU == 0xFFFFFFFF)
-        return 0;
+        return -1023.0;
     for (int i = 31; i >= 0; i--)
     {
         table[i] = (uint8_t)(valueU & 0x00000001);
@@ -125,8 +125,8 @@ double PUBLIC_IEEE754_32(uint8_t value3, uint8_t value2, uint8_t value1, uint8_t
     var.raw.exponent = f;
     var.raw.sign = table[0];
 
-    valueI = var.f * 1000;
-    valueDob = valueI / 1000.0;
+    valueI = var.f * 10000;
+    valueDob = valueI / 10000.0;
     return valueDob;
 }
 /***************************************************************************/
@@ -190,5 +190,150 @@ void PUBLIC_JsonArrayLoading(cJSON *array, uint8_t cnt, char *name, char *dataty
     }
 }
 
+/**
+ * @brief 山东省协议单位解析
+ *
+ * @param value 枚举值
+ * @return char* 单位
+ */
+char *PUBLIC_SD_ProtocolUnitAnalysis(uint8_t value)
+{
+    switch (value)
+    {
+        case PUBLIC_SD_PROTOCO_UNIT_NULL:
+            return " ";
 
+        case PUBLIC_SD_PROTOCO_UNIT_dB:
+            return "dB";
+
+        case PUBLIC_SD_PROTOCO_UNIT_dBm:
+            return "dBm";
+
+        case PUBLIC_SD_PROTOCO_UNIT_dBmV:
+            return "dBmV";
+
+        case PUBLIC_SD_PROTOCO_UNIT_dBuV:
+            return "dBμV";
+
+        case PUBLIC_SD_PROTOCO_UNIT_V:
+            return "V";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mV:
+            return "mV";
+
+        case PUBLIC_SD_PROTOCO_UNIT_uV:
+            return "μV";
+
+        case PUBLIC_SD_PROTOCO_UNIT_PERCENT:
+            return "%";
+
+        case PUBLIC_SD_PROTOCO_UNIT_A:
+            return "A";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mA:
+            return "mA";
+
+        case PUBLIC_SD_PROTOCO_UNIT_uA:
+            return "μV";
+
+        case PUBLIC_SD_PROTOCO_UNIT_O:
+            return "Ω";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mO:
+            return "mΩ";
+
+        case PUBLIC_SD_PROTOCO_UNIT_uO:
+            return "μΩ";
+
+        case PUBLIC_SD_PROTOCO_UNIT_m_s2:
+            return "m/s²";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mm:
+            return "mm";
+
+        case PUBLIC_SD_PROTOCO_UNIT_CENTIGRADE:
+            return "℃";
+
+        case PUBLIC_SD_PROTOCO_UNIT_FAHRENHEIT:
+            return "℉";
+
+        case PUBLIC_SD_PROTOCO_UNIT_Pa:
+            return "Pa";
+
+        case PUBLIC_SD_PROTOCO_UNIT_C:
+            return "C";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mC:
+            return "mC";
+
+        case PUBLIC_SD_PROTOCO_UNIT_uC:
+            return "μC";
+
+        case PUBLIC_SD_PROTOCO_UNIT_nC:
+            return "nC";
+
+        case PUBLIC_SD_PROTOCO_UNIT_pC:
+            return "pC";
+
+        case PUBLIC_SD_PROTOCO_UNIT_m_s:
+            return "m/s";
+
+        case PUBLIC_SD_PROTOCO_UNIT_kO:
+            return "kΩ";
+
+        case PUBLIC_SD_PROTOCO_UNIT_MO:
+            return "MΩ";
+
+        case PUBLIC_SD_PROTOCO_UNIT_GO:
+            return "GΩ";
+
+        case PUBLIC_SD_PROTOCO_UNIT_TO:
+            return "TΩ";
+
+        case PUBLIC_SD_PROTOCO_UNIT_Hz:
+            return "Hz";
+
+        case PUBLIC_SD_PROTOCO_UNIT_H:
+            return "H";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mH:
+            return "mH";
+
+        case PUBLIC_SD_PROTOCO_UNIT_F:
+            return "F";
+
+        case PUBLIC_SD_PROTOCO_UNIT_mF:
+            return "mF";
+
+        case PUBLIC_SD_PROTOCO_UNIT_uF:
+            return "μF";
+
+        case PUBLIC_SD_PROTOCO_UNIT_nF:
+            return "nF";
+
+        case PUBLIC_SD_PROTOCO_UNIT_pF:
+            return "pF";
+
+        case PUBLIC_SD_PROTOCO_UNIT_s:
+            return "s";
+
+        case PUBLIC_SD_PROTOCO_UNIT_ms:
+            return "ms";
+
+        case PUBLIC_SD_PROTOCO_UNIT_us:
+            return "μs";
+
+        case PUBLIC_SD_PROTOCO_UNIT_MPa:
+            return "MPa";
+
+        case PUBLIC_SD_PROTOCO_UNIT_uL_L:
+            return "μL/L";
+
+        case PUBLIC_SD_PROTOCO_UNIT_ANGLE:
+            return "°";
+
+        default:
+            break;
+    }
+}
 

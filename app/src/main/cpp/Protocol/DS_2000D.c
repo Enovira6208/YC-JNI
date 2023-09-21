@@ -9,7 +9,7 @@
 
 /* 山东达顺短路阻抗 */
 #include "DS_2000D.h"
-
+static char returnJsonDataBuff[1000];
 uint8_t DS_2000D_ParamCnt = 0;
 DS_2000DValueType DS_2000DValue;
 

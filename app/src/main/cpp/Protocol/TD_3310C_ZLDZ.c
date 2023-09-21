@@ -1,6 +1,8 @@
 #include "TD_3310C_ZLDZ.h"
 #include "../public/mycrc16.h"
 
+static  char returnJsonDataBuff[1000];
+
 uint16_t TD_3310C_ZLDZ_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
     if (cnt == 1) { /*直流电阻测试仪*/
@@ -73,6 +75,8 @@ char *TD_3310C_SendData(ZLDZ_DataVALUE value)
 
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
+
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

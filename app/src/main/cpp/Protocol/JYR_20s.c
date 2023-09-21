@@ -10,7 +10,7 @@
 /* 金源直流电阻 */
 #include "JYR_20s.h"
 #include <math.h>
-
+static char returnJsonDataBuff[1000];
 
 JYR_20sValueType JYR_20sValue;
 JYR_20sAnalyEnum JYR_20sAnaly;
@@ -50,20 +50,15 @@ double JYR_20sCount(uint8_t *buff)
     double vlaue = 0;
 
     memset(ascll, 0, 5);
-    for (uint8_t i = 0; i < 7; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < 7; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1);
     }
     return vlaue;
@@ -81,20 +76,15 @@ double JYR_20sCount_2(uint8_t *buff)
     double vlaue = 0;
 
     memset(ascll, 0, 4);
-    for (uint8_t i = 0; i < 5; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < 5; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1);
     }
     return vlaue;
@@ -111,8 +101,7 @@ char *JYR_20sRecvMessage(uint8_t *buff, uint16_t size)
 
     memcpy(&Data.Ao, recv->Data, sizeof(JYR_20sDataType));
 
-    switch (recv->Way)
-    {
+    switch (recv->Way) {
         /* YN三相同测 */
         case JYR_20s_WAY_YN_THREE_PHASE:
             JYR_20sAnaly = JYR_20_ANALY_3;
@@ -154,8 +143,7 @@ char *JYR_20sRecvMessage(uint8_t *buff, uint16_t size)
             break;
     }
 
-    switch (JYR_20sAnaly)
-    {
+    switch (JYR_20sAnaly) {
         case JYR_20_ANALY_1:
             JYR_20sValue.Ao = JYR_20sCount(Data.Ao);
             JYR_20sValue.AoU[0] = Data.Ao[6];
@@ -213,6 +201,7 @@ char *JYR_20sSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

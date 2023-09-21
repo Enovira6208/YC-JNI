@@ -9,7 +9,7 @@
 
 /* 金源分接开关 */
 #include "JYK_I.h"
-
+static char returnJsonDataBuff[1000];
 JYK_IValue2Type JYK_IValue2;
 
 uint8_t Cmd;
@@ -23,8 +23,7 @@ uint16_t JYK_IReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
     uint8_t hexBuff[10];
 
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         hexBuff[0] = 0x7E;
         hexBuff[1] = 0x4A;
         hexBuff[2] = 0x4B;
@@ -37,9 +36,7 @@ uint16_t JYK_IReadData(uint8_t *ascllBuff, uint8_t cnt)
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 8);
 
         return 16;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         hexBuff[0] = 0x7E;
         hexBuff[1] = 0x4A;
         hexBuff[2] = 0x4B;
@@ -67,23 +64,16 @@ double JYK_ICount(uint8_t *buff)
     double vlaue = 0;
 
     memset(ascll, 0, 5);
-    for (uint8_t i = 0; i < 5; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < 5; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j++] = buff[i] - 0x30;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
-        }
-        else
-        {
+        } else {
             temp++;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1 - temp);
     }
     return vlaue;
@@ -102,22 +92,18 @@ char *JYK_IRecvMessage(uint8_t *buff, uint16_t size)
 
     Cmd = recv->Cmd;
 
-    if (recv->Cmd != 0x50)
-    {
+    if (recv->Cmd != 0x50) {
         if (recv->Cmd != 0x40)
             return NULL;
     }
 
-    if (recv->Cmd == 0x40)
-    {
+    if (recv->Cmd == 0x40) {
         memcpy(&Data1.Motion, recv->Data, sizeof(JYK_IData1Type));
 
         JYK_IValue2.Ra = JYK_ICount(Data1.Ra_Data);
         JYK_IValue2.Rb = JYK_ICount(Data1.Rb_Data);
         JYK_IValue2.Rc = JYK_ICount(Data1.Rc_Data);
-    }
-    else if (recv->Cmd == 0x50)
-    {
+    } else if (recv->Cmd == 0x50) {
         memcpy(&Data2.Ra_Data, recv->Data, sizeof(JYK_IData2Type));
 
         JYK_IValue2.Ra = JYK_ICount(Data2.Ra_Data);
@@ -157,6 +143,7 @@ char *JYK_ISend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

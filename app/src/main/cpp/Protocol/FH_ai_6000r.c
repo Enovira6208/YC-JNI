@@ -10,7 +10,7 @@
 /* 济南泛华 容性设备6000r */
 
 #include "FH_ai_6000r.h"
-
+static char returnJsonDataBuff[1000];
 
 uint8_t FH_ai_6000r_ParamCnt = 0;
 FH_ai_6000rValueType FH_ai_6000rValue;
@@ -23,8 +23,7 @@ char *FH_ai_6000rWifiSend(void);
  */
 uint16_t FH_ai_6000rReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -35,9 +34,7 @@ uint16_t FH_ai_6000rReadData(uint8_t *buff, uint8_t cnt)
         buff[7] = '\r';
         buff[8] = '\n';
         return 9;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -62,30 +59,22 @@ double FH_ai_6000rStr_8_Analy(uint8_t *buff)
     int sign;
     double value = 0;
 
-    if (buff[0] == '-')
-    {
+    if (buff[0] == '-') {
         sign = -1;
-    }
-    else
-    {
+    } else {
         sign = 1;
     }
 
-    for (uint8_t i = 1; i <= 5; i++)
-    {
-        if (buff[i] == '.')
-        {
+    for (uint8_t i = 1; i <= 5; i++) {
+        if (buff[i] == '.') {
             cnt = i - 1;
-        }
-        else
-        {
+        } else {
             array[j++] = buff[i] - 48;
         }
     }
 
     value = 0;
-    for (uint8_t i = 0; i < 4; i++)
-    {
+    for (uint8_t i = 0; i < 4; i++) {
         value += array[i] * pow(10, cnt - 1 - i);
     }
 
@@ -118,36 +107,26 @@ char *FH_ai_6000rRecvMessage(uint8_t *buff, uint16_t size)
     /* FH_ai_6000rValue.Status = 0 表示电流 = 1 表示电压  */
     FH_ai_6000rValue.Status = (msgData.Status[1] - 55) & 0x01;
 
-    if (msgData.angl[0] == '-')
-    {
+    if (msgData.angl[0] == '-') {
         sign = -1;
-    }
-    else
-    {
+    } else {
         sign = 1;
     }
     /* m减去小数点前面多余的空格 */
     uint8_t m = 0;
     memset(array, 0, 6);
-    for (uint8_t i = 1; i <= 7; i++)
-    {
-        if (msgData.angl[i] == '.')
-        {
+    for (uint8_t i = 1; i <= 7; i++) {
+        if (msgData.angl[i] == '.') {
             cnt = i - 1 - m;
-        }
-        else if ((msgData.angl[i] >= '0') && (msgData.angl[i] <= '9'))
-        {
+        } else if ((msgData.angl[i] >= '0') && (msgData.angl[i] <= '9')) {
             array[j++] = msgData.angl[i] - 48;
-        }
-        else
-        {
+        } else {
             m++;
         }
     }
 
     FH_ai_6000rValue.angl = 0;
-    for (uint8_t i = 0; i < 6; i++)
-    {
+    for (uint8_t i = 0; i < 6; i++) {
         FH_ai_6000rValue.angl += array[i] * pow(10, cnt - 1 - i);
     }
 
@@ -191,6 +170,7 @@ char *FH_ai_6000rWifiSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 
     str = cJSON_PrintUnformatted(cjson_data);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);

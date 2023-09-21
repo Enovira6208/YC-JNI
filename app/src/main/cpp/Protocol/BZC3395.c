@@ -9,7 +9,7 @@
 
 /* 保定金达直流电阻 */
 #include "BZC3395.h"
-
+static char returnJsonDataBuff[1000];
 BZC3395ValueType BZC3395Value;
 
 char *BZC3395Send(void);
@@ -21,15 +21,12 @@ uint16_t BZC3395ReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
     uint8_t hexBuff[10];
 
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         hexBuff[0] = 0x0A;
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 1);
 
         return 2;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         hexBuff[0] = 0xAA;
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 1);
 
@@ -51,47 +48,33 @@ double BZC3395Count(uint8_t *buff, uint8_t cnt, uint8_t type)
     double vlaue = 0;
     uint8_t blank = 0;
 
-    for (uint8_t i = 0; i < sizeof(buff); i++)
-    {
-        if (buff[i] = 0x23)
-        {
+    for (uint8_t i = 0; i < sizeof(buff); i++) {
+        if (buff[i] = 0x23) {
             blank = i;
         }
     }
 
     memset(ascll, 0, 10);
-    for (uint8_t i = 0; i < cnt; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < cnt; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
-        }
-        else if (buff[i] == 0x23)
-        {
+        } else if (buff[i] == 0x23) {
             temp++;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1 - temp);
     }
 
-    if (type == 1)
-    {
+    if (type == 1) {
         /* blank + j + 1 + 1  空格+数字+小数点+位 cnt - blank - 1 - j 总数-小数点-数字*/
         memcpy(BZC3395Value.Rauint, &buff[blank + j + 1 + 1], cnt - blank - 1 - j);
-    }
-    else if (type == 2)
-    {
+    } else if (type == 2) {
         memcpy(BZC3395Value.Rbuint, &buff[blank + j + 1 + 1], cnt - blank - 1 - j);
-    }
-    else if (type == 3)
-    {
+    } else if (type == 3) {
         memcpy(BZC3395Value.Rcuint, &buff[blank + j + 1 + 1], cnt - blank - 1 - j);
     }
 
@@ -115,12 +98,9 @@ char *BZC3395RecvMessage(uint8_t *buff, uint16_t size)
     if (recv->Head != 0x23)
         return NULL;
     /* 值为0 */
-    if (recv->Data[0] == 0x24)
-    {
+    if (recv->Data[0] == 0x24) {
         BZC3395Value.Ra = 0;
-    }
-    else if (recv->Data[0] == 'a')
-    {
+    } else if (recv->Data[0] == 'a') {
         index1 = strstr((char *)buff, "a");
         index2 = strstr((char *)buff, "b");
         index3 = strstr((char *)buff, "c");
@@ -132,9 +112,7 @@ char *BZC3395RecvMessage(uint8_t *buff, uint16_t size)
         BZC3395Value.Ra = BZC3395Count(&recv->Data[2], value1 - 2, 1);
         BZC3395Value.Rb = BZC3395Count(&recv->Data[2 + value1], value2 - 2, 1);
         BZC3395Value.Rc = BZC3395Count(&recv->Data[2 + value2], value3 - 2, 1);
-    }
-    else if (recv->Data[0] == 'A')
-    {
+    } else if (recv->Data[0] == 'A') {
         index1 = strstr((char *)buff, "A");
         index2 = strstr((char *)buff, "B");
         index3 = strstr((char *)buff, "C");
@@ -146,9 +124,7 @@ char *BZC3395RecvMessage(uint8_t *buff, uint16_t size)
         BZC3395Value.Rb = BZC3395Count(&recv->Data[2], value1 - 2, 1);
         BZC3395Value.Rb = BZC3395Count(&recv->Data[2 + value1], value2 - 2, 1);
         BZC3395Value.Rb = BZC3395Count(&recv->Data[2 + value2], value3 - 2, 1);
-    }
-    else
-    {
+    } else {
         index1 = strstr((char *)buff, " ");
         index2 = strstr((char *)buff, "\n");
         BZC3395Value.Ra = BZC3395Count(recv->Data, index2 - index1 + 1, 1);
@@ -180,6 +156,7 @@ char *BZC3395Send(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

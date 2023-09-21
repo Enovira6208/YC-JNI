@@ -4,12 +4,12 @@
  * @Copyright: 福建省亿鑫海信息科技有限公司
  * @Date: 2023-05-30 10:48:52
  * @LastEditTime: 2023-05-30 17:19:56
- * @LastEditors:  
+ * @LastEditors:
  */
 #include <stdio.h>
 #include "JYC.h"
 #include "math.h"
-
+static char returnJsonDataBuff[1000];
 uint16_t JYC_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
     uint8_t hexBuff[20];
@@ -114,6 +114,7 @@ char *JYCSend(JYCValueType *value)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

@@ -9,6 +9,8 @@
 /* 保定金源变比旧版 */
 #include "JYW6400_IM.h"
 
+static char returnJsonDataBuff[1000];
+
 JYW6400_IMValueType JYW6400_IMValue;
 
 char *JYW6400_IMSend(void);
@@ -44,8 +46,7 @@ char *JYW6400_IMRecvMessage(uint8_t *buff, uint16_t size)
     JYW6400_IMValue.switchingGearPosition = recv->Data[11];
 
     JYW6400_IMValue.frequency = PUBLIC_IEEE754_32(recv->Data[12], recv->Data[13], recv->Data[14], recv->Data[15]);
-    for (uint8_t i = 0; i < 3; i++)
-    {
+    for (uint8_t i = 0; i < 3; i++) {
         JYW6400_IMValue.value[i].voltage = PUBLIC_IEEE754_32(recv->Data[16 + 28 * i],
                                            recv->Data[17 + 28 * i], recv->Data[18 + 28 * i], recv->Data[19 + 28 * i]);
         JYW6400_IMValue.value[i].electricity = PUBLIC_IEEE754_32(recv->Data[20 + 28 * i],
@@ -106,8 +107,7 @@ char *JYW6400_IMSend(void)
     PUBLIC_JsonArrayLoading(cjson_array1, 10, "shortCircuitImpedance_ABC", "double", "Ω", JYW6400_IMValue.shortCircuitImpedance_ABC, "null");
     cJSON_AddItemToObject(cjson_properties, "single", cjson_array1);
     printf("JYW6400_IMSend 11 \r\n");
-    for (uint8_t i = 0; i < 3; i++)
-    {
+    for (uint8_t i = 0; i < 3; i++) {
         cJSON *cjson_temp = NULL;
         cjson_array2 = cJSON_CreateArray();
 
@@ -131,6 +131,7 @@ char *JYW6400_IMSend(void)
     printf("JYW6400_IMSend  33\r\n");
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);

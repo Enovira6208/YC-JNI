@@ -9,7 +9,7 @@
 
 /* 金源回路电阻 */
 #include "JYL_100B.h"
-
+static char returnJsonDataBuff[1000];
 JYL_100BValueType JYL_100BValue;
 
 char *JYL_100BSend(void);
@@ -47,20 +47,15 @@ double JYL_100BCount(uint8_t *buff)
     double vlaue = 0;
 
     memset(ascll, 0, 5);
-    for (uint8_t i = 0; i < 6; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < 6; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1);
     }
     return vlaue;
@@ -108,6 +103,8 @@ char *JYL_100BSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

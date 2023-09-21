@@ -9,7 +9,7 @@
 
 /* 泛华介损6000H */
 #include "FH_ai_6000h.h"
-
+static char returnJsonDataBuff[1000];
 FH_ai_6000hValueType FH_ai_6000hValue;
 
 char *FH_ai_6000hWifiSend(void);
@@ -20,8 +20,7 @@ char *FH_ai_6000hWifiSend(void);
  */
 uint16_t FH_ai_6000hReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -32,9 +31,7 @@ uint16_t FH_ai_6000hReadData(uint8_t *buff, uint8_t cnt)
         buff[7] = '\r';
         buff[8] = '\n';
         return 9;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -67,25 +64,18 @@ double FH_ai_6000hStrAnaly(uint8_t *buff)
     temp_array[5] = buff[1];
 
     memset(array, 0, 5);
-    for (uint8_t i = 0; i <= 4; i++)
-    {
-        if (temp_array[i] == 'A')
-        {
+    for (uint8_t i = 0; i <= 4; i++) {
+        if (temp_array[i] == 'A') {
             cnt = i;
-        }
-        else if (temp_array[i] >= 'B' && temp_array[i] <= 'F')
-        {
+        } else if (temp_array[i] >= 'B' && temp_array[i] <= 'F') {
             temp++;
-        }
-        else if (temp_array[i] >= '0' && temp_array[i] <= '9')
-        {
+        } else if (temp_array[i] >= '0' && temp_array[i] <= '9') {
             array[j] = temp_array[i] - 48;
             j++;
         }
     }
 
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         value += array[i] * pow(10, cnt - i - 1 - temp);
     }
     return value;
@@ -96,16 +86,11 @@ double FH_ai_6000hStrAnaly(uint8_t *buff)
 */
 void FH_ai_6000hStrAnaly_Cu(uint8_t buff, uint8_t index)
 {
-    if (((buff - 48) & 0x03) == 0)
-    {
+    if (((buff - 48) & 0x03) == 0) {
         FH_ai_6000hValue.Param[index].Cu[0] = 'p';
-    }
-    else if (((buff - 48) & 0x03) == 1)
-    {
+    } else if (((buff - 48) & 0x03) == 1) {
         FH_ai_6000hValue.Param[index].Cu[0] = 'n';
-    }
-    else if (((buff - 48) & 0x03) == 2)
-    {
+    } else if (((buff - 48) & 0x03) == 2) {
         FH_ai_6000hValue.Param[index].Cu[0] = 'u';
     }
     FH_ai_6000hValue.Param[index].Cu[1] = 'F';
@@ -116,16 +101,11 @@ void FH_ai_6000hStrAnaly_Cu(uint8_t buff, uint8_t index)
 */
 void FH_ai_6000hStrAnaly_DFu(uint8_t buff, uint8_t index)
 {
-    if (((buff - 48) & 0x03) == 0)
-    {
+    if (((buff - 48) & 0x03) == 0) {
         FH_ai_6000hValue.Param[index].DFu[0] = '%';
-    }
-    else if (((buff - 48) & 0x03) == 1)
-    {
+    } else if (((buff - 48) & 0x03) == 1) {
         FH_ai_6000hValue.Param[index].DFu[0] = ' ';
-    }
-    else if (((buff - 48) & 0x03) == 2)
-    {
+    } else if (((buff - 48) & 0x03) == 2) {
         FH_ai_6000hValue.Param[index].DFu[0] = 'k';
     }
 }
@@ -149,21 +129,16 @@ double FH_ai_6000hStrAnaly_four(uint8_t *buff)
 
     memset(array, 0, 5);
     cnt = temp_array[0] - 48;
-    for (uint8_t i = 1; i <= 4; i++)
-    {
-        if (temp_array[i] >= 'A' && temp_array[i] <= 'F')
-        {
+    for (uint8_t i = 1; i <= 4; i++) {
+        if (temp_array[i] >= 'A' && temp_array[i] <= 'F') {
             temp++;
-        }
-        else if (temp_array[i] >= '0' && temp_array[i] <= '9')
-        {
+        } else if (temp_array[i] >= '0' && temp_array[i] <= '9') {
             array[j] = temp_array[i] - 48;
             j++;
         }
     }
 
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         value += array[i] * pow(10, cnt - i - 1 - temp);
     }
     return value;
@@ -194,26 +169,18 @@ char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
 
     /* D3002759  低地址在前 高地址在后  实际值为 59 27 00 D3*/
 
-    if ((((messageData.Param[1] - 48) & 0x07 == 0)) || (((messageData.Param[1] - 48) & 0x07) == 1))
-    {
+    if ((((messageData.Param[1] - 48) & 0x07 == 0)) || (((messageData.Param[1] - 48) & 0x07) == 1)) {
         FH_ai_6000hValue.Mode = FH_AI_6000H_SINGLE;
-    }
-    else if (((messageData.Param[1] - 48) & 0x07) == 4)
-    {
+    } else if (((messageData.Param[1] - 48) & 0x07) == 4) {
         FH_ai_6000hValue.Mode = FH_AI_6000H_TWO;
-    }
-    else if (((messageData.Param[1] - 48) & 0x07) == 2)
-    {
+    } else if (((messageData.Param[1] - 48) & 0x07) == 2) {
         FH_ai_6000hValue.Mode = FH_AI_6000H_THREE;
-    }
-    else if (((messageData.Param[1] - 48) & 0x07) == 3)
-    {
+    } else if (((messageData.Param[1] - 48) & 0x07) == 3) {
         FH_ai_6000hValue.Mode = FH_AI_6000H_FOUR;
     }
 
 
-    switch (FH_ai_6000hValue.Mode)
-    {
+    switch (FH_ai_6000hValue.Mode) {
         /* 单通道 */
         case FH_AI_6000H_SINGLE:
             FH_ai_6000hValue.Param[0].C = FH_ai_6000hStrAnaly(messageData.Array[0].str);
@@ -309,6 +276,7 @@ char *FH_ai_6000hWifiSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 
     str = cJSON_PrintUnformatted(cjson_data);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);

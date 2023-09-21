@@ -9,8 +9,8 @@
 
 /* 金源回路电阻 */
 #include "JYR_40C.h"
-
-JYR_40CValueType JYL_100BValue;
+static char returnJsonDataBuff[1000];
+JYR_40CValueType JYR_40C;
 
 char *JYR_40CSend(void);
 
@@ -72,8 +72,8 @@ char *JYR_40CRecvMessage(uint8_t *buff, uint16_t size)
     if (recv->Cmd != 0x45 && recv->Cmd != 0x44 && recv->Cmd != 0x48)
         return NULL;
 
-    JYL_100BValue.R = JYR_40CCount(Data.R_Data);
-    JYL_100BValue.Ruint[0] = Data.R_Data[6];
+    JYR_40C.R = JYR_40CCount(Data.R_Data);
+    JYR_40C.Ruint[0] = Data.R_Data[6];
 
     /* 发送数据 */
     return JYR_40CSend();
@@ -94,11 +94,12 @@ char *JYR_40CSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "JYR_40C");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance", "double", JYL_100BValue.Ruint, JYL_100BValue.R, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance", "double", JYR_40C.Ruint, JYR_40C.R, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

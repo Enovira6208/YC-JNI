@@ -9,7 +9,7 @@
 
 /* 保定金达变比 */
 #include "BBC6638.h"
-
+static char returnJsonDataBuff[10000];
 
 BBC6638ValueType BBC6638Value;
 
@@ -22,15 +22,12 @@ uint16_t BBC6638ReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
     uint8_t hexBuff[10];
 
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         hexBuff[0] = 0x0A;
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 1);
 
         return 2;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         hexBuff[0] = 0xAA;
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 1);
 
@@ -58,24 +55,17 @@ double BBC6638Count(uint8_t *buff, uint8_t cnt)
         sign = -1;
 
     memset(ascll, 0, 10);
-    for (uint8_t i = 0; i < cnt; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < cnt; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
-        }
-        else
-        {
+        } else {
             temp++;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1 - temp);
     }
 
@@ -101,8 +91,7 @@ char *BBC6638RecvMessage(uint8_t *buff, uint16_t size)
 
 
     /* 三相 */
-    if (strstr((char *)buff, "ab") != NULL)
-    {
+    if (strstr((char *)buff, "ab") != NULL) {
         index1 = strstr((char *)buff, "=");
         index2 = strstr((char *)buff, "$");
         value1 = index2 - index1;
@@ -140,8 +129,7 @@ char *BBC6638RecvMessage(uint8_t *buff, uint16_t size)
 
     }
     /* 单相 */
-    else
-    {
+    else {
         index1 = strstr((char *)buff, "=");
         index2 = strstr((char *)buff, "$");
         value1 = index2 - index1;
@@ -190,6 +178,7 @@ char *BBC6638Send(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

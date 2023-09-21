@@ -10,7 +10,7 @@
 
 /* 泛华接地导通 */
 #include "FH_ai_6310B.h"
-
+static char returnJsonDataBuff[1000];
 FH_ai_6310bValueType FH_ai_6310bValue;
 
 char *FH_ai_6310bwifiSend(void);
@@ -21,8 +21,7 @@ char *FH_ai_6310bwifiSend(void);
  */
 uint16_t FH_ai_6310bReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -33,9 +32,7 @@ uint16_t FH_ai_6310bReadData(uint8_t *buff, uint8_t cnt)
         buff[7] = '\r';
         buff[8] = '\n';
         return 9;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -62,41 +59,29 @@ double FH_ai_6310bStrAnaly(uint8_t *buff)
     double value = 0;
 
     memset(array, 0, 10);
-    if (buff[2] == '-')
-    {
+    if (buff[2] == '-') {
         sign = -1;
-    }
-    else
-    {
+    } else {
         sign = 1;
     }
 
-    for (uint8_t i = 3; i <= 9; i++)
-    {
-        if (buff[i] == '.')
-        {
+    for (uint8_t i = 3; i <= 9; i++) {
+        if (buff[i] == '.') {
             cnt = i - 2;
-        }
-        else if (buff[i] >= '0' && buff[i] <= '9')
-        {
+        } else if (buff[i] >= '0' && buff[i] <= '9') {
             array[j++] = buff[i];
-        }
-        else //if (buff[i] >= 'B' && buff[i] <= 'F')
-        {
+        } else { //if (buff[i] >= 'B' && buff[i] <= 'F')
             temp++;
         }
     }
 
-    for (uint8_t i = 0; i < j; i++)
-    {
-        if ((array[i] >= '0') && (array[i] <= '9'))
-        {
+    for (uint8_t i = 0; i < j; i++) {
+        if ((array[i] >= '0') && (array[i] <= '9')) {
             array[i] = array[i] - 48;
         }
     }
 
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         value += array[i] * pow(10, cnt - i - 1 - temp);
     }
 
@@ -156,6 +141,7 @@ char *FH_ai_6310bwifiSend(void)
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

@@ -13,7 +13,7 @@
 #include "FH_ai_6000hl.h"
 
 
-
+static char returnJsonDataBuff[1000];
 uint8_t FH_ai_6000hl_ParamCnt = 0;
 FH_ai_6000hlValueType FH_ai_6000hlValue;
 
@@ -24,8 +24,7 @@ char *FH_ai_6000hlWifiSend(void);
  */
 uint16_t FH_ai_6000hlReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -37,9 +36,7 @@ uint16_t FH_ai_6000hlReadData(uint8_t *buff, uint8_t cnt)
         buff[8] = '\r';
         buff[9] = '\n';
         return 10;
-    }
-    else if (cnt == 2)
-    {
+    } else if (cnt == 2) {
         buff[0] = '#';
         buff[1] = '9';
         buff[2] = '9';
@@ -65,31 +62,22 @@ double FH_ai_6000hlStrAnaly(uint8_t *buff)
     double value;
 
     memset(array, 0, 5);
-    if (buff[4] == '-')
-    {
+    if (buff[4] == '-') {
         sign = -1;
-    }
-    else
-    {
+    } else {
         sign = 1;
     }
 
-    for (uint8_t i = 5; i <= 9; i++)
-    {
-        if (buff[i] == '.')
-        {
+    for (uint8_t i = 5; i <= 9; i++) {
+        if (buff[i] == '.') {
             cnt = i - 5;
-        }
-        else
-        {
+        } else {
             array[j++] = buff[i];
         }
     }
 
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        if ((array[i] >= '0') && (array[i] <= '9'))
-        {
+    for (uint8_t i = 0; i < 4; i++) {
+        if ((array[i] >= '0') && (array[i] <= '9')) {
             array[i] = array[i] - 48;
         }
     }
@@ -120,8 +108,7 @@ char *FH_ai_6000hlRecvMessage(uint8_t *buff, uint16_t size)
     memcpy(FH_ai_6000hlValue.Time, messageData.Time, 16);
     FH_ai_6000hlValue.Mode = (FH_ai_6000hlModeEnum)(messageData.Name[14] - 48);
 
-    switch (FH_ai_6000hlValue.Mode)
-    {
+    switch (FH_ai_6000hlValue.Mode) {
         /* 单通道 */
         case FH_AI_6000HL_SINGLE:
             FH_ai_6000hlValue.Param[0].C = FH_ai_6000hlStrAnaly(messageData.Array[0].str);
@@ -250,6 +237,7 @@ char *FH_ai_6000hlWifiSend(void)
 
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);

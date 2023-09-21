@@ -11,7 +11,7 @@
 /* 加华 JH6000 */
 #include "jh6000.h"
 #include "../public/mycrc16.h"
-
+static char returnJsonDataBuff[1000];
 char *JH6000_SendData(void);
 
 
@@ -31,8 +31,7 @@ uint16_t JH6000_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 
     memset(hexBuff, 0, sizeof(hexBuff));
     /* 获取数据条数 */
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         /* 把数据条数清空  使用最新获取的条数 */
         JH6000_DataCnt = 0;
 
@@ -53,8 +52,7 @@ uint16_t JH6000_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 
     }
     /* 获取数据 */
-    else if (cnt == 2)
-    {
+    else if (cnt == 2) {
         hexBuff[0] = 0x65;
         hexBuff[1] = 0x01;
         hexBuff[2] = 0x03;
@@ -167,8 +165,7 @@ char *JH6000_RecvMessage(uint8_t *buff, uint16_t size)
     if (crc != mycrc16_calc(&recv->Head, length + 5))
         return NULL;
 
-    switch (recv->ControlType)
-    {
+    switch (recv->ControlType) {
         case JH6000_CONTROL_GET_PAST_DATA_CNT:
             /* 获取到数据条数 */
             return JH6000_AnalyDataCnt(recv->Data, length);
@@ -189,8 +186,7 @@ char *JH6000_SendData(void)
     cJSON *cjson_data = NULL;
     cJSON *cjson_array = NULL;
 
-    for (uint8_t i = 0; i < 6; i++)
-    {
+    for (uint8_t i = 0; i < 6; i++) {
         sprintf(&sendData[i * 2], "%02X", JH6000_Value.DateTime[i]);
     }
 
@@ -235,6 +231,7 @@ char *JH6000_SendData(void)
 
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

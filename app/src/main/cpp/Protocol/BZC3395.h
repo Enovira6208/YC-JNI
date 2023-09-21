@@ -13,15 +13,13 @@
 
 
 
-typedef struct
-{
+typedef struct {
     uint8_t Head;
     uint8_t Mode;                                        /* 模式 */
     uint8_t Data[50];
 } BZC3395MessageType;
 
-typedef struct
-{
+typedef struct {
     double Ra;
     uint8_t Rauint[4];                                  /* 单位 */
     double Rb;

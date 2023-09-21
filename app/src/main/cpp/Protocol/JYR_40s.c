@@ -12,6 +12,7 @@
 /* 金源直流电阻 */
 #include "JYR_40s.h"
 
+static char returnJsonDataBuff[1000];
 
 JYR_40sValueType JYR_40sValue;
 JYR_40sAnalyEnum JYR_40sAnaly;
@@ -51,20 +52,15 @@ double JYR_40sCount(uint8_t *buff)
     double vlaue = 0;
 
     memset(ascll, 0, 5);
-    for (uint8_t i = 0; i < 7; i++)
-    {
-        if ((buff[i] >= 0x30) && (buff[i] <= 0x39))
-        {
+    for (uint8_t i = 0; i < 7; i++) {
+        if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
-        }
-        else if (buff[i] == '.')
-        {
+        } else if (buff[i] == '.') {
             decimal = i;
         }
     }
-    for (uint8_t i = 0; i < j; i++)
-    {
+    for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1);
     }
     return vlaue;
@@ -84,8 +80,7 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
 
     JYR_40sValue.Way = recv->Way;
 
-    switch (recv->Way)
-    {
+    switch (recv->Way) {
         /* 单通道 */
         case JYR_40S_WAY_SUNGLE_CHANNEL:
             memcpy(&Data.AoSign, recv->Data, sizeof(JYR_40sDataType));
@@ -102,16 +97,11 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
         case JYR_40S_WAY_YN_THREE_PHASE_COMPEN:
             JYR_40sValue.Sign = recv->Data[0];
             /* 数据位中  最开始的为 阶段 标志 */
-            if (recv->Data[0] == 0x30)
-            {
+            if (recv->Data[0] == 0x30) {
                 JYR_40sAnaly = JYR_40_ANALY_2;
-            }
-            else if (recv->Data[0] == 0x31)
-            {
+            } else if (recv->Data[0] == 0x31) {
                 JYR_40sAnaly = JYR_40_ANALY_3;
-            }
-            else
-            {
+            } else {
                 JYR_40sAnaly = JYR_40_ANALY_3;
             }
             memcpy(&Data.AoSign, recv->Data + 1, sizeof(JYR_40sDataType));
@@ -137,8 +127,7 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
     }
 
 
-    switch (JYR_40sAnaly)
-    {
+    switch (JYR_40sAnaly) {
         case JYR_40_ANALY_1:
             JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
             JYR_40sValue.AoU[0] = Data.Ao[6];

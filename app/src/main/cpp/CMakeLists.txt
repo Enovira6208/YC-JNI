@@ -50,6 +50,17 @@ add_library(
         Protocol/JYT_A_V0.c
         Protocol/JYT_A_V1.c
         Protocol/JYT_A_V2.c
+        Protocol/PDT_840.c
+        Protocol/JYW6100.c
+        Protocol/FH_ai_6301B.c
+        Protocol/FH_ai_6301_general.c
+        Protocol/CTP_120.c
+        Protocol/SD_HVM_5000.c
+        Protocol/JYW6400_DC.c
+        Protocol/SD_Z_VI.c
+        Protocol/JYW6400_IM.c
+        Protocol/JYC.c
+        Protocol/FH_IDCE_2415CT.c
         public/cJSON.c
         public/interface.c
         public/mycrc16.c

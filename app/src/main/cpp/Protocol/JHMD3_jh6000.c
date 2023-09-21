@@ -11,7 +11,7 @@
 /* 协议版本 jh6000 1.05 */
 #include "JHMD3_jh6000.h"
 #include "../public/mycrc16.h"
-
+static char returnJsonDataBuff[1000];
 char *JHMD3_jh6000_SendData(void);
 
 JHMD3_jh6000_DataValueType JHMD3_jh6000_Value;
@@ -211,6 +211,7 @@ char *JHMD3_jh6000_SendData(void)
 
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

@@ -7,6 +7,7 @@
  * @LastEditors:
  */
 
+static char returnJsonDataBuff[1000];
 
 /* 苏州海沃绝缘电阻 */
 #include "SD_HVM_5000.h"
@@ -115,6 +116,7 @@ char *SD_HVM_5000Send(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

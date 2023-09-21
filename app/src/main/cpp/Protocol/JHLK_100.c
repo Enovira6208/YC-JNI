@@ -11,7 +11,7 @@
 /* 协议版本 jh6000 1.05 */
 #include "JHLK_100.h"
 #include "../public/mycrc16.h"
-
+static char returnJsonDataBuff[1000];
 JHLK_100_DataValueType JHLK_100_Value;
 
 FunctionalState JHLK_100_GetDataFlag = DISABLE;
@@ -117,6 +117,7 @@ char *JHLK_100_SendData(uint8_t SerialNumber_int, uint8_t TestEncoding_int, uint
 
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

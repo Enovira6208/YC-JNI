@@ -9,6 +9,8 @@
 /* 保定金源变比旧版 */
 #include "JYW6400_DC.h"
 
+static char returnJsonDataBuff[1000];
+
 JYW6400_DCValueType JYW6400_DCValue;
 
 char *JYW6400_DCSend(void);
@@ -41,8 +43,7 @@ char *JYW6400_DCRecvMessage(uint8_t *buff, uint16_t size)
     memset(JYW6400_DCValue.electricityU, 0, 4);
     memcpy(JYW6400_DCValue.electricityU, PUBLIC_SD_ProtocolUnitAnalysis(recv->Data[11]), 4);
     printf("JYW6400_DCRecvMessage 22 \r\n");
-    for (uint8_t i = 0; i < 31; i++)
-    {
+    for (uint8_t i = 0; i < 31; i++) {
         JYW6400_DCValue.resistance[i].AN = PUBLIC_IEEE754_32(recv->Data[12 + 12 * i],
                                            recv->Data[13 + 12 * i], recv->Data[14 + 12 * i], recv->Data[15 + 12 * i]);
         JYW6400_DCValue.resistance[i].BN = PUBLIC_IEEE754_32(recv->Data[16 + 12 * i],
@@ -94,13 +95,11 @@ char *JYW6400_DCSend(void)
     PUBLIC_JsonArrayLoading(cjson_array1, 3, "oilTemp", "double", "°", JYW6400_DCValue.oilTemp, "null");
     cJSON_AddItemToObject(cjson_properties, "single", cjson_array1);
 
-    for (uint8_t i = 0; i < 31; i++)
-    {
+    for (uint8_t i = 0; i < 31; i++) {
         cJSON *cjson_temp = NULL;
         cjson_array2 = cJSON_CreateArray();
 
-        if ((JYW6400_DCValue.resistance[i].AN != -1023.0) && (JYW6400_DCValue.resistance[i].AN != -1023.0) && (JYW6400_DCValue.resistance[i].AN != -1023.0))
-        {
+        if ((JYW6400_DCValue.resistance[i].AN != -1023.0) && (JYW6400_DCValue.resistance[i].AN != -1023.0) && (JYW6400_DCValue.resistance[i].AN != -1023.0)) {
             PUBLIC_JsonArrayLoading(cjson_array2, 1, "resistance_AN", "double", JYW6400_DCValue.resistance[i].ANU, JYW6400_DCValue.resistance[i].AN, "null");
             PUBLIC_JsonArrayLoading(cjson_array2, 2, "resistance_BN", "double", JYW6400_DCValue.resistance[i].BNU, JYW6400_DCValue.resistance[i].AN, "null");
             PUBLIC_JsonArrayLoading(cjson_array2, 3, "resistance_CN", "double", JYW6400_DCValue.resistance[i].CNU, JYW6400_DCValue.resistance[i].AN, "null");
@@ -118,6 +117,7 @@ char *JYW6400_DCSend(void)
 
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
+
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
