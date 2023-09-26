@@ -12,7 +12,7 @@
 /* 泛华避雷器 */
 #include "FH_ai_6106s.h"
 
-static char returnJsonDataBuff[1000];
+static char returnJsonDataBuff[2000];
 char *FH_ai_6106sBleSend(void);
 
 FH_ai_6106s_Part1ValueType FH_ai_6106s_Part1Value;

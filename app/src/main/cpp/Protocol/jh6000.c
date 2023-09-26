@@ -11,7 +11,7 @@
 /* 加华 JH6000 */
 #include "jh6000.h"
 #include "../public/mycrc16.h"
-static char returnJsonDataBuff[1000];
+static char returnJsonDataBuff[2000];
 char *JH6000_SendData(void);
 
 
