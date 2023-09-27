@@ -38,7 +38,7 @@ typedef enum {
     INTERFACE_DEVICE_CODE_FH_AI_6000H,   /* 泛华介损6000H */
     INTERFACE_DEVICE_CODE_FH_AI_6310B,   /* 泛华接地导通 */
     INTERFACE_DEVICE_CODE_FH_AI_6310L,   /* 泛华回路电阻 */
-    INTERFACE_DEVICE_CODE_HV9003,        /* 上海思创介损 */
+
     INTERFACE_DEVICE_CODE_JYL_100B,      /* 金源回路电阻 */
     INTERFACE_DEVICE_CODE_JYL_I,         /* 金源分接开关 */
     INTERFACE_DEVICE_CODE_HLC5501,       /* 保定金达回路电阻 */
@@ -61,10 +61,12 @@ typedef enum {
     INTERFACE_DEVICE_CODE_TD_3310C_ZK,   /*泰达变压器综合测试仪阻抗实验*/
     INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ, /*泰达变压器综合测试仪直流电阻实验*/
     INTERFACE_DEVICE_CODE_JYW6100,       /*变压器参数测试仪*/
-    INTERFACE_DEVICE_CODE_FH_AI_6301B,                  /*济南泛华塑料机箱*/
-    INTERFACE_DEVICE_CODE_FH_IDCE_2415CT,                /*IDCE_2415CT,IDCE_2206CT协议*/
-    INTERFACE_DEVICE_CODE_PDT_840,               /*厦门红相PDT_840协议*/
-    INTERFACE_DEVICE_CODE_CTP_120               /*武汉豪迈CTP_120协议*/    
+    INTERFACE_DEVICE_CODE_FH_AI_6301B,   /*济南泛华塑料机箱*/
+    INTERFACE_DEVICE_CODE_FH_IDCE_2415CT,/*IDCE_2415CT,IDCE_2206CT协议*/
+    INTERFACE_DEVICE_CODE_PDT_840,       /*厦门红相PDT_840协议*/
+    INTERFACE_DEVICE_CODE_CTP_120,       /*武汉豪迈CTP_120协议*/
+    INTERFACE_DEVICE_CODE_HV9003,        /*上海思创介质损耗测试仪*/
+    INTERFACE_DEVICE_CODE_JYR_40D
 }
 INTERFACE_DeviceCodeEnum;
 

@@ -61,6 +61,9 @@ add_library(
         Protocol/JYW6400_IM.c
         Protocol/JYC.c
         Protocol/FH_IDCE_2415CT.c
+        Protocol/BYKC_2003.c
+        Protocol/HV9003.c
+        Protocol/JYR_40D.c
         public/cJSON.c
         public/interface.c
         public/mycrc16.c

@@ -8,6 +8,7 @@
  */
 
 /* 保定金源变比V1.0 */
+/* 适用JYT-A、JYT、JYT-E*/
 #include "JYT_A_V1.h"
 
 static char returnJsonDataBuff[1000];

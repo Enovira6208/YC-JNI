@@ -43,14 +43,16 @@
 #include "../Protocol/TD_3310C_ZK.h"
 #include "../Protocol/TD_3310C_ZLDZ.h"
 #include "../Protocol/JYW6100.h"
+#include "../Protocol/JYR_40D.h"
 #include "../Protocol/FH_ai_6301B.h"
 #include "../Protocol/FH_IDCE_2415CT.h"
 #include "../Protocol/PDT_840.h"
 #include "../Protocol/CTP_120.h"
+#include "../Protocol/HV9003.h"
 
 
 INTERFACE_InfoType INTERFACE_Info;
-static char returnJsonDataBuff[1000];
+static char returnJsonDataBuff1[2000];
 
 void InterfaceJsonBuff(char *jsonBuff)
 {
@@ -129,7 +131,9 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ;
     }  else if (NULL != strstr((char *)jsonBuff, "JYW6100")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYW6100;
-    } else if (NULL != strstr((char *)jsonBuff, "ai_6301B")) {
+    }   else if (NULL != strstr((char *)jsonBuff, "JYR_40D")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40D;
+    } else if (NULL != strstr((char *)jsonBuff, "AI_6301B")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6301B;
     } else if (NULL != strstr((char *)jsonBuff, "IDCE_2415CT")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_IDCE_2415CT;
@@ -137,8 +141,10 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_PDT_840;
     } else if (NULL != strstr((char *)jsonBuff, "CTP_120")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_CTP_120;
+    } else if (NULL != strstr((char *)jsonBuff, "HV9003")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_HV9003;
     }
- 
+
     else {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_NULL;
     }
@@ -247,8 +253,8 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             break;
 
-        case INTERFACE_DEVICE_CODE_HV9003:
-            break;
+        // case INTERFACE_DEVICE_CODE_HV9003:
+        //     break;
 
         case INTERFACE_DEVICE_CODE_JYL_100B:
             size = JYL_100BReadData(INTERFACE_Info.sendMsg.dataMsg);
@@ -347,6 +353,10 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             size = JYW6100ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
             INTERFACE_Info.sendMsg.baud = 9600;
             break;
+        case INTERFACE_DEVICE_CODE_JYR_40D:
+            size = JYR_40DReadData(INTERFACE_Info.sendMsg.dataMsg);
+            INTERFACE_Info.sendMsg.baud = 9600;
+            break;
         case INTERFACE_DEVICE_CODE_FH_AI_6301B:
             size = FH_ai_6301BReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
@@ -364,8 +374,12 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             size = CTP_120ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             INTERFACE_Info.sendMsg.baud = 19200;
-            break;    
-        
+            break;
+        case INTERFACE_DEVICE_CODE_HV9003:
+            size = HV9003_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            break;
+
         default:
             return NULL;
     }
@@ -440,8 +454,7 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
         printf("InterfaceDeviceDataAnalysis ASCLL%s\n", dataBuff);
     }
 
-    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
-
+    memset(returnJsonDataBuff1, 0, sizeof(returnJsonDataBuff1));
     switch (INTERFACE_Info.DeviceCode) {
         case INTERFACE_DEVICE_CODE_NULL:
             return NULL;
@@ -488,8 +501,8 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
         case INTERFACE_DEVICE_CODE_FH_AI_6310L:
             return FH_ai_6310LRecvMessage(dataBuff, size);
 
-        case INTERFACE_DEVICE_CODE_HV9003:
-        //return HV9003RecvMessage(dataBuff, size);
+        // case INTERFACE_DEVICE_CODE_HV9003:
+        // //return HV9003RecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_JYL_100B:
             return JYL_100BRecvMessage(hexbuff, size);
@@ -547,7 +560,10 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
 
         case INTERFACE_DEVICE_CODE_JYW6100:
             return JYW6100RecvMessage(hexbuff, size);
-            
+
+        case INTERFACE_DEVICE_CODE_JYR_40D:
+            return JYR_40DRecvMessage(hexbuff, size);
+
         case INTERFACE_DEVICE_CODE_FH_AI_6301B:
             return FH_ai_6301BRecvMessage(dataBuff, size);
 
@@ -555,11 +571,14 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
             return FH_IDCE_2415CTRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_PDT_840:
-            return PDT_840RecvMessage(dataBuff, size); 
+            return PDT_840RecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_CTP_120:
-            return CTP_120RecvMessage(dataBuff, size); 
-                
+            return CTP_120RecvMessage(dataBuff, size);
+
+        case INTERFACE_DEVICE_CODE_HV9003:
+            return HV9003_RecvMessage(dataBuff, size);
+
         default:
             break;
     }

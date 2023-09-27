@@ -9,7 +9,7 @@
 
 /* 保定金达变比 */
 #include "BBC6638.h"
-static char returnJsonDataBuff[10000];
+static char returnJsonDataBuff[1000];
 
 BBC6638ValueType BBC6638Value;
 
