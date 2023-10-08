@@ -84,15 +84,13 @@ double FH_ai_6301BStrAnaly(uint8_t *buff)
     return value * sign;
 }
 
-double FH_ai_6301B_count1(uint8_t *buff,uint8_t len)
+double FH_ai_6301B_count1(uint8_t *buff, uint8_t len)
 {
     double value = 0;
     double t1 = 0;
-    for (uint8_t i = 0; i < len;i++)
-    {
+    for (uint8_t i = 0; i < len; i++) {
         t1 = buff[i] - '0';
-        for (uint8_t k = 0; k < len-i-1;k++)
-        {
+        for (uint8_t k = 0; k < len - i - 1; k++) {
             t1 = t1 * 10;
         }
         value += t1;
@@ -143,14 +141,14 @@ char *FH_ai_6301BRecvMessage(uint8_t *buff, uint16_t size)
     if (recv->Head != '#')
         return NULL;
 
-    memcpy(FH_ai_6301BValue.Name,messageData.Name,8);
+    memcpy(FH_ai_6301BValue.Name, messageData.Name, 8);
     memcpy(FH_ai_6301BValue.Time, messageData.Time, 19);
 
     FH_ai_6301BValue.TestMode = messageData.TestMode - '0';
     FH_ai_6301BValue.Rab = messageData.Rab - '0';
-    FH_ai_6301BValue.TimeMode = FH_ai_6301B_count1(messageData.TimeMode,2);
-    FH_ai_6301BValue.AAA =  FH_ai_6301B_count1(messageData.AAA,3);
-    FH_ai_6301BValue.BBB = FH_ai_6301B_count1(messageData.BBB,3);
+    FH_ai_6301BValue.TimeMode = FH_ai_6301B_count1(messageData.TimeMode, 2);
+    FH_ai_6301BValue.AAA =  FH_ai_6301B_count1(messageData.AAA, 3);
+    FH_ai_6301BValue.BBB = FH_ai_6301B_count1(messageData.BBB, 3);
     FH_ai_6301BValue.Jam = messageData.Jam - '0';
 
     FH_ai_6301BValue.Z = FH_ai_6301BStrAnaly(messageData.Z);
@@ -193,15 +191,15 @@ char *FH_ai_6301BwifiSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "AI_6301B");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "name", "string","null", 0,FH_ai_6301BValue.Name);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "time", "string","null", 0,FH_ai_6301BValue.Time);
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "name", "string", "null", 0, FH_ai_6301BValue.Name);
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "time", "string", "null", 0, FH_ai_6301BValue.Time);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "testMode", "double","null", FH_ai_6301BValue.TestMode,"null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "rab", "double","null", FH_ai_6301BValue.Rab,"null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "timeMode", "double","null",FH_ai_6301BValue.TimeMode,"null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "aaa", "double","null",FH_ai_6301BValue.AAA,"null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "bbb", "double","null",FH_ai_6301BValue.BBB,"null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "jam", "double","null", FH_ai_6301BValue.Jam,"null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "testMode", "double", "null", FH_ai_6301BValue.TestMode, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "rab", "double", "null", FH_ai_6301BValue.Rab, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "timeMode", "double", "null", FH_ai_6301BValue.TimeMode, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "aaa", "double", "null", FH_ai_6301BValue.AAA, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "bbb", "double", "null", FH_ai_6301BValue.BBB, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 8, "jam", "double", "null", FH_ai_6301BValue.Jam, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 9, "impedance", "double", FH_ai_6301BValue.Zuint, FH_ai_6301BValue.Z, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 10, "resistance", "double", FH_ai_6301BValue.Ruint, FH_ai_6301BValue.R, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 11, "voltage", "double", FH_ai_6301BValue.Uuint, FH_ai_6301BValue.U, "null");
@@ -213,6 +211,7 @@ char *FH_ai_6301BwifiSend(void)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

@@ -32,29 +32,21 @@ uint8_t PUBLIC_NumbToBcd(uint8_t numb)
 void PUBLIC_AscllToHex(uint8_t *hex, char *ascll, uint16_t len)
 {
     uint8_t buff[len];
-    for (uint16_t i = 0; i < len; i++)
-    {
-        if ((ascll[i] >= 0x30) && (ascll[i] <= 0x39))
-        {
+    for (uint16_t i = 0; i < len; i++) {
+        if ((ascll[i] >= 0x30) && (ascll[i] <= 0x39)) {
             buff[i] = ascll[i] - 0x30;
-        }
-        else if ((ascll[i] >= 0x41) && (ascll[i] <= 0x46))
-        {
+        } else if ((ascll[i] >= 0x41) && (ascll[i] <= 0x46)) {
             buff[i] = ascll[i] - 0x37;
         }
         /* 小写字母 */
-        else if ((ascll[i] >= 0x61) && (ascll[i] <= 0x66))
-        {
+        else if ((ascll[i] >= 0x61) && (ascll[i] <= 0x66)) {
             buff[i] = ascll[i] - 0x57;
-        }
-        else
-        {
+        } else {
             buff[i] = 0xFF;
         }
     }
     uint16_t j = 0;
-    for (uint16_t i = 0; i < len;)
-    {
+    for (uint16_t i = 0; i < len;) {
         j = i / 2;
         hex[j] = ((buff[i] << 4) | (buff[i + 1] & 0x0F));
         i += 2;
@@ -68,20 +60,15 @@ void PUBLIC_HexToAscll(char *ascll, uint8_t *hex, uint16_t len)
 {
 
     uint16_t j = 0;
-    for (uint16_t i = 0; i < len; i++)
-    {
+    for (uint16_t i = 0; i < len; i++) {
         ascll[j] = (hex[i] >> 4) & 0x0F;
         ascll[j + 1] = hex[i] & 0x0F;
         j += 2;
     }
-    for (uint16_t i = 0; i < len * 2; i++)
-    {
-        if (ascll[i] <= 9)
-        {
+    for (uint16_t i = 0; i < len * 2; i++) {
+        if (ascll[i] <= 9) {
             ascll[i] += 0x30;
-        }
-        else if (ascll[i] >= 10)
-        {
+        } else if (ascll[i] >= 10) {
             ascll[i] += 0x37;
         }
     }
@@ -93,8 +80,7 @@ void PUBLIC_HexToAscll(char *ascll, uint8_t *hex, uint16_t len)
 uint32_t PUBLIC_convertToInt(uint8_t *arr, uint8_t  low, uint8_t high)
 {
     uint32_t f = 0, i;
-    for (i = high; i >= low; i--)
-    {
+    for (i = high; i >= low; i--) {
         f = f + arr[i] * pow(2, high - i);
     }
     return f;
@@ -114,8 +100,7 @@ double PUBLIC_IEEE754_32(uint8_t value3, uint8_t value2, uint8_t value1, uint8_t
     valueU = (value0 << 24) | (value1 << 16) | (value2 << 8) | (value3);
     if (valueU == 0xFFFFFFFF)
         return -1023.0;
-    for (int i = 31; i >= 0; i--)
-    {
+    for (int i = 31; i >= 0; i--) {
         table[i] = (uint8_t)(valueU & 0x00000001);
         valueU >>= 1;
     }
@@ -131,6 +116,16 @@ double PUBLIC_IEEE754_32(uint8_t value3, uint8_t value2, uint8_t value1, uint8_t
 }
 /***************************************************************************/
 
+float FourBytesToFloat (uint8_t byte4, uint8_t byte3, uint8_t byte2, uint8_t byte1)
+{
+    unsigned int bits = ( byte1 << 24 ) + ( byte2 << 16 ) + ( byte3 << 8) + byte4;
+    int s = ( bits >> 31 ) == 0 ? 1 : -1;
+    int e = ( bits >> 23 ) & 0xff;
+    int m = ( e == 0 ) ?
+            ( bits & 0x7fffff ) << 1 :
+            ( bits & 0x7fffff ) | 0x800000;
+    return s * m * ( float ) pow( 2, e - 150 );
+}
 
 /**
  * @brief 异或校验
@@ -143,8 +138,7 @@ uint8_t calc_xor_checksum(uint8_t *buff, uint16_t size)
 {
     uint8_t checksum = 0;
 
-    for (uint8_t i = 0; i < size; i++)
-    {
+    for (uint8_t i = 0; i < size; i++) {
         checksum ^= *(buff + i);
     }
 
@@ -180,12 +174,9 @@ void PUBLIC_JsonArrayLoading(cJSON *array, uint8_t cnt, char *name, char *dataty
     cJSON_AddStringToObject(cjson.Array[cnt].Param, "name", name);
     cJSON_AddStringToObject(cjson.Array[cnt].Param, "datatype", datatype);
     cJSON_AddStringToObject(cjson.Array[cnt].Param, "unit", unit);
-    if (strstr(datatype, "str") !=  NULL)
-    {
+    if (strstr(datatype, "str") !=  NULL) {
         cJSON_AddStringToObject(cjson.Array[cnt].Param, "value", valueStr);
-    }
-    else if ((strstr(datatype, "double") !=  NULL) || (strstr(datatype, "int") !=  NULL))
-    {
+    } else if ((strstr(datatype, "double") !=  NULL) || (strstr(datatype, "int") !=  NULL)) {
         cJSON_AddNumberToObject(cjson.Array[cnt].Param, "value", value);
     }
 }
@@ -198,8 +189,7 @@ void PUBLIC_JsonArrayLoading(cJSON *array, uint8_t cnt, char *name, char *dataty
  */
 char *PUBLIC_SD_ProtocolUnitAnalysis(uint8_t value)
 {
-    switch (value)
-    {
+    switch (value) {
         case PUBLIC_SD_PROTOCO_UNIT_NULL:
             return " ";
 

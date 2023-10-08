@@ -22,8 +22,7 @@ char *CTP_120wifiSend(uint8_t cnt);
  */
 uint16_t CTP_120ReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         buff[0] = 'R';
         buff[1] = 'E';
         buff[2] = 'G';
@@ -58,8 +57,7 @@ char *CTP_120RecvMessage(uint8_t *buff, uint16_t size)
     if (recv->cmd[1] != 0x03)
         return NULL;
 
-    if (recv->data_len[3] == 0xFD) // 电流互感器
-    {
+    if (recv->data_len[3] == 0xFD) { // 电流互感器
         CTP_120A_MessageDataType messageData;
         memcpy(messageData.test_time, recv->Data, sizeof(CTP_120A_MessageDataType));
 
@@ -145,9 +143,7 @@ char *CTP_120RecvMessage(uint8_t *buff, uint16_t size)
         CTP_120A_Value.Excitation_voltage20 = CTP_120count(messageData.Excitation_voltage20);
 
         return CTP_120wifiSend(1);
-    }
-    else if (recv->data_len[3] == 0x88) // 电压互感器
-    {
+    } else if (recv->data_len[3] == 0x88) { // 电压互感器
         CTP_120V_MessageDataType messageData;
         memcpy(messageData.test_time, recv->Data, sizeof(CTP_120V_MessageDataType));
 
@@ -217,8 +213,7 @@ char *CTP_120wifiSend(uint8_t cnt)
     cjson_data = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
 
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         cJSON_AddStringToObject(cjson_data, "device", "CTP_120_Current");
 
         PUBLIC_JsonArrayLoading(cjson_array, 1, "test_time", "string", "null", 0, CTP_120A_Value.test_time);
@@ -281,18 +276,17 @@ char *CTP_120wifiSend(uint8_t cnt)
         PUBLIC_JsonArrayLoading(cjson_array, 56, "Excitation_current19", "double", "A", CTP_120A_Value.Excitation_current19, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 57, "Excitation_voltage19", "double", "V", CTP_120A_Value.Excitation_voltage19, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 58, "Excitation_current20", "double", "A", CTP_120A_Value.Excitation_current20, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 59, "Excitation_voltage20", "double", "V", CTP_120A_Value.Excitation_voltage20, "null");   
+        PUBLIC_JsonArrayLoading(cjson_array, 59, "Excitation_voltage20", "double", "V", CTP_120A_Value.Excitation_voltage20, "null");
     }
 
-    else if (cnt == 2)
-    {
+    else if (cnt == 2) {
         cJSON_AddStringToObject(cjson_data, "device", "CTP_120_Voltage");
 
         PUBLIC_JsonArrayLoading(cjson_array, 1, "test_time", "string", "null", 0, CTP_120V_Value.test_time);
         PUBLIC_JsonArrayLoading(cjson_array, 2, "once_voltage", "double", "V", CTP_120V_Value.once_voltage, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 2, "second_voltage", "double", "V", CTP_120V_Value.second_voltage, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 2, "polarity", "double", "null", CTP_120V_Value.polarity, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 2, "ratio_difference", "double", "%", CTP_120V_Value.ratio_difference, "null");      
+        PUBLIC_JsonArrayLoading(cjson_array, 2, "ratio_difference", "double", "%", CTP_120V_Value.ratio_difference, "null");
 
         PUBLIC_JsonArrayLoading(cjson_array, 2, "Excitation_current1", "double", "A", CTP_120V_Value.Excitation_current1, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 2, "Excitation_voltage1", "double", "V", CTP_120V_Value.Excitation_voltage1, "null");
@@ -319,6 +313,7 @@ char *CTP_120wifiSend(uint8_t cnt)
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

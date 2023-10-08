@@ -28,7 +28,7 @@ uint16_t JYR_40DReadData(uint8_t *ascllBuff)
     hexBuff[8] = 0x20;
     hexBuff[9] = 0x3B;
     hexBuff[10] = 0x0D;
-    // PUBLIC_HexToAscll(ascllBuff, hexBuff, 11);
+    PUBLIC_HexToAscll(ascllBuff, hexBuff, 11);
 
     return 11;
 }
@@ -106,6 +106,7 @@ char *JYR_40DSend(void)
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

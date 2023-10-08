@@ -13,15 +13,13 @@
 
 #include "../public/public.h"
 
-typedef struct
-{
+typedef struct {
     uint8_t str[9];
 } HV9003_StrType;
 
 
 /*************************************************************************************************************************/
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t voltage[7];                              /* 电压 */
     uint8_t frequency[7];                           /* 频率 */
@@ -29,8 +27,7 @@ typedef struct
 
 } HV9003_1MessageDataType;
 
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t voltage[7];                              /* 电压 */
     double test1;
@@ -39,8 +36,7 @@ typedef struct
 } HV9003_1ValueType;
 
 /*************************************************************************************************************************/
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t highv_voltage[7];                              /* 高压电压值 */
     uint8_t frequency[7];                           /* 频率 */
@@ -50,8 +46,7 @@ typedef struct
 
 } HV9003_2MessageDataType;
 
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t highv_voltage[7];                              /* 高压电压值 */
     double test1;
@@ -63,23 +58,20 @@ typedef struct
     double percent;                           /* 百分比 */
 } HV9003_2ValueType;
 /*************************************************************************************************************************/
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t voltage[7];                              /* 电压 */
     uint8_t frequency[7];                           /* 频率 */
 } HV9003_3MessageDataType;
 
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t voltage[7];                              /* 电压 */
     double test1;
     uint8_t frequency[7]; /* 频率 */
 } HV9003_3ValueType;
 /*************************************************************************************************************************/
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t voltage[7];                              /* 电压 */
     uint8_t frequency[4];                           /* 频率 */
@@ -89,8 +81,7 @@ typedef struct
     uint8_t phase_difference[6];                           /* 测量结果相位差 */
 } HV9003_4MessageDataType;
 
-typedef struct
-{
+typedef struct {
     uint8_t head[1];                           /* 数据头 */
     uint8_t voltage[7];                              /* 电压 */
     double test1;
@@ -105,8 +96,7 @@ typedef struct
     uint8_t phase_difference[6]; /* 测量结果相位差 */
 } HV9003_4ValueType;
 /*************************************************************************************************************************/
-typedef struct
-{
+typedef struct {
     uint8_t Data[40];
 } HV9003_MessageType;
 

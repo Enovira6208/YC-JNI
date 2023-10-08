@@ -202,6 +202,7 @@ char *JYR_20sSend(void)
     str = cJSON_PrintUnformatted(cjson_data);
     //printf("%s\r\n", str);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

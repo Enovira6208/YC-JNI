@@ -23,8 +23,7 @@ char *PDT_840wifiSend(uint8_t cnt);
  */
 uint16_t PDT_840ReadData(uint8_t *buff, uint8_t cnt)
 {
-    if (cnt == 1 || cnt == 2 || cnt == 3)
-    {
+    if (cnt == 1 || cnt == 2 || cnt == 3) {
         buff[0] = 0x65;
         buff[1] = cnt;
         buff[2] = 0x03;
@@ -40,8 +39,7 @@ uint16_t PDT_840ReadData(uint8_t *buff, uint8_t cnt)
 
 void PDT_840count1(uint8_t *buf, uint8_t *buf1, uint8_t len)
 {
-    for (int i = 0; i < len; i++)
-    {
+    for (int i = 0; i < len; i++) {
         buf[i] = buf1[i];
     }
 }
@@ -60,8 +58,7 @@ char *PDT_840RecvMessage(uint8_t *buff, uint16_t size)
     if (recv->len[1] == 0x01)
         return NULL;
 
-    if (recv->type == 0x01)
-    {
+    if (recv->type == 0x01) {
         PDT_840_1MessageDataType messageData;
         memcpy(messageData.serious_number, recv->Data, sizeof(PDT_840_1MessageDataType));
 
@@ -104,8 +101,7 @@ char *PDT_840RecvMessage(uint8_t *buff, uint16_t size)
         return PDT_840wifiSend(1);
     }
 
-    else if (recv->type == 0x02)
-    {
+    else if (recv->type == 0x02) {
         PDT_840_2MessageDataType messageData;
         memcpy(messageData.UUID_number, recv->Data, sizeof(PDT_840_2MessageDataType));
 
@@ -125,8 +121,7 @@ char *PDT_840RecvMessage(uint8_t *buff, uint16_t size)
         return PDT_840wifiSend(2);
     }
 
-    else if (recv->type == 0x03)
-    {
+    else if (recv->type == 0x03) {
         PDT_840_3MessageDataType messageData;
         memcpy(messageData.serious_number, recv->Data, sizeof(PDT_840_1MessageDataType));
 
@@ -225,8 +220,7 @@ char *PDT_840wifiSend(uint8_t cnt)
     cjson_data = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
 
-    if (cnt == 1)
-    {
+    if (cnt == 1) {
         cJSON_AddStringToObject(cjson_data, "device", "PDT_840_1");
 
         PUBLIC_JsonArrayLoading(cjson_array, 1, "serious_number", "string", "null", 0, PDT_840Value1.serious_number);
@@ -261,11 +255,10 @@ char *PDT_840wifiSend(uint8_t cnt)
         PUBLIC_JsonArrayLoading(cjson_array, 30, "SF6_N2_v", "double", "%V", PDT_840Value1.SF6_N2_v, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 31, "SF6_N2_w", "double", "%W", PDT_840Value1.SF6_N2_w, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 32, "temp", "double", "null", PDT_840Value1.temp, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 33, "pressure", "double", "null", PDT_840Value1.pressure, "null");    
+        PUBLIC_JsonArrayLoading(cjson_array, 33, "pressure", "double", "null", PDT_840Value1.pressure, "null");
     }
 
-    if (cnt == 2)
-    {
+    if (cnt == 2) {
         cJSON_AddStringToObject(cjson_data, "device", "PDT_840_2");
 
         PUBLIC_JsonArrayLoading(cjson_array, 1, "UUID_number", "string", "null", 0, PDT_840Value2.UUID_number);
@@ -277,11 +270,10 @@ char *PDT_840wifiSend(uint8_t cnt)
         PUBLIC_JsonArrayLoading(cjson_array, 7, "max", "double", "null", PDT_840Value2.max, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 8, "min", "double", "null", PDT_840Value2.min, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 9, "power", "double", "null", PDT_840Value2.power, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 10, "test_satus", "double", "null", PDT_840Value2.test_satus, "null"); 
+        PUBLIC_JsonArrayLoading(cjson_array, 10, "test_satus", "double", "null", PDT_840Value2.test_satus, "null");
     }
 
-    if(cnt == 3)
-    {
+    if (cnt == 3) {
         cJSON_AddStringToObject(cjson_data, "device", "PDT_840_3");
 
         PUBLIC_JsonArrayLoading(cjson_array, 1, "serious_number", "string", "null", 0, PDT_840Value3.serious_number);
@@ -354,12 +346,13 @@ char *PDT_840wifiSend(uint8_t cnt)
         PUBLIC_JsonArrayLoading(cjson_array, 17, "ambient_temp", "double", "null", PDT_840Value3.ambient_temp, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 17, "atmospheric_pressure", "double", "null", PDT_840Value3.atmospheric_pressure, "null");
         PUBLIC_JsonArrayLoading(cjson_array, 17, "device_status", "double", "null", PDT_840Value3.device_status, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 17, "test_result", "double", "null", PDT_840Value3.test_result, "null");         
+        PUBLIC_JsonArrayLoading(cjson_array, 17, "test_result", "double", "null", PDT_840Value3.test_result, "null");
     }
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

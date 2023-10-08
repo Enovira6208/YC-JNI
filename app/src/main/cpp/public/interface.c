@@ -442,7 +442,6 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
     //     printf("InterfaceDeviceDataAnalysis %x\n", dataBuff[i]);
     // }
     unsigned char hexbuff[500];
-
     if (strstr(INTERFACE_Info.sendMsg.dataFormat, "HEX") != NULL) {
         PUBLIC_AscllToHex(hexbuff, dataBuff, strlen(dataBuff));
         printf("InterfaceDeviceDataAnalysis HEX %d \n", strlen(dataBuff) / 2);

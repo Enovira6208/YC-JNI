@@ -108,31 +108,31 @@ char *JH6000_DataAnalysis(uint8_t *buffer, uint16_t size)
     JH6000_Value.DeviceNumber[3] = recv->DeviceNumber[3];
     JH6000_Value.DeviceNumber[4] = recv->DeviceNumber[4];
     JH6000_Value.DeviceNumber[5] = recv->DeviceNumber[5];
-    JH6000_Value.SO2 = PUBLIC_IEEE754_32(recv->SO2[3], recv->SO2[2], recv->SO2[1], recv->SO2[0]);
-    JH6000_Value.H2S = PUBLIC_IEEE754_32(recv->H2S[3], recv->H2S[2], recv->H2S[1], recv->H2S[0]);
-    JH6000_Value.CO = PUBLIC_IEEE754_32(recv->CO[3], recv->CO[2], recv->CO[1], recv->CO[0]);
-    JH6000_Value.HF = PUBLIC_IEEE754_32(recv->HF[3], recv->HF[2], recv->HF[1], recv->HF[0]);
-    JH6000_Value.H2 = PUBLIC_IEEE754_32(recv->H2[3], recv->H2[2], recv->H2[1], recv->H2[0]);
-    JH6000_Value.CF4 = PUBLIC_IEEE754_32(recv->CF4[3], recv->CF4[2], recv->CF4[1], recv->CF4[0]);
-    JH6000_Value.NO = PUBLIC_IEEE754_32(recv->NO[3], recv->NO[2], recv->NO[1], recv->NO[0]);
-    JH6000_Value.O2 = PUBLIC_IEEE754_32(recv->O2[3], recv->O2[2], recv->O2[1], recv->O2[0]);
-    JH6000_Value.DewPoint = PUBLIC_IEEE754_32(recv->DewPoint[3], recv->DewPoint[2], recv->DewPoint[1], recv->DewPoint[0]);
-    JH6000_Value.Humi = PUBLIC_IEEE754_32(recv->Humi[3], recv->Humi[2], recv->Humi[1], recv->Humi[0]);
-    JH6000_Value.Humi20 = PUBLIC_IEEE754_32(recv->Humi20[3], recv->Humi20[2], recv->Humi20[1], recv->Humi20[0]);
-    JH6000_Value.SF6_V = PUBLIC_IEEE754_32(recv->SF6_V[3], recv->SF6_V[2], recv->SF6_V[1], recv->SF6_V[0]);
-    JH6000_Value.SF6_W = PUBLIC_IEEE754_32(recv->SF6_W[3], recv->SF6_W[2], recv->SF6_W[1], recv->SF6_W[0]);
-    JH6000_Value.CF4_V = PUBLIC_IEEE754_32(recv->CF4_V[3], recv->CF4_V[2], recv->CF4_V[1], recv->CF4_V[0]);
-    JH6000_Value.CF4_W = PUBLIC_IEEE754_32(recv->CF4_W[3], recv->CF4_W[2], recv->CF4_W[1], recv->CF4_W[0]);
-    JH6000_Value.Temp = PUBLIC_IEEE754_32(recv->Temp[3], recv->Temp[2], recv->Temp[1], recv->Temp[0]);
-    JH6000_Value.MPA = PUBLIC_IEEE754_32(recv->MPA[3], recv->MPA[2], recv->MPA[1], recv->MPA[0]);
-    JH6000_Value.N2_V = PUBLIC_IEEE754_32(recv->N2_V[3], recv->N2_V[2], recv->N2_V[1], recv->N2_V[0]);
-    JH6000_Value.N2_W = PUBLIC_IEEE754_32(recv->N2_W[3], recv->N2_W[2], recv->N2_W[1], recv->N2_W[0]);
-    JH6000_Value.AIR_V = PUBLIC_IEEE754_32(recv->AIR_V[3], recv->AIR_V[2], recv->AIR_V[1], recv->AIR_V[0]);
-    JH6000_Value.AIR_W = PUBLIC_IEEE754_32(recv->AIR_W[3], recv->AIR_W[2], recv->AIR_W[1], recv->AIR_W[0]);
-    JH6000_Value.SF6_CF4_V = PUBLIC_IEEE754_32(recv->SF6_CF4_V[3], recv->SF6_CF4_V[2], recv->SF6_CF4_V[1], recv->SF6_CF4_V[0]);
-    JH6000_Value.SF6_CF4_W = PUBLIC_IEEE754_32(recv->SF6_CF4_W[3], recv->SF6_CF4_W[2], recv->SF6_CF4_W[1], recv->SF6_CF4_W[0]);
-    JH6000_Value.SF6_N2_V = PUBLIC_IEEE754_32(recv->SF6_N2_V[3], recv->SF6_N2_V[2], recv->SF6_N2_V[1], recv->SF6_N2_V[0]);
-    JH6000_Value.SF6_N2_W = PUBLIC_IEEE754_32(recv->SF6_N2_W[3], recv->SF6_N2_W[2], recv->SF6_N2_W[1], recv->SF6_N2_W[0]);
+    JH6000_Value.SO2 = FourBytesToFloat(recv->SO2[3], recv->SO2[2], recv->SO2[1], recv->SO2[0]);
+    JH6000_Value.H2S = FourBytesToFloat(recv->H2S[3], recv->H2S[2], recv->H2S[1], recv->H2S[0]);
+    JH6000_Value.CO = FourBytesToFloat(recv->CO[3], recv->CO[2], recv->CO[1], recv->CO[0]);
+    JH6000_Value.HF = FourBytesToFloat(recv->HF[3], recv->HF[2], recv->HF[1], recv->HF[0]);
+    JH6000_Value.H2 = FourBytesToFloat(recv->H2[3], recv->H2[2], recv->H2[1], recv->H2[0]);
+    JH6000_Value.CF4 = FourBytesToFloat(recv->CF4[3], recv->CF4[2], recv->CF4[1], recv->CF4[0]);
+    JH6000_Value.NO = FourBytesToFloat(recv->NO[3], recv->NO[2], recv->NO[1], recv->NO[0]);
+    JH6000_Value.O2 = FourBytesToFloat(recv->O2[3], recv->O2[2], recv->O2[1], recv->O2[0]);
+    JH6000_Value.DewPoint = FourBytesToFloat(recv->DewPoint[3], recv->DewPoint[2], recv->DewPoint[1], recv->DewPoint[0]);
+    JH6000_Value.Humi = FourBytesToFloat(recv->Humi[3], recv->Humi[2], recv->Humi[1], recv->Humi[0]);
+    JH6000_Value.Humi20 = FourBytesToFloat(recv->Humi20[3], recv->Humi20[2], recv->Humi20[1], recv->Humi20[0]);
+    JH6000_Value.SF6_V = FourBytesToFloat(recv->SF6_V[3], recv->SF6_V[2], recv->SF6_V[1], recv->SF6_V[0]);
+    JH6000_Value.SF6_W = FourBytesToFloat(recv->SF6_W[3], recv->SF6_W[2], recv->SF6_W[1], recv->SF6_W[0]);
+    JH6000_Value.CF4_V = FourBytesToFloat(recv->CF4_V[3], recv->CF4_V[2], recv->CF4_V[1], recv->CF4_V[0]);
+    JH6000_Value.CF4_W = FourBytesToFloat(recv->CF4_W[3], recv->CF4_W[2], recv->CF4_W[1], recv->CF4_W[0]);
+    JH6000_Value.Temp = FourBytesToFloat(recv->Temp[3], recv->Temp[2], recv->Temp[1], recv->Temp[0]);
+    JH6000_Value.MPA = FourBytesToFloat(recv->MPA[3], recv->MPA[2], recv->MPA[1], recv->MPA[0]);
+    JH6000_Value.N2_V = FourBytesToFloat(recv->N2_V[3], recv->N2_V[2], recv->N2_V[1], recv->N2_V[0]);
+    JH6000_Value.N2_W = FourBytesToFloat(recv->N2_W[3], recv->N2_W[2], recv->N2_W[1], recv->N2_W[0]);
+    JH6000_Value.AIR_V = FourBytesToFloat(recv->AIR_V[3], recv->AIR_V[2], recv->AIR_V[1], recv->AIR_V[0]);
+    JH6000_Value.AIR_W = FourBytesToFloat(recv->AIR_W[3], recv->AIR_W[2], recv->AIR_W[1], recv->AIR_W[0]);
+    JH6000_Value.SF6_CF4_V = FourBytesToFloat(recv->SF6_CF4_V[3], recv->SF6_CF4_V[2], recv->SF6_CF4_V[1], recv->SF6_CF4_V[0]);
+    JH6000_Value.SF6_CF4_W = FourBytesToFloat(recv->SF6_CF4_W[3], recv->SF6_CF4_W[2], recv->SF6_CF4_W[1], recv->SF6_CF4_W[0]);
+    JH6000_Value.SF6_N2_V = FourBytesToFloat(recv->SF6_N2_V[3], recv->SF6_N2_V[2], recv->SF6_N2_V[1], recv->SF6_N2_V[0]);
+    JH6000_Value.SF6_N2_W = FourBytesToFloat(recv->SF6_N2_W[3], recv->SF6_N2_W[2], recv->SF6_N2_W[1], recv->SF6_N2_W[0]);
 
     /* 发送数据 */
     return JH6000_SendData();
@@ -148,10 +148,10 @@ char *JH6000_RecvMessage(uint8_t *buff, uint16_t size)
     JH6000_MessageType *recv = (JH6000_MessageType *)buff;
 
     length = (recv->Length[0] << 8) | recv->Length[1];
-
     /* 防止数组越界 */
-    if (length >= JH6000_DATA_SIZE)
+    if (length >= JH6000_DATA_SIZE) {
         return NULL;
+    }
 
     crc = (recv->Data[length + 1] << 8) | recv->Data[length];
 
@@ -232,6 +232,7 @@ char *JH6000_SendData(void)
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

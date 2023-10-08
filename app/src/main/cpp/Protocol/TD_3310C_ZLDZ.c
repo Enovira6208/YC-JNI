@@ -77,6 +77,7 @@ char *TD_3310C_SendData(ZLDZ_DataVALUE value)
 //    printf("%s\r\n", str);
 
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */

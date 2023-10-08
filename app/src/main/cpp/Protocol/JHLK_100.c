@@ -118,6 +118,7 @@ char *JHLK_100_SendData(uint8_t SerialNumber_int, uint8_t TestEncoding_int, uint
     str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
 
+    memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
 
     /* 一定要释放内存 */
