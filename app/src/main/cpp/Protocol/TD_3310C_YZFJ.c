@@ -1,19 +1,30 @@
 #include "TD_3310C_YZFJ.h"
 #include "../public/mycrc16.h"
 
-static char returnJsonDataBuff[1000];
+static char returnJsonDataBuff[2500];
 
 
 uint16_t TD_3310C_YZFJ_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
-    if (cnt == 1) { /*直流电阻测试仪*/
+    uint8_t hexBuff[15];
+    hexBuff[0] = 0x42;
+    hexBuff[1] = 0x45;
+    hexBuff[2] = 0x47;
+    hexBuff[3] = 0x0f;
+    hexBuff[4] = 0x00;
+    hexBuff[5] = 0x00;
+    hexBuff[6] = 0x00;
+    hexBuff[7] = 0x03;
+    hexBuff[8] = 0x00;
+    hexBuff[9] = 0x00;
+    hexBuff[10] = 0x00;
+    hexBuff[11] = 0x00;
+    hexBuff[12] = 0x00;
+    hexBuff[13] = 0x88;
+    hexBuff[14] = 0xec;
+    PUBLIC_HexToAscll(ascllBuff, hexBuff, 15);
 
-    } else if (cnt == 2) { /*有载分接开关测试仪*/
-
-    } else if (cnt == 3 ) { /*阻抗测试*/
-
-    }
-    return 0;
+    return 16;
 }
 
 
@@ -41,7 +52,7 @@ char *TD_3310C_YZFJ_SendData(YZFJ_DataVALUE value)
     cjson_data = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_ZLDZ");
+    cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_YZFJ");
 
     PUBLIC_JsonArrayLoading(cjson_array, 1, "time", "string", "null", 0, time);
     PUBLIC_JsonArrayLoading(cjson_array, 2, "testName", "string", "null",  0, testName);
@@ -72,19 +83,32 @@ char *TD_3310C_YZFJ_SendData(YZFJ_DataVALUE value)
     PUBLIC_JsonArrayLoading(cjson_array, 12, "TT_unit", "string", "null", 0, TT_unit);
 
 
-    for (int j = 0; j < 3; j++) {
-        char temp_A[30], temp_B[30], temp_C[30];
-        sprintf(&temp_A[0], "%s", "A_transient_resistance");
-        sprintf(&temp_A[22], "%d", j);
-        sprintf(&temp_B[0], "%s", "A_transient_resistance");
-        sprintf(&temp_B[22], "%d", j);
-        sprintf(&temp_C[0], "%s", "A_transient_resistance");
-        sprintf(&temp_C[22], "%d", j);
+    // for (int j = 0; j < 3; j++) {
+    //     char temp_A[30], temp_B[30], temp_C[30];
+    //     sprintf(&temp_A[0], "%s", "A_transient_resistance");
+    //     sprintf(&temp_A[22], "%d", j);
+    //     sprintf(&temp_B[0], "%s", "B_transient_resistance");
+    //     sprintf(&temp_B[22], "%d", j);
+    //     sprintf(&temp_C[0], "%s", "C_transient_resistance");
+    //     sprintf(&temp_C[22], "%d", j);
 
-        PUBLIC_JsonArrayLoading(cjson_array, 13 + j * 3, temp_A, "double", "null", value.TR[j].A_transient_resistance, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 14 + j * 3, temp_B, "double", "null", value.TR[j].B_transient_resistance, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 15 + j * 3, temp_C, "double", "null", value.TR[j].C_transient_resistance, "null");
-    }
+    //     PUBLIC_JsonArrayLoading(cjson_array, 13 + j * 3, temp_A, "double", "null", value.TR[j].A_transient_resistance, "null");
+    //     PUBLIC_JsonArrayLoading(cjson_array, 14 + j * 3, temp_B, "double", "null", value.TR[j].B_transient_resistance, "null");
+    //     PUBLIC_JsonArrayLoading(cjson_array, 15 + j * 3, temp_C, "double", "null", value.TR[j].C_transient_resistance, "null");
+    // }
+
+    PUBLIC_JsonArrayLoading(cjson_array, 16, "A_transient_resistance1", "double", "null", value.TR[0].A_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 17, "A_transient_resistance2", "double", "null", value.TR[0].B_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 18, "A_bridging_resistance", "double", "null", value.TR[0].C_transient_resistance, "null");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 19, "B_transient_resistance1", "double", "null", value.TR[1].A_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 20, "B_transient_resistance2", "double", "null", value.TR[1].B_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 21, "B_bridging_resistance", "double", "null", value.TR[1].C_transient_resistance, "null");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 22, "C_transient_resistance1", "double", "null", value.TR[2].A_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 23, "C_transient_resistance2", "double", "null", value.TR[2].B_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 24, "C_bridging_resistance", "double", "null", value.TR[2].C_transient_resistance, "null");
+
 
     char TR_unit[5] = "";
     if (value.TR_unit == 0x1a) {

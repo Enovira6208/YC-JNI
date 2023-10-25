@@ -60,6 +60,10 @@ add_library(
         Protocol/SD_Z_VI.c
         Protocol/JYW6400_IM.c
         Protocol/JYC.c
+        Protocol/JD11.c
+        Protocol/CM2100D.c
+        Protocol/QGDW_5_8.c
+        Protocol/QGDW_5_19.c
         Protocol/FH_IDCE_2415CT.c
         Protocol/BYKC_2003.c
         Protocol/HV9003.c

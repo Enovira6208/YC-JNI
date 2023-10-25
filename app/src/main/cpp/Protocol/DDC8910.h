@@ -12,14 +12,12 @@
 #include "../public/public.h"
 
 
-typedef struct
-{
+typedef struct {
     uint8_t Head;                                 /* 命令 */
     uint8_t Data[10];
 } DDC8910MessageType;
 
-typedef struct
-{
+typedef struct {
     double R;
     uint8_t Ruint[4];                                  /* 单位 */
 } DDC8910ValueType;

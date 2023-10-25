@@ -49,6 +49,9 @@
 #include "../Protocol/PDT_840.h"
 #include "../Protocol/CTP_120.h"
 #include "../Protocol/HV9003.h"
+#include "../Protocol/QGDW_5_19.h"
+#include "../Protocol/QGDW_5_8.h"
+#include "../Protocol/JD11.h"
 
 
 INTERFACE_InfoType INTERFACE_Info;
@@ -143,7 +146,14 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_CTP_120;
     } else if (NULL != strstr((char *)jsonBuff, "HV9003")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_HV9003;
+    } else if (NULL != strstr((char *)jsonBuff, "QGDW_5_19")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_QGDW_5_19;
+    } else if (NULL != strstr((char *)jsonBuff, "QGDW_5_8")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_QGDW_5_8;
+    } else if (NULL != strstr((char *)jsonBuff, "JD11")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JD11;
     }
+
 
     else {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_NULL;
@@ -379,6 +389,20 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
             size = HV9003_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             break;
+        case INTERFACE_DEVICE_CODE_QGDW_5_19:
+            size = QGDW_5_19_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            break;
+        case INTERFACE_DEVICE_CODE_QGDW_5_8:
+            size = QGDW_5_8_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            break;
+        case INTERFACE_DEVICE_CODE_JD11:
+            size = JD11ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            INTERFACE_Info.sendMsg.baud = 2400;
+            break;
+
 
         default:
             return NULL;
@@ -578,6 +602,23 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
         case INTERFACE_DEVICE_CODE_HV9003:
             return HV9003_RecvMessage(dataBuff, size);
 
+        case INTERFACE_DEVICE_CODE_QGDW_5_19:
+            return QGDW_5_19_RecvMessage(dataBuff, size);
+
+        case INTERFACE_DEVICE_CODE_QGDW_5_8:
+            return QGDW_5_8_RecvMessage(dataBuff, size);
+
+        case INTERFACE_DEVICE_CODE_JD11:
+            return JD11RecvMessage(dataBuff, size);
+
+        case INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ:
+            return TD_3310C_ZLDZ_RecvMessage(hexbuff, size);
+
+        case INTERFACE_DEVICE_CODE_TD_3310C_YZFJ:
+            return TD_3310C_YZFJ_RecvMessage(hexbuff, size);
+
+        case INTERFACE_DEVICE_CODE_TD_3310C_ZK:
+            return TD_3310C_ZK_RecvMessage(hexbuff, size);
         default:
             break;
     }

@@ -55,7 +55,8 @@ uint16_t FH_ai_6600CReadData(uint8_t *buff, uint8_t cnt)
 double FH_ai_6600CStr_8_Analy(uint8_t *buff)
 {
     uint8_t array[5];
-    uint8_t cnt, j = 0;
+    uint8_t  j = 0;
+    int cnt = 4;
     int sign;
     double value = 0;
 
@@ -66,6 +67,7 @@ double FH_ai_6600CStr_8_Analy(uint8_t *buff)
     }
 
     for (uint8_t i = 1; i <= 5; i++) {
+        printf("******%c\n", buff[i]);
         if (buff[i] == '.') {
             cnt = i - 1;
         } else {
@@ -77,7 +79,6 @@ double FH_ai_6600CStr_8_Analy(uint8_t *buff)
     for (uint8_t i = 0; i < 4; i++) {
         value += array[i] * pow(10, cnt - 1 - i);
     }
-
     value = value * sign;
 
     return value;

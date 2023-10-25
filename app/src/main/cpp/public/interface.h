@@ -66,7 +66,10 @@ typedef enum {
     INTERFACE_DEVICE_CODE_PDT_840,       /*厦门红相PDT_840协议*/
     INTERFACE_DEVICE_CODE_CTP_120,       /*武汉豪迈CTP_120协议*/
     INTERFACE_DEVICE_CODE_HV9003,        /*上海思创介质损耗测试仪*/
-    INTERFACE_DEVICE_CODE_JYR_40D
+    INTERFACE_DEVICE_CODE_JYR_40D,
+    INTERFACE_DEVICE_CODE_QGDW_5_19,          /**/
+    INTERFACE_DEVICE_CODE_QGDW_5_8,          /**/
+    INTERFACE_DEVICE_CODE_JD11          /*JD11密度*/
 }
 INTERFACE_DeviceCodeEnum;
 

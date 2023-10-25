@@ -1,19 +1,30 @@
 #include "TD_3310C_ZK.h"
 #include "../public/mycrc16.h"
 
-static  char returnJsonDataBuff[1000];
+static  char returnJsonDataBuff[3000];
 
 
 uint16_t TD_3310C_ZK_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 {
-    if (cnt == 1) { /*直流电阻测试仪*/
+    uint8_t hexBuff[15];
+    hexBuff[0] = 0x42;
+    hexBuff[1] = 0x45;
+    hexBuff[2] = 0x47;
+    hexBuff[3] = 0x0f;
+    hexBuff[4] = 0x00;
+    hexBuff[5] = 0x00;
+    hexBuff[6] = 0x00;
+    hexBuff[7] = 0x03;
+    hexBuff[8] = 0x00;
+    hexBuff[9] = 0x00;
+    hexBuff[10] = 0x00;
+    hexBuff[11] = 0x00;
+    hexBuff[12] = 0x00;
+    hexBuff[13] = 0x88;
+    hexBuff[14] = 0xec;
+    PUBLIC_HexToAscll(ascllBuff, hexBuff, 15);
 
-    } else if (cnt == 2) { /*有载分接开关测试仪*/
-
-    } else if (cnt == 3 ) { /*阻抗测试*/
-
-    }
-    return 0;
+    return 16;
 }
 
 char *TD_3310C_ZK_SendData(ZK_DataValue value)
@@ -67,7 +78,7 @@ char *TD_3310C_ZK_SendData(ZK_DataValue value)
     cjson_data = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_ZK_ZLDZ");
+    cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_ZK");
 
     PUBLIC_JsonArrayLoading(cjson_array, 1, "time", "string", "null", 0, time);
     PUBLIC_JsonArrayLoading(cjson_array, 2, "testMethod", "string", "null",  0, testMethod);

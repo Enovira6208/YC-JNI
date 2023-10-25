@@ -95,7 +95,7 @@ typedef struct {
     PUBLIC_CjsonParamType Array[100];
 } PUBLIC_CjsonType;
 
-
+float FourBytesToFloat(uint8_t byte4, uint8_t byte3, uint8_t byte2, uint8_t byte1);
 uint8_t PUBLIC_BcdToNumb(uint8_t bcd);
 uint8_t PUBLIC_NumbToBcd(uint8_t numb);
 void PUBLIC_AscllToHex(uint8_t *hex, char *ascll, uint16_t len);
