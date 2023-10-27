@@ -40,10 +40,10 @@ jstring unsignedChar2Jstring( JNIEnv* env, unsigned char* pat )
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_esinhai_collectiondevice_DeviceCommunicationJNI_InterfaceJsonMagLoading(JNIEnv *env, jclass param,jstring path, jint count) {
+Java_com_esinhai_collectiondevice_DeviceCommunicationJNI_InterfaceJsonMagLoading(JNIEnv *env, jclass param,jstring path, jint count, jint baud) {
     LOGE("InterfaceJsonMagLoading count==  %d",count);
     unsigned char *buf_1 = jstringToUnsignedChar(env, path);
-    unsigned char *des = InterfaceJsonMagLoading(buf_1, count);
+    unsigned char *des = InterfaceJsonMagLoading(buf_1, count, baud);
     if (des == NULL) {
         return unsignedChar2Jstring(env,(unsigned char *)"fail");
     }

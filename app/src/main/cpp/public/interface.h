@@ -93,7 +93,7 @@ typedef struct {
     char sendDataBuff[300];
 } INTERFACE_InfoType;
 
-unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt);
+unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int baud);
 unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size);
 
 #endif // _INTERFACE_H_

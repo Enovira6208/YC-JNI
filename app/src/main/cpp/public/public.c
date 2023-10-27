@@ -99,7 +99,7 @@ double PUBLIC_IEEE754_32(uint8_t value3, uint8_t value2, uint8_t value1, uint8_t
 
     valueU = (value0 << 24) | (value1 << 16) | (value2 << 8) | (value3);
     if (valueU == 0xFFFFFFFF)
-        return -1023.0;
+        return -1023;
     for (int i = 31; i >= 0; i--) {
         table[i] = (uint8_t)(valueU & 0x00000001);
         valueU >>= 1;

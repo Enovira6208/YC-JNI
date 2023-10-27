@@ -168,7 +168,7 @@ void InterfaceJsonBuff(char *jsonBuff)
  * @param cnt       采集次数
  * @return char*    下发报文内容
  */
-unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
+unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int baud)
 {
     // LOGE("InterfaceJsonMagLoading==  %d",cnt);
     char *str;
@@ -317,6 +317,7 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt)
 
         case INTERFACE_DEVICE_CODE_FH_AI_6600C:
             size = FH_ai_6600CReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = baud;
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             break;
 
