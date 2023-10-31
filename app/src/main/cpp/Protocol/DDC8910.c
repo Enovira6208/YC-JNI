@@ -47,11 +47,11 @@ double DDC8910Count(uint8_t *buff)
     double vlaue = 0;
     uint8_t blank = 0, tail = 0;
 
-    for (uint8_t i = 0; i < sizeof(buff); i++) {
-        if (buff[i] = 0x23) {
+    for (uint8_t i = 0; i < 8; i++) {
+        if (buff[i] == 0x23) {
             blank = i;
         }
-        if (buff[i] = 0x0D) {
+        if (buff[i] == 0x0D) {
             tail = i;
         }
     }
@@ -70,9 +70,6 @@ double DDC8910Count(uint8_t *buff)
     for (uint8_t i = 0; i < j; i++) {
         vlaue += ascll[i] * pow(10, decimal - i - 1 - temp);
     }
-
-    memcpy(DDC8910Value.Ruint, &buff[blank + j + 1 + 1], tail - blank - 1 - 1 - j);
-
     return vlaue;
 }
 
@@ -84,11 +81,8 @@ char *DDC8910RecvMessage(uint8_t *buff, uint16_t size)
 {
     DDC8910MessageType *recv = (DDC8910MessageType *) buff;
 
-    if (recv->Head != 0x0A)
+    if (recv->Head == 0xA0)
         return "succeed";
-
-    if (recv->Head != 0x23)
-        return NULL;
 
     if (recv->Data[0] == 0x24) {
         DDC8910Value.R = 0;
@@ -96,7 +90,11 @@ char *DDC8910RecvMessage(uint8_t *buff, uint16_t size)
         DDC8910Value.R = DDC8910Count(recv->Data);
     }
 
-
+    if (recv->Data[6] == 0xEA && recv->Data[5] == 0xE6) {
+        sprintf(DDC8910Value.Ruint, "%s", "uΩ");
+    } else if (recv->Data[6] == 0xEA ) {
+        sprintf(DDC8910Value.Ruint, "%s", "mΩ");
+    }
     /* 发送数据 */
     return DDC8910Send();
 }

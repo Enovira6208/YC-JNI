@@ -14,7 +14,8 @@
 
 typedef struct {
     uint8_t Head;                                 /* 命令 */
-    uint8_t Data[10];
+    uint8_t mode;                                 /* 模式 */
+    uint8_t Data[8];
 } DDC8910MessageType;
 
 typedef struct {

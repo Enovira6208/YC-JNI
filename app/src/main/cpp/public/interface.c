@@ -178,7 +178,6 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
     char dataMsg[200];
 
     unsigned int size;
-
     memset(dataMsg, 0, sizeof(dataMsg));
 
     INTERFACE_Info.sendMsg.comMode = "RS232";
