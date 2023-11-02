@@ -349,15 +349,15 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
             break;
         case INTERFACE_DEVICE_CODE_TD_3310C_YZFJ:
             size = TD_3310C_YZFJ_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.baud = 9600;
+            INTERFACE_Info.sendMsg.baud = 115200;
             break;
         case INTERFACE_DEVICE_CODE_TD_3310C_ZK:
             size = TD_3310C_ZK_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.baud = 9600;
+            INTERFACE_Info.sendMsg.baud = 115200;
             break;
         case INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ:
             size = TD_3310C_ZLDZ_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.baud = 9600;
+            INTERFACE_Info.sendMsg.baud = 115200;
             break;
         case INTERFACE_DEVICE_CODE_JYW6100:
             size = JYW6100ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
