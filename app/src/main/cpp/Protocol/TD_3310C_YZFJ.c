@@ -54,8 +54,8 @@ char *TD_3310C_YZFJ_SendData(YZFJ_DataVALUE value)
 
     cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_YZFJ");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "time", "string", "null", 0, time);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "testName", "string", "null",  0, testName);
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "null", 0, time);
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "Test_name", "string", "null",  0, testName);
 
     for (int j = 0; j < 3; j++) {
         char temp_A[30], temp_B[30], temp_C[30];

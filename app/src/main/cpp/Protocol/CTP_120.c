@@ -9,6 +9,7 @@
  */
 
 /* CTP_120*/
+/*武汉豪迈 电压互感器和电力互感器*/
 #include "CTP_120.h"
 #include "../public/mycrc16.h"
 static char returnJsonDataBuff[1000];
@@ -23,6 +24,22 @@ char *CTP_120wifiSend(uint8_t cnt);
 uint16_t CTP_120ReadData(uint8_t *buff, uint8_t cnt)
 {
     if (cnt == 1) {
+        buff[0] = 'R';
+        buff[1] = 'E';
+        buff[2] = 'G';
+        buff[3] = 0x00;
+        buff[4] = 0x00;
+        buff[5] = 0x00;
+        buff[6] = 0x0F;
+        buff[7] = 0x00;
+        buff[8] = 0x01;
+        buff[9] = 0x00;
+        buff[10] = 0x00;
+        buff[11] = 0x00;
+        buff[12] = 0x00;
+        buff[13] = 0x03;
+        buff[14] = 0xef;
+    } else if (cnt == 2) {
         buff[0] = 'R';
         buff[1] = 'E';
         buff[2] = 'G';
@@ -53,7 +70,9 @@ double CTP_120count(uint8_t *buf)
 char *CTP_120RecvMessage(uint8_t *buff, uint16_t size)
 {
     CTP_120MessageType *recv = (CTP_120MessageType *)buff;
-
+    printf("%x\n", recv->Head[0]);
+    printf("%x\n", recv->Head[1]);
+    printf("%x\n", recv->Head[2]);
     if (recv->cmd[1] != 0x03)
         return NULL;
 
@@ -143,7 +162,7 @@ char *CTP_120RecvMessage(uint8_t *buff, uint16_t size)
         CTP_120A_Value.Excitation_voltage20 = CTP_120count(messageData.Excitation_voltage20);
 
         return CTP_120wifiSend(1);
-    } else if (recv->data_len[3] == 0x88) { // 电压互感器
+    } else { // 电压互感器
         CTP_120V_MessageDataType messageData;
         memcpy(messageData.test_time, recv->Data, sizeof(CTP_120V_MessageDataType));
 

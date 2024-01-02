@@ -135,9 +135,11 @@ char *FH_ai_6310bwifiSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "AI_6310B");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", FH_ai_6310bValue.Uuint, FH_ai_6310bValue.U, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "double", FH_ai_6310bValue.Iuint, FH_ai_6310bValue.I, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6310bValue.Ruint, FH_ai_6310bValue.R, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", FH_ai_6310bValue.Uuint, FH_ai_6310bValue.U, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "double", FH_ai_6310bValue.Iuint, FH_ai_6310bValue.I, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6310bValue.Ruint, FH_ai_6310bValue.R, "null");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "current", "double", FH_ai_6310bValue.Iuint, FH_ai_6310bValue.I, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

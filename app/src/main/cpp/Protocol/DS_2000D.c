@@ -132,9 +132,9 @@ char *DS_2000DWifiSend(void)
     PUBLIC_JsonArrayLoading(cjson_array, 2, "ukj_B", "double", "%", DS_2000DValue.ukj_b, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 3, "ukj_C", "double", "%", DS_2000DValue.ukj_c, "null");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "power_a", "double", "W", DS_2000DValue.power_a, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "power_b", "double", "W", DS_2000DValue.power_b, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "power_c", "double", "W", DS_2000DValue.power_c, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "A-X_power", "double", "W", DS_2000DValue.power_a, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "B-X_power", "double", "W", DS_2000DValue.power_b, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "C-X_power", "double", "W", DS_2000DValue.power_c, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

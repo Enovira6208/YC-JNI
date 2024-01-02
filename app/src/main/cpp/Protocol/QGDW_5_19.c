@@ -27,21 +27,21 @@ uint16_t QGDW_5_19_ReadData(uint8_t *buff, uint8_t cnt)
     hexBuff[1] = 0x45;
     hexBuff[2] = 0x47;
 
-    hexBuff[3] = 0x0F;
+    hexBuff[3] = 0x00;
     hexBuff[4] = 0x00;
     hexBuff[5] = 0x00;
-    hexBuff[6] = 0x00;
+    hexBuff[6] = 0x0F;
 
-    hexBuff[7] = 0x03;
-    hexBuff[8] = 0x00;
+    hexBuff[7] = 0x00;
+    hexBuff[8] = 0x03;
 
     hexBuff[9] = 0x00;          /* 数据区长度 */
     hexBuff[10] = 0x00;
     hexBuff[11] = 0x00;
     hexBuff[12] = 0x00;
 
-    hexBuff[13] = 0x88;
-    hexBuff[14] = 0xEC;
+    hexBuff[13] = 0xEF;
+    hexBuff[14] = 0x03;
 
     PUBLIC_HexToAscll(buff, hexBuff, 15);
 

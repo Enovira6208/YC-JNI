@@ -193,10 +193,18 @@ char *JYR_20sSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "JYR_20S");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance_Ao", "double", JYR_20sValue.AoU, JYR_20sValue.Ao, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_Bo", "double", JYR_20sValue.BoU, JYR_20sValue.Bo, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance_Co", "double", JYR_20sValue.CoU, JYR_20sValue.Co, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "unbalanceRate", "double", "%", JYR_20sValue.Unbalance, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance_Ao", "double", JYR_20sValue.AoU, JYR_20sValue.Ao, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_Bo", "double", JYR_20sValue.BoU, JYR_20sValue.Bo, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance_Co", "double", JYR_20sValue.CoU, JYR_20sValue.Co, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 4, "unbalanceRate", "double", "%", JYR_20sValue.Unbalance, "null");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "AN_AB_resistor", "double", JYR_20sValue.AoU, JYR_20sValue.Ao, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "BN_BC_resistor", "double", JYR_20sValue.BoU, JYR_20sValue.Bo, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "CN_CA_resistor", "double", JYR_20sValue.CoU, JYR_20sValue.Co, "null");
+
+    if (JYR_20sAnaly == JYR_20_ANALY_3) {
+        PUBLIC_JsonArrayLoading(cjson_array, 4, "Unbalance", "double", "", JYR_20sValue.Unbalance, "null");
+    }
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

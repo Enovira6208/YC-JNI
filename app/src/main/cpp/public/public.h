@@ -15,7 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-// #include <android/log.h>
+#include <android/log.h>
 #include "cJSON.h"
 
 #define LOG_TAG "CPPLOG"

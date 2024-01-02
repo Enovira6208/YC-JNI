@@ -64,15 +64,21 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JH6000;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6106S")) {    /* 泛华 避雷器*/
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
+    } else if (NULL != strstr((char *)jsonBuff, "AI_6103S")) {    /* 泛华 避雷器*/
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
+    } else if (NULL != strstr((char *)jsonBuff, "AI_6109S")) {    /* 泛华 避雷器*/
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6310LD")) {   /* 泛华 回来电阻 */
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6310LD;
-    } else if (NULL != strstr((char *)jsonBuff, "AI_6301")) { /* 泛华 地阻 */
+    } else if (NULL != strstr((char *)jsonBuff, "AI_6301")) {     /* 泛华 地阻 */
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6301;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6000K")) {    /* 泛华 介损 */
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6000K;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6000HL")) {   /* 泛华  介损 */
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6000HL;
     } else if (NULL != strstr((char *)jsonBuff, "JYR_40S")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40S;
+    } else if (NULL != strstr((char *)jsonBuff, "JYR_50S")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6000R")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6000R;
@@ -92,9 +98,13 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_HV9003;
     } else if (NULL != strstr((char *)jsonBuff, "JYL_100B")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYL_100B;
+    } else if (NULL != strstr((char *)jsonBuff, "JYL_200B")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYL_100B;
     } else if (NULL != strstr((char *)jsonBuff, "JYK_I")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYL_I;
     } else if (NULL != strstr((char *)jsonBuff, "HLC5501")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_HLC5501;
+    } else if (NULL != strstr((char *)jsonBuff, "HLC5502")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_HLC5501;
     } else if (NULL != strstr((char *)jsonBuff, "BZC3395")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_BZC3395;
@@ -118,7 +128,13 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYW6400_DC;
     } else if (NULL != strstr((char *)jsonBuff, "JYW6400_IM")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYW6400_IM;
+    } else if (NULL != strstr((char *)jsonBuff, "JYR_20C")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40C;
     } else if (NULL != strstr((char *)jsonBuff, "JYR_40C")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40C;
+    } else if (NULL != strstr((char *)jsonBuff, "JYR_50B")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40C;
+    } else if (NULL != strstr((char *)jsonBuff, "JYR_50C")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40C;
     } else if (NULL != strstr((char *)jsonBuff, "JHLK_100")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JHLK_100;
@@ -135,6 +151,8 @@ void InterfaceJsonBuff(char *jsonBuff)
     }  else if (NULL != strstr((char *)jsonBuff, "JYW6100")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYW6100;
     }   else if (NULL != strstr((char *)jsonBuff, "JYR_40D")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40D;
+    }   else if (NULL != strstr((char *)jsonBuff, "JYR_40E")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JYR_40D;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6301B")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6301B;
@@ -382,7 +400,6 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
             break;
         case INTERFACE_DEVICE_CODE_CTP_120:
             size = CTP_120ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             INTERFACE_Info.sendMsg.baud = 19200;
             break;
         case INTERFACE_DEVICE_CODE_HV9003:
@@ -476,7 +493,6 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
     } else {
         printf("InterfaceDeviceDataAnalysis ASCLL%s\n", dataBuff);
     }
-
     memset(returnJsonDataBuff1, 0, sizeof(returnJsonDataBuff1));
     switch (INTERFACE_Info.DeviceCode) {
         case INTERFACE_DEVICE_CODE_NULL:
@@ -597,7 +613,7 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
             return PDT_840RecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_CTP_120:
-            return CTP_120RecvMessage(dataBuff, size);
+            return CTP_120RecvMessage(hexbuff, size);
 
         case INTERFACE_DEVICE_CODE_HV9003:
             return HV9003_RecvMessage(dataBuff, size);

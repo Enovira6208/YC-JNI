@@ -96,11 +96,13 @@ char *JYR_40DSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "JYR_40D");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "mode", "int", "null", value.mode, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "int", "A", value.electricity, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "mode", "int", "null", value.mode, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "way", "int", "null", value.way, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "status", "int", "null", value.status, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 1, "mode", "int", "null", value.mode, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "int", "A", value.electricity, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 3, "mode", "int", "null", value.mode, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 4, "way", "int", "null", value.way, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 5, "status", "int", "null", value.status, "null");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "current", "int", "A", value.electricity, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

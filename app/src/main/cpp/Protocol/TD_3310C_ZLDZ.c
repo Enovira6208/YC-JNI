@@ -33,6 +33,7 @@ char *TD_3310C_SendData(ZLDZ_DataVALUE value)
     char time[20];
     cJSON *cjson_data = NULL;
     cJSON *cjson_array = NULL;
+    double a, b, c = 0;
 
     sprintf(&time[0], "%04d", (int)(value.time[0] | (value.time[1] << 8)));
     sprintf(&time[4], "%02d", (int)(value.time[2]));
@@ -55,21 +56,30 @@ char *TD_3310C_SendData(ZLDZ_DataVALUE value)
 
     cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_ZLDZ");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "time", "string", "null", 0, time);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "double", "null",   value.electricity, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "null", 0, time);
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "current", "double", "null",   value.electricity, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 3, "e_unit", "string", "null", 0, e_unit);
+    printf("%lf\n", value.group[0].AB);
+    printf("%lf\n", value.group[1].AB);
+    printf("%lf\n", value.group[2].AB);
     for (int j = 0; j < 31; j++) {
-        char temp_AB[20], temp_BC[20], temp_CA[20];
-        sprintf(&temp_AB[0], "%s", "resistance_AB");
-        sprintf(&temp_AB[13], "%d", j);
-        sprintf(&temp_BC[0], "%s", "resistance_BC");
-        sprintf(&temp_BC[13], "%d", j);
-        sprintf(&temp_CA[0], "%s", "resistance_AC");
-        sprintf(&temp_CA[13], "%d", j);
-        PUBLIC_JsonArrayLoading(cjson_array, 4 + j * 3, temp_AB, "double", "null", value.group[j].AB, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 5 + j * 3, temp_BC, "double", "null", value.group[j].BC, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 6 + j * 3, temp_CA, "double", "null", value.group[j].CA, "null");
+        // char temp_AB[20], temp_BC[20], temp_CA[20];
+        // sprintf(&temp_AB[0], "%s", "AN_AB_resistor");
+        // sprintf(&temp_BC[0], "%s", "BN_BC_resistor");
+        // sprintf(&temp_CA[0], "%s", "CN_CA_resistor");
+        if (value.group[j].AB != -1023) {
+            a = value.group[j].AB;
+        }
+        if (value.group[j].BC != -1023) {
+            b = value.group[j].BC;
+        }
+        if (value.group[j].CA != -1023) {
+            c = value.group[j].CA;
+        }
     }
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "AN_AB_resistor", "double", "null", a, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "BN_BC_resistor", "double", "null", b, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "CN_CA_resistor", "double", "null", c, "null");
     char r_unit[5] = "";
     if (value.resistance_unit == 0x1a) {
         sprintf(r_unit, "%s", "kΩ");
