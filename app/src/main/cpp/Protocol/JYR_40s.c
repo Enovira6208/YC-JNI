@@ -130,7 +130,13 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
         case JYR_40_ANALY_1:
             JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            memcpy(&JYR_40sValue.AoU[0], "Ω", 2);
+            if (JYR_40sValue.AoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
+            }
             break;
 
         case JYR_40_ANALY_2:
@@ -138,9 +144,21 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             JYR_40sValue.Bo = JYR_40sCount(Data.Bo);
             JYR_40sValue.Co = JYR_40sCount(Data.Co);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            memcpy(&JYR_40sValue.AoU[0], "Ω", 2);
+            if (JYR_40sValue.AoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
+            }
             JYR_40sValue.BoU[0] = Data.Bo[6];
-            memcpy(&JYR_40sValue.BoU[0], "Ω", 2);
+            if (JYR_40sValue.BoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.BoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.BoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.BoU[0], "Ω", 4);
+            } else if (JYR_40sValue.BoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.BoU[0], "uΩ", 4);
+            }
             break;
 
         case JYR_40_ANALY_3:
@@ -149,11 +167,29 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             JYR_40sValue.Co = JYR_40sCount(Data.Co);
             JYR_40sValue.UnbalanceH = JYR_40sCount(Data.UnbalanceH);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            memcpy(&JYR_40sValue.AoU[0], "Ω", 2);
+            if (JYR_40sValue.AoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
+            }
             JYR_40sValue.BoU[0] = Data.Bo[6];
-            memcpy(&JYR_40sValue.BoU[0], "Ω", 2);
+            if (JYR_40sValue.BoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.BoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.BoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.BoU[0], "Ω", 4);
+            } else if (JYR_40sValue.BoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.BoU[0], "uΩ", 4);
+            }
             JYR_40sValue.CoU[0] = Data.Co[6];
-            memcpy(&JYR_40sValue.CoU[0], "Ω", 2);
+            if (JYR_40sValue.CoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.CoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.CoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.CoU[0], "Ω", 4);
+            } else if (JYR_40sValue.CoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.CoU[0], "uΩ", 4);
+            }
             break;
 
         case JYR_40_ANALY_4:
@@ -166,11 +202,29 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             JYR_40sValue.Bc = JYR_40sCount(Data.Bc);
             JYR_40sValue.UnbalanceL = JYR_40sCount(Data.UnbalanceL);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            memcpy(&JYR_40sValue.AoU[0], "Ω", 2);
+            if (JYR_40sValue.AoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
+            } else if (JYR_40sValue.AoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
+            }
             JYR_40sValue.BoU[0] = Data.Bo[6];
-            memcpy(&JYR_40sValue.BoU[0], "Ω", 2);
+            if (JYR_40sValue.BoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.BoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.BoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.BoU[0], "Ω", 4);
+            } else if (JYR_40sValue.BoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.BoU[0], "uΩ", 4);
+            }
             JYR_40sValue.CoU[0] = Data.Co[6];
-            memcpy(&JYR_40sValue.CoU[0], "Ω", 2);
+            if (JYR_40sValue.CoU[0] == 0x6d) {
+                memcpy(&JYR_40sValue.CoU[0], "mΩ", 4);
+            } else if (JYR_40sValue.CoU[0] == 0x20) {
+                memcpy(&JYR_40sValue.CoU[0], "Ω", 4);
+            } else if (JYR_40sValue.CoU[0] == 0x75) {
+                memcpy(&JYR_40sValue.CoU[0], "uΩ", 4);
+            }
             break;
     }
 

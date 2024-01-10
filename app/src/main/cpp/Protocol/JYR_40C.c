@@ -94,7 +94,7 @@ char *JYR_40CSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "JYR_40C");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance", "double", JYR_40C.Ruint, JYR_40C.R, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "AN_AB_resistor", "double", JYR_40C.Ruint, JYR_40C.R, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

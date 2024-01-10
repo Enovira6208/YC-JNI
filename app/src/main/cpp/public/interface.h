@@ -26,6 +26,7 @@ typedef enum {
     INTERFACE_DEVICE_CODE_NULL,          /* 空 */
     INTERFACE_DEVICE_CODE_JH6000,        /* 加华 JH6000 */
     INTERFACE_DEVICE_CODE_FH_AI_6106S,   /* 泛华避雷器 */
+    INTERFACE_DEVICE_CODE_FH_AI_6103Z,   /* 泛华避雷器 */
     INTERFACE_DEVICE_CODE_FH_AI_6310LD,  /* 泛华回路电阻 */
     INTERFACE_DEVICE_CODE_FH_AI_6301,    /* 泛华地阻 */
     INTERFACE_DEVICE_CODE_FH_AI_6000K,   /* 泛华介损 */

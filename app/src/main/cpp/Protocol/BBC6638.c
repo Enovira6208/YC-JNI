@@ -165,15 +165,15 @@ char *BBC6638Send(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "BBC6638");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "voltageRatio_rated", "double", "%", BBC6638Value.voltageRatio_rated, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 1, "voltageRatio_rated", "double", "%", BBC6638Value.voltageRatio_rated, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 2, "voltageRatio_A", "double", "%", BBC6638Value.voltageRatio_A, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 3, "difference_A", "double", "%", BBC6638Value.difference_A, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 4, "voltageRatio_B", "double", "%", BBC6638Value.voltageRatio_B, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 5, "difference_B", "double", "%", BBC6638Value.difference_B, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 6, "voltageRatio_C", "double", "%", BBC6638Value.voltageRatio_C, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 7, "difference_C", "double", "%", BBC6638Value.difference_C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "tranches", "int", "", BBC6638Value.tranches, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "branching", "int", "", BBC6638Value.branching, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 7, "tranches", "int", "", BBC6638Value.tranches, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 8, "branching", "int", "", BBC6638Value.branching, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

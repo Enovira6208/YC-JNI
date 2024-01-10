@@ -68,6 +68,7 @@ add_library(
         Protocol/BYKC_2003.c
         Protocol/HV9003.c
         Protocol/JYR_40D.c
+        Protocol/FH_ai_6103z.c
         public/cJSON.c
         public/interface.c
         public/mycrc16.c

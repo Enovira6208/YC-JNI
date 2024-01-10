@@ -14,6 +14,7 @@
 #include "../Protocol/FH_ai_6000hl.h"
 #include "../Protocol/FH_ai_6000r.h"
 #include "../Protocol/FH_ai_6106s.h"
+#include "../Protocol/FH_ai_6103z.h"
 #include "../Protocol/FH_ai_6301.h"
 #include "../Protocol/HCYZ_iv.h"
 #include "../Protocol/jh6000.h"
@@ -64,6 +65,8 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JH6000;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6106S")) {    /* 泛华 避雷器*/
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
+    } else if (NULL != strstr((char *)jsonBuff, "AI_6103Z")) {    /* 泛华 避雷器*/
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6103Z;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6103S")) {    /* 泛华 避雷器*/
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6109S")) {    /* 泛华 避雷器*/
@@ -221,6 +224,11 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
 
         case INTERFACE_DEVICE_CODE_FH_AI_6106S:
             size = FH_ai_6106sReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            break;
+
+        case INTERFACE_DEVICE_CODE_FH_AI_6103Z:
+            size = FH_ai_6103zReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             break;
 
@@ -503,6 +511,9 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
 
         case INTERFACE_DEVICE_CODE_FH_AI_6106S:
             return FH_ai_6106sRecvMessage(dataBuff, size);
+
+        case INTERFACE_DEVICE_CODE_FH_AI_6103Z:
+            return FH_ai_6103zRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6310LD:
         //      return Loop_ResistanceRecvMessage(dataBuff, size);
