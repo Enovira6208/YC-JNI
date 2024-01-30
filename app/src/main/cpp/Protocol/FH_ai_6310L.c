@@ -93,6 +93,7 @@ double FH_ai_6310LStrAnaly(uint8_t *buff)
  */
 char *FH_ai_6310LRecvMessage(uint8_t *buff, uint16_t size)
 {
+
     char read[] = "READ";
     FH_ai_6310LMessageType *recv = (FH_ai_6310LMessageType *) buff;
     FH_ai_6310LMessageDataType messageData;
@@ -135,7 +136,7 @@ char *FH_ai_6310LwifiSend(void)
     cJSON_AddStringToObject(cjson_data, "device", "AI_6310L");
 
     PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", FH_ai_6310LValue.Uuint, FH_ai_6310LValue.U, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "current", "double", FH_ai_6310LValue.Iuint, FH_ai_6310LValue.I, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "double", FH_ai_6310LValue.Iuint, FH_ai_6310LValue.I, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6310LValue.Ruint, FH_ai_6310LValue.R, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);

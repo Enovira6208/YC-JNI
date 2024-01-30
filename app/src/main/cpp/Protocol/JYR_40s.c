@@ -46,13 +46,13 @@ uint16_t JYR_40sReadData(uint8_t *ascllBuff)
  */
 double JYR_40sCount(uint8_t *buff)
 {
-    uint8_t ascll[9];
-    uint8_t decimal = 0;
+    uint8_t ascll[5];
+    uint8_t decimal;
     uint8_t j = 0;
-    double value = 0;
+    double vlaue = 0;
 
-    memset(ascll, 0, 9);
-    for (uint8_t i = 0; i < 9; i++) {
+    memset(ascll, 0, 5);
+    for (uint8_t i = 0; i < 7; i++) {
         if ((buff[i] >= 0x30) && (buff[i] <= 0x39)) {
             ascll[j] = buff[i] - 0x30;
             j++;
@@ -60,10 +60,10 @@ double JYR_40sCount(uint8_t *buff)
             decimal = i;
         }
     }
-    for (uint8_t k = 0; k < j; k++) {
-        value += ascll[k] * pow(10, decimal - k - 1);
+    for (uint8_t i = 0; i < j; i++) {
+        vlaue += ascll[i] * pow(10, decimal - i - 1);
     }
-    return value;
+    return vlaue;
 }
 
 /*
@@ -75,10 +75,11 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
 //  uint8_t cnt;
 //  int sign;
 
-    JYR_40sMessageType *recv = (JYR_40sMessageType *)buff;
+    JYR_40sMessageType *recv = (JYR_40sMessageType *) buff;
     JYR_40sDataType Data;
 
     JYR_40sValue.Way = recv->Way;
+
     switch (recv->Way) {
         /* 单通道 */
         case JYR_40S_WAY_SUNGLE_CHANNEL:
@@ -130,13 +131,7 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
         case JYR_40_ANALY_1:
             JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            if (JYR_40sValue.AoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.AoU[1], "Ω", 2);
             break;
 
         case JYR_40_ANALY_2:
@@ -144,21 +139,9 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             JYR_40sValue.Bo = JYR_40sCount(Data.Bo);
             JYR_40sValue.Co = JYR_40sCount(Data.Co);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            if (JYR_40sValue.AoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.AoU[1], "Ω", 2);
             JYR_40sValue.BoU[0] = Data.Bo[6];
-            if (JYR_40sValue.BoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.BoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.BoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.BoU[0], "Ω", 4);
-            } else if (JYR_40sValue.BoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.BoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.BoU[1], "Ω", 2);
             break;
 
         case JYR_40_ANALY_3:
@@ -167,29 +150,11 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             JYR_40sValue.Co = JYR_40sCount(Data.Co);
             JYR_40sValue.UnbalanceH = JYR_40sCount(Data.UnbalanceH);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            if (JYR_40sValue.AoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.AoU[1], "Ω", 2);
             JYR_40sValue.BoU[0] = Data.Bo[6];
-            if (JYR_40sValue.BoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.BoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.BoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.BoU[0], "Ω", 4);
-            } else if (JYR_40sValue.BoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.BoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.BoU[1], "Ω", 2);
             JYR_40sValue.CoU[0] = Data.Co[6];
-            if (JYR_40sValue.CoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.CoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.CoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.CoU[0], "Ω", 4);
-            } else if (JYR_40sValue.CoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.CoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.CoU[1], "Ω", 2);
             break;
 
         case JYR_40_ANALY_4:
@@ -202,29 +167,11 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             JYR_40sValue.Bc = JYR_40sCount(Data.Bc);
             JYR_40sValue.UnbalanceL = JYR_40sCount(Data.UnbalanceL);
             JYR_40sValue.AoU[0] = Data.Ao[6];
-            if (JYR_40sValue.AoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.AoU[0], "Ω", 4);
-            } else if (JYR_40sValue.AoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.AoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.AoU[1], "Ω", 2);
             JYR_40sValue.BoU[0] = Data.Bo[6];
-            if (JYR_40sValue.BoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.BoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.BoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.BoU[0], "Ω", 4);
-            } else if (JYR_40sValue.BoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.BoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.BoU[1], "Ω", 2);
             JYR_40sValue.CoU[0] = Data.Co[6];
-            if (JYR_40sValue.CoU[0] == 0x6d) {
-                memcpy(&JYR_40sValue.CoU[0], "mΩ", 4);
-            } else if (JYR_40sValue.CoU[0] == 0x20) {
-                memcpy(&JYR_40sValue.CoU[0], "Ω", 4);
-            } else if (JYR_40sValue.CoU[0] == 0x75) {
-                memcpy(&JYR_40sValue.CoU[0], "uΩ", 4);
-            }
+            memcpy(&JYR_40sValue.CoU[1], "Ω", 2);
             break;
     }
 
@@ -248,21 +195,10 @@ char *JYR_40sSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "JYR_40S");
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance_Ao", "double", JYR_40sValue.AoU, JYR_40sValue.Ao, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_Bo", "double", JYR_40sValue.BoU, JYR_40sValue.Bo, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance_Co", "double", JYR_40sValue.CoU, JYR_40sValue.Co, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "unbalanceRate", "double", "%", JYR_40sValue.UnbalanceH, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "AN_AB_resistor", "double", JYR_40sValue.AoU, JYR_40sValue.Ao, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "BN_BC_resistor", "double", JYR_40sValue.BoU, JYR_40sValue.Bo, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "CN_CA_resistor", "double", JYR_40sValue.CoU, JYR_40sValue.Co, "null");
-
-    if (JYR_40sAnaly == JYR_40_ANALY_3) {
-        PUBLIC_JsonArrayLoading(cjson_array, 4, "UnbalanceL", "double", "", JYR_40sValue.UnbalanceH, "null");
-    } else if (JYR_40sAnaly == JYR_40_ANALY_4) {
-        PUBLIC_JsonArrayLoading(cjson_array, 4, "low_voltage_Unbalance", "double", "", JYR_40sValue.UnbalanceL, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 5, "high_voltage_Unbalance", "double", "", JYR_40sValue.UnbalanceH, "null");
-    }
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance_Ao", "double", JYR_40sValue.AoU, JYR_40sValue.Ao, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_Bo", "double", JYR_40sValue.BoU, JYR_40sValue.Bo, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance_Co", "double", JYR_40sValue.CoU, JYR_40sValue.Co, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "unbalanceRate", "double", "%", JYR_40sValue.UnbalanceH, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

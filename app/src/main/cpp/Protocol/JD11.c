@@ -19,18 +19,19 @@ char *JD11wifiSend(void);
  *  @ brief 读取仪器数据
  */
 uint16_t JD11ReadData(uint8_t *buff, uint8_t cnt)
-{
+{  
     return 0;
 }
 
-double jd11_count1(uint8_t *data, uint8_t *volarity)
+double jd11_count1(uint8_t *data,uint8_t *volarity)
 {
     double value = 0;
 
     value = data[0] * 256 + data[1];
     value = value / 10;
 
-    if (volarity[0] == 0) {
+    if(volarity[0] == 0)
+    {
         value = -1 * value;
     }
     return value;
@@ -54,7 +55,7 @@ char *JD11RecvMessage(uint8_t *buff, uint16_t size)
     JD11_MessageDataType messageData;
     memcpy(messageData.time, recv->Data, sizeof(JD11_MessageDataType));
 
-    JD11_Value.time[0] = '2';
+    JD11_Value.time[0] = '2'; 
     JD11_Value.time[1] = '0';
     JD11_Value.time[2] = messageData.time[0] / 10 + '0';
     JD11_Value.time[3] = messageData.time[0] / 10 + '0';
@@ -79,8 +80,8 @@ char *JD11RecvMessage(uint8_t *buff, uint16_t size)
 
     JD11_Value.contact2_1_up_pt = jd11_count2(messageData.contact2_1_up_pt);
     JD11_Value.contact2_1_up_p20 = jd11_count2(messageData.contact2_1_up_p20);
-
-    JD11_Value.contact2_2_up_pt = jd11_count2(messageData.contact2_2_up_pt);
+    
+JD11_Value.contact2_2_up_pt = jd11_count2(messageData.contact2_2_up_pt);
     JD11_Value.contact2_2_up_p20 = jd11_count2(messageData.contact2_2_up_p20);
     JD11_Value.contact2_2_down_p20 = jd11_count2(messageData.contact2_2_down_p20);
     JD11_Value.contact2_3_down_pt = jd11_count2(messageData.contact2_3_down_pt);
@@ -139,63 +140,63 @@ char *JD11wifiSend(void)
     cjson_data = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_data, "device", "JD11");
+        cJSON_AddStringToObject(cjson_data, "device", "JD11");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "test_time", "string", "null", 0, JD11_Value.time);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "temperature", "double", "℃", JD11_Value.temp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "contact_type", "double", "null", JD11_Value.contact_type, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 1, "time", "string", "null", 0, JD11_Value.time);
+        PUBLIC_JsonArrayLoading(cjson_array, 2, "temp", "double", "℃", JD11_Value.temp, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 3, "contact_type", "double", "null", JD11_Value.contact_type, "null");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "contact2_1_up_pt", "double", "null", JD11_Value.contact2_1_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "contact2_1_up_p20", "double", "null", JD11_Value.contact2_1_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "contact2_2_up_pt", "double", "null", JD11_Value.contact2_2_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "contact2_2_up_p20", "double", "null", JD11_Value.contact2_2_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "contact2_3_up_pt", "double", "null", JD11_Value.contact2_3_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "contact2_3_up_p20", "double", "null", JD11_Value.contact2_3_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 10, "contact2_up_avg_pt", "double", "null", JD11_Value.contact2_up_avg_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 11, "contact2_up_avg_p20", "double", "null", JD11_Value.contact2_up_avg_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 12, "contact2_1_down_pt", "double", "null", JD11_Value.contact2_1_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 13, "contact2_1_down_p20", "double", "null", JD11_Value.contact2_1_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 14, "contact2_2_down_pt", "double", "null", JD11_Value.contact2_2_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 15, "contact2_2_down_p20", "double", "null", JD11_Value.contact2_2_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 16, "contact2_3_down_pt", "double", "null", JD11_Value.contact2_3_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 17, "contact2_3_down_p20", "double", "null", JD11_Value.contact2_3_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 18, "contact2_down_avg_pt", "double", "null", JD11_Value.contact2_down_avg_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 19, "contact2_down_avg_p20", "double", "null", JD11_Value.contact2_down_avg_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 20, "contact3_1_up_pt", "double", "null", JD11_Value.contact3_1_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 21, "contact3_1_up_p20", "double", "null", JD11_Value.contact3_1_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 22, "contact3_2_up_pt", "double", "null", JD11_Value.contact3_2_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 23, "contact3_2_up_p20", "double", "null", JD11_Value.contact3_2_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 24, "contact3_3_up_pt", "double", "null", JD11_Value.contact3_3_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 25, "contact3_3_up_p20", "double", "null", JD11_Value.contact3_3_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 26, "contact3_up_avg_pt", "double", "null", JD11_Value.contact3_up_avg_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 27, "contact3_up_avg_p20", "double", "null", JD11_Value.contact3_up_avg_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 28, "contact3_1_down_pt", "double", "null", JD11_Value.contact3_1_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 29, "contact3_1_down_p20", "double", "null", JD11_Value.contact3_1_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 30, "contact3_2_down_pt", "double", "null", JD11_Value.contact3_2_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 4, "contact2_1_up_pt", "double", "null", JD11_Value.contact2_1_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 5, "contact2_1_up_p20", "double", "null", JD11_Value.contact2_1_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 6, "contact2_2_up_pt", "double", "null", JD11_Value.contact2_2_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 7, "contact2_2_up_p20", "double", "null", JD11_Value.contact2_2_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 8, "contact2_3_up_pt", "double", "null", JD11_Value.contact2_3_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 9, "contact2_3_up_p20", "double", "null", JD11_Value.contact2_3_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 10, "contact2_up_avg_pt", "double", "null", JD11_Value.contact2_up_avg_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 11, "contact2_up_avg_p20", "double", "null", JD11_Value.contact2_up_avg_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 12, "contact2_1_down_pt", "double", "null", JD11_Value.contact2_1_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 13, "contact2_1_down_p20", "double", "null", JD11_Value.contact2_1_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 14, "contact2_2_down_pt", "double", "null", JD11_Value.contact2_2_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 15, "contact2_2_down_p20", "double", "null", JD11_Value.contact2_2_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 16, "contact2_3_down_pt", "double", "null", JD11_Value.contact2_3_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 17, "contact2_3_down_p20", "double", "null", JD11_Value.contact2_3_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 18, "contact2_down_avg_pt", "double", "null", JD11_Value.contact2_down_avg_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 19, "contact2_down_avg_p20", "double", "null", JD11_Value.contact2_down_avg_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 20, "contact3_1_up_pt", "double", "null", JD11_Value.contact3_1_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 21, "contact3_1_up_p20", "double", "null", JD11_Value.contact3_1_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 22, "contact3_2_up_pt", "double", "null", JD11_Value.contact3_2_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 23, "contact3_2_up_p20", "double", "null", JD11_Value.contact3_2_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 24, "contact3_3_up_pt", "double", "null", JD11_Value.contact3_3_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 25, "contact3_3_up_p20", "double", "null", JD11_Value.contact3_3_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 26, "contact3_up_avg_pt", "double", "null", JD11_Value.contact3_up_avg_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 27, "contact3_up_avg_p20", "double", "null", JD11_Value.contact3_up_avg_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 28, "contact3_1_down_pt", "double", "null", JD11_Value.contact3_1_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 29, "contact3_1_down_p20", "double", "null", JD11_Value.contact3_1_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 30, "contact3_2_down_pt", "double", "null", JD11_Value.contact3_2_down_pt, "null");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 31, "contact3_2_down_p20", "double", "null", JD11_Value.contact3_2_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 32, "contact3_3_down_pt", "double", "null", JD11_Value.contact3_3_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 33, "contact3_3_down_p20", "double", "null", JD11_Value.contact3_3_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 34, "contact3_down_avg_pt", "double", "null", JD11_Value.contact3_down_avg_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 35, "contact3_down_avg_p20", "double", "null", JD11_Value.contact3_down_avg_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 36, "contact1_1_up_pt", "double", "null", JD11_Value.contact1_1_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 37, "contact1_1_up_p20", "double", "null", JD11_Value.contact1_1_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 38, "contact1_2_up_pt", "double", "null", JD11_Value.contact1_2_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 39, "contact1_2_up_p20", "double", "null", JD11_Value.contact1_2_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 40, "contact1_3_up_pt", "double", "null", JD11_Value.contact1_3_up_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 41, "contact1_3_up_p20", "double", "null", JD11_Value.contact1_3_up_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 42, "contact1_up_avg_pt", "double", "null", JD11_Value.contact1_up_avg_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 43, "contact1_up_avg_p20", "double", "null", JD11_Value.contact1_up_avg_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 44, "contact1_1_down_pt", "double", "null", JD11_Value.contact1_1_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 45, "contact1_1_down_p20", "double", "null", JD11_Value.contact1_1_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 46, "contact1_2_down_pt", "double", "null", JD11_Value.contact1_2_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 47, "contact1_2_down_p20", "double", "null", JD11_Value.contact1_2_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 48, "contact1_3_down_pt", "double", "null", JD11_Value.contact1_3_down_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 49, "contact1_3_down_p20", "double", "null", JD11_Value.contact1_3_down_p20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 50, "contact1_down_avg_pt", "double", "null", JD11_Value.contact1_down_avg_pt, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 51, "contact1_down_avg_p20", "double", "null", JD11_Value.contact1_down_avg_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 31, "contact3_2_down_p20", "double", "null", JD11_Value.contact3_2_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 32, "contact3_3_down_pt", "double", "null", JD11_Value.contact3_3_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 33, "contact3_3_down_p20", "double", "null", JD11_Value.contact3_3_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 34, "contact3_down_avg_pt", "double", "null", JD11_Value.contact3_down_avg_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 35, "contact3_down_avg_p20", "double", "null", JD11_Value.contact3_down_avg_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 36, "contact1_1_up_pt", "double", "null", JD11_Value.contact1_1_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 37, "contact1_1_up_p20", "double", "null", JD11_Value.contact1_1_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 38, "contact1_2_up_pt", "double", "null", JD11_Value.contact1_2_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 39, "contact1_2_up_p20", "double", "null", JD11_Value.contact1_2_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 40, "contact1_3_up_pt", "double", "null", JD11_Value.contact1_3_up_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 41, "contact1_3_up_p20", "double", "null", JD11_Value.contact1_3_up_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 42, "contact1_up_avg_pt", "double", "null", JD11_Value.contact1_up_avg_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 43, "contact1_up_avg_p20", "double", "null", JD11_Value.contact1_up_avg_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 44, "contact1_1_down_pt", "double", "null", JD11_Value.contact1_1_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 45, "contact1_1_down_p20", "double", "null", JD11_Value.contact1_1_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 46, "contact1_2_down_pt", "double", "null", JD11_Value.contact1_2_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 47, "contact1_2_down_p20", "double", "null", JD11_Value.contact1_2_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 48, "contact1_3_down_pt", "double", "null", JD11_Value.contact1_3_down_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 49, "contact1_3_down_p20", "double", "null", JD11_Value.contact1_3_down_p20, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 50, "contact1_down_avg_pt", "double", "null", JD11_Value.contact1_down_avg_pt, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, 51, "contact1_down_avg_p20", "double", "null", JD11_Value.contact1_down_avg_p20, "null");
 
-
+    
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

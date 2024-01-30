@@ -149,13 +149,9 @@ char *BZC3395Send(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "BZC3395");
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance", "double", BZC3395Value.Rauint, BZC3395Value.Ra, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance", "double", BZC3395Value.Rbuint, BZC3395Value.Rb, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", BZC3395Value.Rcuint, BZC3395Value.Rc, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "AN_AB_resistor", "double", BZC3395Value.Rauint, BZC3395Value.Ra, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "BN_BC_resistor", "double", BZC3395Value.Rbuint, BZC3395Value.Rb, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "CN_CA_resistor", "double", BZC3395Value.Rcuint, BZC3395Value.Rc, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance", "double", BZC3395Value.Rauint, BZC3395Value.Ra, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance", "double", BZC3395Value.Rbuint, BZC3395Value.Rb, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", BZC3395Value.Rcuint, BZC3395Value.Rc, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

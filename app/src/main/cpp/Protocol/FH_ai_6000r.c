@@ -159,12 +159,12 @@ char *FH_ai_6000rWifiSend(void)
     cJSON_AddStringToObject(cjson_data, "device", "AI_6000R");
 
     PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  FH_ai_6000rValue.Status, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "Loss_angle_difference", "double", "°", FH_ai_6000rValue.angl, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "reference_voltage_current", "double", FH_ai_6000rValue.refu, FH_ai_6000rValue.ref, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "Sample_current", "double", "", FH_ai_6000rValue.ix, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "angl", "double", "°", FH_ai_6000rValue.angl, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "ref", "double", FH_ai_6000rValue.refu, FH_ai_6000rValue.ref, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "ix", "double", "", FH_ai_6000rValue.ix, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 5, "capacitance", "double", FH_ai_6000rValue.cxu, FH_ai_6000rValue.cx, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "Dielectric_loss", "double", "%",   FH_ai_6000rValue.df, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "currentRatio", "double", "",  FH_ai_6000rValue.ii, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "dielectricLoss", "double", "%",   FH_ai_6000rValue.df, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "currentRatio", "double", "",  FH_ai_6000rValue.ii, "null");
 
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);

@@ -148,17 +148,15 @@ char *FH_ai_6301wifiSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "AI_6301");
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "string", "null", 0, FH_ai_6301Value.Mode);
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "impedance", "double", FH_ai_6301Value.Zuint, FH_ai_6301Value.Z, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6301Value.Ruint, FH_ai_6301Value.R, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage", "double", FH_ai_6301Value.Uuint, FH_ai_6301Value.U, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "electricity", "double", FH_ai_6301Value.Iuint, FH_ai_6301Value.I, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "power", "double", FH_ai_6301Value.Puint, FH_ai_6301Value.P, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "angle", "double", "°", FH_ai_6301Value.A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "frequency", "double", "Hz", FH_ai_6301Value.F, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 9, "Temp", "double", "℃", FH_ai_6301Value.T, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Current_I0", "double", FH_ai_6301Value.Iuint, FH_ai_6301Value.I, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "string", "null", 0, FH_ai_6301Value.Mode);
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "impedance", "double", FH_ai_6301Value.Zuint, FH_ai_6301Value.Z, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6301Value.Ruint, FH_ai_6301Value.R, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage", "double", FH_ai_6301Value.Uuint, FH_ai_6301Value.U, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "electricity", "double", FH_ai_6301Value.Iuint, FH_ai_6301Value.I, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "power", "double", FH_ai_6301Value.Puint, FH_ai_6301Value.P, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "angle", "double", "°", FH_ai_6301Value.A, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 8, "frequency", "double", "Hz", FH_ai_6301Value.F, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 9, "Temp", "double", "℃", FH_ai_6301Value.T, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

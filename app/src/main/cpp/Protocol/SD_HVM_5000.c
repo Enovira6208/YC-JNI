@@ -106,19 +106,12 @@ char *SD_HVM_5000Send(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "SD_HVM_5000");
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", SD_HVM_5000Value.Vuint, SD_HVM_5000Value.voltage, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "resistanceR15", "double", SD_HVM_5000Value.Ruint_15s, SD_HVM_5000Value.resistance_15s, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistanceR60", "double", SD_HVM_5000Value.Ruint_60s, SD_HVM_5000Value.resistance_60s, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "resistanceR600", "double", SD_HVM_5000Value.Ruint_10min, SD_HVM_5000Value.resistance_10min, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "absorptance", "double", "",   SD_HVM_5000Value.absorptance, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "polarizationIndex", "double", "", SD_HVM_5000Value.polarizationIndex, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testing_voltage", "double", SD_HVM_5000Value.Vuint, SD_HVM_5000Value.voltage, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", SD_HVM_5000Value.Vuint, SD_HVM_5000Value.voltage, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 2, "resistanceR15", "double", SD_HVM_5000Value.Ruint_15s, SD_HVM_5000Value.resistance_15s, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 3, "resistanceR60", "double", SD_HVM_5000Value.Ruint_60s, SD_HVM_5000Value.resistance_60s, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 4, "resistanceR600", "double", SD_HVM_5000Value.Ruint_10min, SD_HVM_5000Value.resistance_10min, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 5, "absorptance", "double", "",   SD_HVM_5000Value.absorptance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "Polarization_index", "double", "", SD_HVM_5000Value.polarizationIndex, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "polarizationIndex", "double", "", SD_HVM_5000Value.polarizationIndex, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

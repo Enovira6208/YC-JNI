@@ -113,19 +113,12 @@ char *SD_Z_VISend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "SD_Z_VI");
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "testTime", "string", "", 0, SD_Z_VIValue.testTime);
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "testVoltage", "double", SD_Z_VIValue.testVuint, SD_Z_VIValue.testVoltage, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "testElectricity", "double", SD_Z_VIValue.testEuint, SD_Z_VIValue.testElectricity, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage_75", "double", SD_Z_VIValue.Vuint_75, SD_Z_VIValue.voltage_75, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "electricity_75", "double", SD_Z_VIValue.Iuint_75,   SD_Z_VIValue.electricity_75, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "sustainTime", "double", SD_Z_VIValue.sustainTuint_75, SD_Z_VIValue.sustainTime, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "", 0, SD_Z_VIValue.testTime);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "testing_voltage", "double", SD_Z_VIValue.testVuint, SD_Z_VIValue.testVoltage, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "test_current", "double", SD_Z_VIValue.testEuint, SD_Z_VIValue.testElectricity, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage_75_percent_value", "double", SD_Z_VIValue.Vuint_75, SD_Z_VIValue.voltage_75, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "current_75_percent_value", "double", SD_Z_VIValue.Iuint_75,   SD_Z_VIValue.electricity_75, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "Test_duration", "double", SD_Z_VIValue.sustainTuint_75, SD_Z_VIValue.sustainTime, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "testTime", "string", "", 0, SD_Z_VIValue.testTime);
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "testVoltage", "double", SD_Z_VIValue.testVuint, SD_Z_VIValue.testVoltage, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "testElectricity", "double", SD_Z_VIValue.testEuint, SD_Z_VIValue.testElectricity, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage_75", "double", SD_Z_VIValue.Vuint_75, SD_Z_VIValue.voltage_75, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "electricity_75", "double", SD_Z_VIValue.Iuint_75,   SD_Z_VIValue.electricity_75, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "sustainTime", "double", SD_Z_VIValue.sustainTuint_75, SD_Z_VIValue.sustainTime, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

@@ -149,8 +149,8 @@ char *JYT_A_V1Send(void)
     PUBLIC_JsonArrayLoading(cjson_array, 4, "difference_A", "double", "%", JYT_A_V1Value.difference_A, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 5, "difference_B", "double", "%", JYT_A_V1Value.difference_B, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 6, "difference_C", "double", "%", JYT_A_V1Value.difference_C, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "tranches", "int", "", JYT_A_V1Value.tranches, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "branching", "int", "", JYT_A_V1Value.branching, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "tranches", "int", "", JYT_A_V1Value.tranches, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 8, "branching", "int", "", JYT_A_V1Value.branching, "null");
 
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);

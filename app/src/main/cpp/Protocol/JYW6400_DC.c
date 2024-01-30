@@ -34,12 +34,15 @@ char *JYW6400_DCRecvMessage(uint8_t *buff, uint16_t size)
 
     if ((recv->Head[0] != 0x42) || (recv->Head[1] != 0x45) || (recv->Head[2] != 0x47))
         return NULL;
+    printf("JYW6400_DCRecvMessage 00 \r\n");
     memset(JYW6400_DCValue.testTime, 0, 10);
     sprintf(JYW6400_DCValue.testTime, "%02d%02d%02d%02d%02d%02d%02d", 20, ((recv->Data[0] | (recv->Data[1] << 8)) % 100),
             recv->Data[2], recv->Data[3], recv->Data[4], recv->Data[5], recv->Data[6]);
     JYW6400_DCValue.electricity = PUBLIC_IEEE754_32(recv->Data[7], recv->Data[8], recv->Data[9], recv->Data[10]);
+    printf("JYW6400_DCRecvMessage 11 \r\n");
     memset(JYW6400_DCValue.electricityU, 0, 4);
     memcpy(JYW6400_DCValue.electricityU, PUBLIC_SD_ProtocolUnitAnalysis(recv->Data[11]), 4);
+    printf("JYW6400_DCRecvMessage 22 \r\n");
     for (uint8_t i = 0; i < 31; i++) {
         JYW6400_DCValue.resistance[i].AN = PUBLIC_IEEE754_32(recv->Data[12 + 12 * i],
                                            recv->Data[13 + 12 * i], recv->Data[14 + 12 * i], recv->Data[15 + 12 * i]);
@@ -87,9 +90,9 @@ char *JYW6400_DCSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "JYW6400_DC");
 
-    PUBLIC_JsonArrayLoading(cjson_array1, 1, "Test_time", "string", "", 0, JYW6400_DCValue.testTime);
-    PUBLIC_JsonArrayLoading(cjson_array1, 2, "current", "double", JYW6400_DCValue.electricityU, JYW6400_DCValue.electricity, "null");
-    PUBLIC_JsonArrayLoading(cjson_array1, 3, "Oil_temperature", "double", "°", JYW6400_DCValue.oilTemp, "null");
+    PUBLIC_JsonArrayLoading(cjson_array1, 1, "testTime", "string", "", 0, JYW6400_DCValue.testTime);
+    PUBLIC_JsonArrayLoading(cjson_array1, 2, "electricity", "double", JYW6400_DCValue.electricityU, JYW6400_DCValue.electricity, "null");
+    PUBLIC_JsonArrayLoading(cjson_array1, 3, "oilTemp", "double", "°", JYW6400_DCValue.oilTemp, "null");
     cJSON_AddItemToObject(cjson_properties, "single", cjson_array1);
 
     for (uint8_t i = 0; i < 31; i++) {
@@ -97,9 +100,9 @@ char *JYW6400_DCSend(void)
         cjson_array2 = cJSON_CreateArray();
 
         if ((JYW6400_DCValue.resistance[i].AN != -1023.0) && (JYW6400_DCValue.resistance[i].AN != -1023.0) && (JYW6400_DCValue.resistance[i].AN != -1023.0)) {
-            PUBLIC_JsonArrayLoading(cjson_array2, 1, "AN_AB_resistor", "double", JYW6400_DCValue.resistance[i].ANU, JYW6400_DCValue.resistance[i].AN, "null");
-            PUBLIC_JsonArrayLoading(cjson_array2, 2, "BN_BC_resistor", "double", JYW6400_DCValue.resistance[i].BNU, JYW6400_DCValue.resistance[i].AN, "null");
-            PUBLIC_JsonArrayLoading(cjson_array2, 3, "CN_CA_resistor", "double", JYW6400_DCValue.resistance[i].CNU, JYW6400_DCValue.resistance[i].AN, "null");
+            PUBLIC_JsonArrayLoading(cjson_array2, 1, "resistance_AN", "double", JYW6400_DCValue.resistance[i].ANU, JYW6400_DCValue.resistance[i].AN, "null");
+            PUBLIC_JsonArrayLoading(cjson_array2, 2, "resistance_BN", "double", JYW6400_DCValue.resistance[i].BNU, JYW6400_DCValue.resistance[i].AN, "null");
+            PUBLIC_JsonArrayLoading(cjson_array2, 3, "resistance_CN", "double", JYW6400_DCValue.resistance[i].CNU, JYW6400_DCValue.resistance[i].AN, "null");
 
             cjson_temp = cJSON_CreateObject();
             sprintf(buff, "%s%02d", POINTS, i + 1);

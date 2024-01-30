@@ -209,21 +209,23 @@ char *JH6000_SendData(void)
     PUBLIC_JsonArrayLoading(cjson_array, 11, "CF4", "double", "null",   JH6000_Value.CF4, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 12, "NO", "double", "null", JH6000_Value.NO, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 13, "O2", "double", "null", JH6000_Value.O2, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 14, "Dew_point", "double", "null",  JH6000_Value.DewPoint, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 15, "humidity", "double", "RH%",   JH6000_Value.Humi, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 16, "Humidity_20_degrees", "double", "RH%", JH6000_Value.Humi20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 17, "SF6_purity_V", "double", "null", JH6000_Value.SF6_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 18, "SF6_purity_W", "double", "null", JH6000_Value.SF6_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 19, "CF4_volume_ratio_V", "double", "null", JH6000_Value.CF4_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 20, "CF4_mass_ratio_W", "double", "null", JH6000_Value.CF4_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 21, "Temperature", "double", "℃",   JH6000_Value.Temp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 22, "Pressure", "double", "null",   JH6000_Value.MPA, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 23, "Air_volume_ratio_V", "double", "null", JH6000_Value.AIR_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 24, "Air_quality_ratio_W", "double", "null", JH6000_Value.AIR_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 25, "SF6_CF4_purity_V", "double", "null", JH6000_Value.SF6_CF4_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 26, "SF6_CF4_purity_W", "double", "null", JH6000_Value.SF6_CF4_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 27, "SF6_N2_purity_V", "double", "null",  JH6000_Value.SF6_N2_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 28, "SF6_N2_purity_W", "double", "null",  JH6000_Value.SF6_N2_W, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 14, "DewPoint", "double", "null",  JH6000_Value.DewPoint, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 15, "Humi", "double", "RH%",   JH6000_Value.Humi, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 16, "Humi20", "double", "RH%", JH6000_Value.Humi20, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 17, "SF6_V", "double", "null", JH6000_Value.SF6_V, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 18, "SF6_W", "double", "null", JH6000_Value.SF6_W, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 19, "CF4_V", "double", "null", JH6000_Value.CF4_V, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 20, "CF4_W", "double", "null", JH6000_Value.CF4_W, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 21, "Temp", "double", "℃",   JH6000_Value.Temp, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 22, "MPA", "double", "null",   JH6000_Value.MPA, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 23, "N2_V", "double", "null",  JH6000_Value.N2_V, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 24, "N2_W", "double", "null",  JH6000_Value.N2_W, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 25, "AIR_V", "double", "null", JH6000_Value.AIR_V, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 26, "AIR_W", "double", "null", JH6000_Value.AIR_W, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 27, "SF6_CF4_V", "double", "null", JH6000_Value.SF6_CF4_V, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 28, "SF6_CF4_W", "double", "null", JH6000_Value.SF6_CF4_W, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 29, "SF6_N2_V", "double", "null",  JH6000_Value.SF6_N2_V, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 30, "SF6_N2_W", "double", "null",  JH6000_Value.SF6_N2_W, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 

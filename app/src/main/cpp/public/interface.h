@@ -26,12 +26,12 @@ typedef enum {
     INTERFACE_DEVICE_CODE_NULL,          /* 空 */
     INTERFACE_DEVICE_CODE_JH6000,        /* 加华 JH6000 */
     INTERFACE_DEVICE_CODE_FH_AI_6106S,   /* 泛华避雷器 */
-    INTERFACE_DEVICE_CODE_FH_AI_6103Z,   /* 泛华避雷器 */
     INTERFACE_DEVICE_CODE_FH_AI_6310LD,  /* 泛华回路电阻 */
     INTERFACE_DEVICE_CODE_FH_AI_6301,    /* 泛华地阻 */
     INTERFACE_DEVICE_CODE_FH_AI_6000K,   /* 泛华介损 */
     INTERFACE_DEVICE_CODE_FH_AI_6000HL,  /* 泛华介损 */
     INTERFACE_DEVICE_CODE_JYR_40S,       /* 金源直流电阻 */
+    INTERFACE_DEVICE_CODE_BYKC_2003,     /* 有载分接 */
     INTERFACE_DEVICE_CODE_FH_AI_6000R,   /* 泛华容性设备 */
     INTERFACE_DEVICE_CODE_HCYZ_IV,       /* 华创分接开关 */
     INTERFACE_DEVICE_CODE_JYR_20S,       /* 金源直流电阻 */
@@ -68,11 +68,9 @@ typedef enum {
     INTERFACE_DEVICE_CODE_CTP_120,       /*武汉豪迈CTP_120协议*/
     INTERFACE_DEVICE_CODE_HV9003,        /*上海思创介质损耗测试仪*/
     INTERFACE_DEVICE_CODE_JYR_40D,
-    INTERFACE_DEVICE_CODE_QGDW_5_19,
-    INTERFACE_DEVICE_CODE_QGDW_5_8,
-    INTERFACE_DEVICE_CODE_JD11,          /*JD11密度*/
-    INTERFACE_DEVICE_CODE_CVT2301,        /*变比测试仪*/
-    // INTERFACE_DEVICE_CODE_DB8001         /*断路器机械特性测试仪*/
+    INTERFACE_DEVICE_CODE_QGDW_5_19,          /**/
+    INTERFACE_DEVICE_CODE_QGDW_5_8,          /**/
+    INTERFACE_DEVICE_CODE_JD11          /*JD11密度*/
 }
 INTERFACE_DeviceCodeEnum;
 

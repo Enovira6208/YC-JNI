@@ -191,25 +191,22 @@ char *FH_ai_6301BwifiSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "AI_6301B");
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "name", "string", "null", 0, FH_ai_6301BValue.Name);
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "time", "string", "null", 0, FH_ai_6301BValue.Time);
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "name", "string", "null", 0, FH_ai_6301BValue.Name);
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "time", "string", "null", 0, FH_ai_6301BValue.Time);
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "testMode", "double", "null", FH_ai_6301BValue.TestMode, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "rab", "double", "null", FH_ai_6301BValue.Rab, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "timeMode", "double", "null", FH_ai_6301BValue.TimeMode, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "aaa", "double", "null", FH_ai_6301BValue.AAA, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "bbb", "double", "null", FH_ai_6301BValue.BBB, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "jam", "double", "null", FH_ai_6301BValue.Jam, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 9, "impedance", "double", FH_ai_6301BValue.Zuint, FH_ai_6301BValue.Z, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 10, "resistance", "double", FH_ai_6301BValue.Ruint, FH_ai_6301BValue.R, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 11, "voltage", "double", FH_ai_6301BValue.Uuint, FH_ai_6301BValue.U, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 12, "electricity", "double", FH_ai_6301BValue.Iuint, FH_ai_6301BValue.I, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 13, "interference_voltage", "double", FH_ai_6301BValue.Nuint, FH_ai_6301BValue.N, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 14, "frequency", "double", FH_ai_6301BValue.Fuint, FH_ai_6301BValue.F, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 15, "angle", "double", "°", FH_ai_6301BValue.Fai, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "null", 0, FH_ai_6301BValue.Time);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "Current_I0", "double", FH_ai_6301BValue.Iuint, FH_ai_6301BValue.I, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "testMode", "double", "null", FH_ai_6301BValue.TestMode, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "rab", "double", "null", FH_ai_6301BValue.Rab, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "timeMode", "double", "null", FH_ai_6301BValue.TimeMode, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "aaa", "double", "null", FH_ai_6301BValue.AAA, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "bbb", "double", "null", FH_ai_6301BValue.BBB, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 8, "jam", "double", "null", FH_ai_6301BValue.Jam, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 9, "impedance", "double", FH_ai_6301BValue.Zuint, FH_ai_6301BValue.Z, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 10, "resistance", "double", FH_ai_6301BValue.Ruint, FH_ai_6301BValue.R, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 11, "voltage", "double", FH_ai_6301BValue.Uuint, FH_ai_6301BValue.U, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 12, "electricity", "double", FH_ai_6301BValue.Iuint, FH_ai_6301BValue.I, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 13, "interference_voltage", "double", FH_ai_6301BValue.Nuint, FH_ai_6301BValue.N, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 14, "frequency", "double", FH_ai_6301BValue.Fuint, FH_ai_6301BValue.F, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 15, "angle", "double", "°", FH_ai_6301BValue.Fai, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

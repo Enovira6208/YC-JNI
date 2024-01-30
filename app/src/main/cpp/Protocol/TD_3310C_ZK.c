@@ -80,7 +80,7 @@ char *TD_3310C_ZK_SendData(ZK_DataValue value)
 
     cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_ZK");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "null", 0, time);
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "time", "string", "null", 0, time);
     PUBLIC_JsonArrayLoading(cjson_array, 2, "testMethod", "string", "null",  0, testMethod);
     PUBLIC_JsonArrayLoading(cjson_array, 3, "testWay", "string", "null",  0, testWay);
     PUBLIC_JsonArrayLoading(cjson_array, 4, "Pressure_winding", "string", "null",  0, Pressure_winding);
