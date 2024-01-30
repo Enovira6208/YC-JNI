@@ -93,7 +93,6 @@ double FH_ai_6310LStrAnaly(uint8_t *buff)
  */
 char *FH_ai_6310LRecvMessage(uint8_t *buff, uint16_t size)
 {
-
     char read[] = "READ";
     FH_ai_6310LMessageType *recv = (FH_ai_6310LMessageType *) buff;
     FH_ai_6310LMessageDataType messageData;

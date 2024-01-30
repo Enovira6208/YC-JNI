@@ -284,6 +284,3 @@ char *FH_ai_6000hWifiSend(void)
     cJSON_Delete(cjson_data);
     return returnJsonDataBuff;
 }
-
-
-

@@ -8,7 +8,7 @@
  */
 
 #include "public.h"
-
+#include "time.h"
 
 /**
  * @brief BCD码转十进制

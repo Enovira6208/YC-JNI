@@ -11,7 +11,7 @@
 /* 避雷器协议 */
 /* 泛华避雷器 */
 #include "FH_ai_6106s.h"
-
+#include "time.h"
 static char returnJsonDataBuff[3000];
 char *FH_ai_6106sBleSend(void);
 
@@ -719,88 +719,77 @@ char *FH_ai_6106sRecvMessage(uint8_t *buff, uint16_t size)
  */
 char *FH_ai_6106sBleSend(void)
 {
+    time_t current_time;
+    char *c_time_string;
+    /* 获取当前时间 */
+    current_time = time(NULL);
+    /* 转换为本地时间格式 */
+    c_time_string = ctime(&current_time);
+
     char *str;
-    cJSON *cjson_data = NULL;
+    cJSON *cjson_all = NULL;
     cJSON *cjson_array = NULL;
+    cJSON *cjson_request = NULL;
+    cJSON *cjson_services = NULL;
+    cJSON *cjson_data = NULL;
+    cJSON *cjson_data1 = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
     cjson_data = cJSON_CreateObject();
+    cjson_data1 = cJSON_CreateObject();
+    cjson_all = cJSON_CreateObject();
+    cjson_request = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
+    cjson_services = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_data, "device", "AI_6106S");
+    cJSON_AddStringToObject(cjson_request, "deviceId", "FH_ai_6106s");
+    cJSON_AddItemToObject(cjson_all, "devices", cjson_array);
+    cJSON_AddItemToObject(cjson_array, "request", cjson_request);
 
-    /* 自动边补 */
-    if (FH_ai_6106s_Part1Value.MC == 2) {
-        FH_ai_6106s_Part1Value.Angle[0].A = (FH_ai_6106s_Part4Value.Data[0].A - 120) / 2;
-        FH_ai_6106s_Part1Value.Angle[1].A = 0;
-        FH_ai_6106s_Part1Value.Angle[2].A = -((FH_ai_6106s_Part4Value.Data[2].A - 120) / 2);
-    }
+    cJSON_AddNumberToObject(cjson_data1, "Ix_A", FH_ai_6106s_Part4Value.Data[0].ix);
+    cJSON_AddNumberToObject(cjson_data1, "angle_A", FH_ai_6106s_Part4Value.Data[0].A);
+    cJSON_AddNumberToObject(cjson_data1, "Irlp_A", FH_ai_6106s_Part4Value.Data[0].irlp);
+    cJSON_AddNumberToObject(cjson_data1, "Ixp_A", FH_ai_6106s_Part4Value.Data[0].ixp);
+    cJSON_AddNumberToObject(cjson_data1, "Ir_A", FH_ai_6106s_Part4Value.Data[0].ir);
+    cJSON_AddNumberToObject(cjson_data1, "Irp_A", FH_ai_6106s_Part4Value.Data[0].irp);
+    cJSON_AddNumberToObject(cjson_data1, "Iclp_A", FH_ai_6106s_Part4Value.Data[0].iclp);
+    cJSON_AddNumberToObject(cjson_data1, "Ir3p_A", FH_ai_6106s_Part4Value.Data[0].i3);
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "RP", "int", "null", FH_ai_6106s_Part1Value.RP, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "MC", "int", "null", FH_ai_6106s_Part1Value.MC, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "MP", "int", "null", FH_ai_6106s_Part1Value.MP, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "angle_A0", "double", "°", FH_ai_6106s_Part1Value.Angle[0].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "angle_B0", "double", "°", FH_ai_6106s_Part1Value.Angle[1].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "angle_C0", "double", "°", FH_ai_6106s_Part1Value.Angle[2].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "atlas", "string", "null", 0, (char *)FH_ai_6106s_Part2Value.Data);
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "ix_A", "double", FH_ai_6106s_Part4Value.Data[0].ixu,  FH_ai_6106s_Part4Value.Data[0].ix, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 9, "irlp_A", "double", FH_ai_6106s_Part4Value.Data[0].irlpu, FH_ai_6106s_Part4Value.Data[0].irlp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 10, "i3_A", "double", FH_ai_6106s_Part4Value.Data[0].i3u,  FH_ai_6106s_Part4Value.Data[0].i3, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 11, "iclp_A", "double", FH_ai_6106s_Part4Value.Data[0].iclpu, FH_ai_6106s_Part4Value.Data[0].iclp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 12, "angle_A", "double", "°", FH_ai_6106s_Part4Value.Data[0].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 13, "power_A", "double", "mW",   FH_ai_6106s_Part4Value.Data[0].pl, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 14, "conclusion_A", "double", "null",  FH_ai_6106s_Part4Value.Data[0].C, "null");
+    cJSON_AddNumberToObject(cjson_data1, "Ix_B", FH_ai_6106s_Part4Value.Data[1].ix);
+    cJSON_AddNumberToObject(cjson_data1, "Ixp_B", FH_ai_6106s_Part4Value.Data[1].A);
+    cJSON_AddNumberToObject(cjson_data1, "Ir_B", FH_ai_6106s_Part4Value.Data[1].irlp);
+    cJSON_AddNumberToObject(cjson_data1, "Irlp_B", FH_ai_6106s_Part4Value.Data[1].ixp);
+    cJSON_AddNumberToObject(cjson_data1, "Irp_B", FH_ai_6106s_Part4Value.Data[1].ir);
+    cJSON_AddNumberToObject(cjson_data1, "Iclp_B", FH_ai_6106s_Part4Value.Data[1].irp);
+    cJSON_AddNumberToObject(cjson_data1, "Ir3p_B", FH_ai_6106s_Part4Value.Data[1].iclp);
+    cJSON_AddNumberToObject(cjson_data1, "angle_B", FH_ai_6106s_Part4Value.Data[1].i3);
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 15, "ix_B", "double", FH_ai_6106s_Part4Value.Data[1].ixu,  FH_ai_6106s_Part4Value.Data[1].ix, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 16, "irlp_B", "double", FH_ai_6106s_Part4Value.Data[1].irlpu, FH_ai_6106s_Part4Value.Data[1].irlp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 17, "i3_B", "double", FH_ai_6106s_Part4Value.Data[1].i3u,  FH_ai_6106s_Part4Value.Data[1].i3, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 18, "iclp_B", "double", FH_ai_6106s_Part4Value.Data[1].iclpu, FH_ai_6106s_Part4Value.Data[1].iclp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 19, "angle_B", "double", "°",  FH_ai_6106s_Part4Value.Data[1].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 20, "power_B", "double", "mW",   FH_ai_6106s_Part4Value.Data[1].pl, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 21, "conclusion_B", "double", "null",  FH_ai_6106s_Part4Value.Data[1].C, "null");
+    cJSON_AddNumberToObject(cjson_data1, "Ix_C", FH_ai_6106s_Part4Value.Data[2].ix);
+    cJSON_AddNumberToObject(cjson_data1, "Ixp_C", FH_ai_6106s_Part4Value.Data[2].A);
+    cJSON_AddNumberToObject(cjson_data1, "Ir_C", FH_ai_6106s_Part4Value.Data[2].irlp);
+    cJSON_AddNumberToObject(cjson_data1, "Irlp_C", FH_ai_6106s_Part4Value.Data[2].ixp);
+    cJSON_AddNumberToObject(cjson_data1, "Irp_C", FH_ai_6106s_Part4Value.Data[2].ir);
+    cJSON_AddNumberToObject(cjson_data1, "Iclp_C", FH_ai_6106s_Part4Value.Data[2].irp);
+    cJSON_AddNumberToObject(cjson_data1, "Ir3p_C", FH_ai_6106s_Part4Value.Data[2].iclp);
+    cJSON_AddNumberToObject(cjson_data1, "angle_C", FH_ai_6106s_Part4Value.Data[2].i3);
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 22, "ix_C", "double", FH_ai_6106s_Part4Value.Data[2].ixu,  FH_ai_6106s_Part4Value.Data[2].ix, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 23, "irlp_C", "double", FH_ai_6106s_Part4Value.Data[2].irlpu, FH_ai_6106s_Part4Value.Data[2].irlp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 24, "i3_C", "double", FH_ai_6106s_Part4Value.Data[2].i3u,  FH_ai_6106s_Part4Value.Data[2].i3, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 25, "iclp_C", "double", FH_ai_6106s_Part4Value.Data[2].iclpu, FH_ai_6106s_Part4Value.Data[2].iclp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 26, "angle_C", "double", "°", FH_ai_6106s_Part4Value.Data[2].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 27, "power_C", "double", "mW",   FH_ai_6106s_Part4Value.Data[2].pl, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 28, "conclusion_C", "double", "null",  FH_ai_6106s_Part4Value.Data[2].C, "null");
+    cJSON_AddNumberToObject(cjson_data1, "power_A", FH_ai_6106s_Part4Value.Data[0].pl);
+    cJSON_AddNumberToObject(cjson_data1, "power_B", FH_ai_6106s_Part4Value.Data[1].pl);
+    cJSON_AddNumberToObject(cjson_data1, "power_C", FH_ai_6106s_Part4Value.Data[2].pl);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Phase_A_Ix", "double", FH_ai_6106s_Part4Value.Data[0].ixu,  FH_ai_6106s_Part4Value.Data[0].ix, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "A_phase_phase_angle", "double", "°", FH_ai_6106s_Part4Value.Data[0].A, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "A_phase_Irlp", "double", FH_ai_6106s_Part4Value.Data[0].irlpu, FH_ai_6106s_Part4Value.Data[0].irlp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "A_phase_Irp", "double", FH_ai_6106s_Part4Value.Data[0].irlpu, FH_ai_6106s_Part4Value.Data[0].irp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "A_phase_Iclp", "double", FH_ai_6106s_Part4Value.Data[0].iclpu, FH_ai_6106s_Part4Value.Data[0].iclp, "null");
+    cJSON_AddItemToArray(cjson_services, cjson_data);
+    cJSON_AddItemToObject(cjson_data, "data", cjson_data1);
+    cJSON_AddStringToObject(cjson_data, "eventTime", c_time_string);
+    cJSON_AddStringToObject(cjson_data, "serviceId", "dynamicAttribute");
+    cJSON_AddItemToObject(cjson_request, "services", cjson_services);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "Phase_B_Ix", "double", FH_ai_6106s_Part4Value.Data[1].ixu,  FH_ai_6106s_Part4Value.Data[1].ix, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "B_phase_Irlp", "double", FH_ai_6106s_Part4Value.Data[1].irlpu, FH_ai_6106s_Part4Value.Data[1].irlp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "A_phase_Irp", "double", FH_ai_6106s_Part4Value.Data[0].irlpu, FH_ai_6106s_Part4Value.Data[0].irp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "A_phase_Iclp", "double", FH_ai_6106s_Part4Value.Data[0].iclpu, FH_ai_6106s_Part4Value.Data[0].iclp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "B_phase_phase_angle", "double", "°",  FH_ai_6106s_Part4Value.Data[1].A, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "Phase_C_Ix", "double", FH_ai_6106s_Part4Value.Data[2].ixu,  FH_ai_6106s_Part4Value.Data[2].ix, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "C_phase_Irlp", "double", FH_ai_6106s_Part4Value.Data[2].irlpu, FH_ai_6106s_Part4Value.Data[2].irlp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "C_phase_Irp", "double", FH_ai_6106s_Part4Value.Data[2].irlpu, FH_ai_6106s_Part4Value.Data[2].irp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "C_phase_Iclp", "double", FH_ai_6106s_Part4Value.Data[2].iclpu, FH_ai_6106s_Part4Value.Data[2].iclp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "C_phase_phase_angle", "double", "°", FH_ai_6106s_Part4Value.Data[2].A, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 10, "testing_mode", "int", "null", FH_ai_6106s_Part1Value.MC, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 11, "power_A", "double", "mW",   FH_ai_6106s_Part4Value.Data[0].pl, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 12, "power_B", "double", "mW",   FH_ai_6106s_Part4Value.Data[1].pl, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 13, "power_C", "double", "mW",   FH_ai_6106s_Part4Value.Data[2].pl, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-//    printf("%s\r\n", str);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

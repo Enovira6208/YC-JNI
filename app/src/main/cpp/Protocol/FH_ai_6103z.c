@@ -20,7 +20,7 @@ FH_ai_6103z_Part2ValueType FH_ai_6103z_Part2Value;
 FH_ai_6103z_Part3ValueType FH_ai_6103z_Part3Value;
 FH_ai_6103z_Part4ValueType FH_ai_6103z_Part4Value;
 
-uint16_t FH_ai_6103z_DataCnt = 0;
+uint16_t FH_ai_6103z_DataCnt = 0x3039;
 uint16_t FH_ai_6103z_cnt = 0;
 
 /*
@@ -46,8 +46,13 @@ uint16_t FH_ai_6103zReadData(uint8_t *buff, uint8_t cnt)
         buff[2] = '9';
         buff[3] = 'R';
         buff[4] = 'M';
-        buff[5] = FH_ai_6103z_DataCnt >> 8;
-        buff[6] = (FH_ai_6103z_DataCnt & 0x00ff) - 1;
+        if ((FH_ai_6103z_DataCnt & 0x00ff) % 16 == 0 && (FH_ai_6103z_DataCnt & 0x00ff)  > 16) {
+            buff[5] = (FH_ai_6103z_DataCnt >> 8) - 1;
+            buff[6] = (FH_ai_6103z_DataCnt & 0x00ff) + 9;
+        } else {
+            buff[5] = FH_ai_6103z_DataCnt >> 8;
+            buff[6] = FH_ai_6103z_DataCnt & 0x00ff - 1;
+        }
         buff[7] = '\r';
         buff[8] = '\n';
         FH_ai_6103z_cnt = 2;
@@ -708,10 +713,8 @@ uint16_t FH_ai_6103z4Analy(uint8_t *buff)
  */
 char *FH_ai_6103z_AnalyDataCnt(uint8_t *buff, uint16_t size)
 {
-    FH_ai_6103z_DataCnt = (buff[2] << 8) | (buff[3]);
-    uint8_t buff1[2];
-    buff1[0] = FH_ai_6103z_DataCnt >> 8;
-    buff1[1] = (FH_ai_6103z_DataCnt & 0x00ff) - 1;
+    FH_ai_6103z_DataCnt = (buff[0] << 8) | (buff[1]);
+    printf("******%x\n", FH_ai_6103z_DataCnt);
     return "succeed";
 }
 
@@ -732,8 +735,8 @@ char *FH_ai_6103zRecvMessage(uint8_t *buff, uint16_t size)
         return NULL;
 
     FH_ai_6103z_DataCnt = 0;
-    if (recv->Read[1] == 'M' && FH_ai_6103z_cnt == 2) {
-        return FH_ai_6103z_AnalyDataCnt(recv->Read, 2);
+    if (recv->Read[1] == 'M' && FH_ai_6103z_cnt == 1) {
+        return FH_ai_6103z_AnalyDataCnt(recv->Data, 2);
     }
 
     /* 把前面的这部分ascll码转成十六进制 */
@@ -769,37 +772,6 @@ char *FH_ai_6103zBleSend(void)
         FH_ai_6103z_Part1Value.Angle[1].A = 0;
         FH_ai_6103z_Part1Value.Angle[2].A = -((FH_ai_6103z_Part4Value.Data[2].A - 120) / 2);
     }
-
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "RP", "int", "null", FH_ai_6103z_Part1Value.RP, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "MC", "int", "null", FH_ai_6103z_Part1Value.MC, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "MP", "int", "null", FH_ai_6103z_Part1Value.MP, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "angle_A0", "double", "°", FH_ai_6103z_Part1Value.Angle[0].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "angle_B0", "double", "°", FH_ai_6103z_Part1Value.Angle[1].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "angle_C0", "double", "°", FH_ai_6103z_Part1Value.Angle[2].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "atlas", "string", "null", 0, (char *)FH_ai_6103z_Part2Value.Data);
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "ix_A", "double", FH_ai_6103z_Part4Value.Data[0].ixu,  FH_ai_6103z_Part4Value.Data[0].ix, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 9, "irlp_A", "double", FH_ai_6103z_Part4Value.Data[0].irlpu, FH_ai_6103z_Part4Value.Data[0].irlp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 10, "i3_A", "double", FH_ai_6103z_Part4Value.Data[0].i3u,  FH_ai_6103z_Part4Value.Data[0].i3, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 11, "iclp_A", "double", FH_ai_6103z_Part4Value.Data[0].iclpu, FH_ai_6103z_Part4Value.Data[0].iclp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 12, "angle_A", "double", "°", FH_ai_6103z_Part4Value.Data[0].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 13, "power_A", "double", "mW",   FH_ai_6103z_Part4Value.Data[0].pl, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 14, "conclusion_A", "double", "null",  FH_ai_6103z_Part4Value.Data[0].C, "null");
-
-    // PUBLIC_JsonArrayLoading(cjson_array, 15, "ix_B", "double", FH_ai_6103z_Part4Value.Data[1].ixu,  FH_ai_6103z_Part4Value.Data[1].ix, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 16, "irlp_B", "double", FH_ai_6103z_Part4Value.Data[1].irlpu, FH_ai_6103z_Part4Value.Data[1].irlp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 17, "i3_B", "double", FH_ai_6103z_Part4Value.Data[1].i3u,  FH_ai_6103z_Part4Value.Data[1].i3, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 18, "iclp_B", "double", FH_ai_6103z_Part4Value.Data[1].iclpu, FH_ai_6103z_Part4Value.Data[1].iclp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 19, "angle_B", "double", "°",  FH_ai_6103z_Part4Value.Data[1].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 20, "power_B", "double", "mW",   FH_ai_6103z_Part4Value.Data[1].pl, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 21, "conclusion_B", "double", "null",  FH_ai_6103z_Part4Value.Data[1].C, "null");
-
-    // PUBLIC_JsonArrayLoading(cjson_array, 22, "ix_C", "double", FH_ai_6103z_Part4Value.Data[2].ixu,  FH_ai_6103z_Part4Value.Data[2].ix, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 23, "irlp_C", "double", FH_ai_6103z_Part4Value.Data[2].irlpu, FH_ai_6103z_Part4Value.Data[2].irlp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 24, "i3_C", "double", FH_ai_6103z_Part4Value.Data[2].i3u,  FH_ai_6103z_Part4Value.Data[2].i3, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 25, "iclp_C", "double", FH_ai_6103z_Part4Value.Data[2].iclpu, FH_ai_6103z_Part4Value.Data[2].iclp, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 26, "angle_C", "double", "°", FH_ai_6103z_Part4Value.Data[2].A, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 27, "power_C", "double", "mW",   FH_ai_6103z_Part4Value.Data[2].pl, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 28, "conclusion_C", "double", "null",  FH_ai_6103z_Part4Value.Data[2].C, "null");
 
     PUBLIC_JsonArrayLoading(cjson_array, 1, "Phase_A_Ix", "double", FH_ai_6103z_Part4Value.Data[0].ixu,  FH_ai_6103z_Part4Value.Data[0].ix, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 2, "A_phase_phase_angle", "double", "°", FH_ai_6103z_Part4Value.Data[0].A, "null");

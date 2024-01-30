@@ -1,6 +1,6 @@
 
 #include "BYKC_2003.h"
-static char returnJsonDataBuff[1000];
+static char returnJsonDataBuff[2000];
 /*
  *  @ brief 读取仪器数据
  */
@@ -19,7 +19,7 @@ uint16_t BYKC_2003ReadData(uint8_t *ascllBuff, uint8_t cnt)
 
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 1);
 
-        return 2;
+        return 10;
     } else if (cnt == 2) {
         hexBuff[0] = 0xAA;
         hexBuff[1] = 0x55;
@@ -31,7 +31,7 @@ uint16_t BYKC_2003ReadData(uint8_t *ascllBuff, uint8_t cnt)
 
         PUBLIC_HexToAscll(ascllBuff, hexBuff, 1);
 
-        return 2;
+        return 10;
     }
     return 0;
 }
@@ -76,13 +76,13 @@ char *BYKC_2003Send(BYKC_2003ValueType *recv)
 
     cJSON_AddStringToObject(cjson_data, "device", "BYKC_2003");
 
-    for (int i = 0; i < 2400; i++) {
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "electricity_A_state", "double", "", recv[i].electricity_A_state, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage_B_state", "double", "", recv[i].voltage_B_state, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "electricity_B_state", "double", "", recv[i].electricity_B_state, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage_C", "double", "", recv[i].voltage_C, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "electricity_C", "double", "", recv[i].electricity_C, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage_A", "double", "", recv[i].voltage_A, "null");
+    for (int i = 0; i < 3; i++) {
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6, "electricity_A_state", "double", "", recv[i].electricity_A_state, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 1, "voltage_B_state", "double", "", recv[i].voltage_B_state, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 2, "electricity_B_state", "double", "", recv[i].electricity_B_state, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 3, "voltage_C", "double", "", recv[i].voltage_C, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 4, "electricity_C", "double", "", recv[i].electricity_C, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 5, "voltage_A", "double", "", recv[i].voltage_A, "null");
     }
 
 

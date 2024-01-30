@@ -10,7 +10,8 @@
 
 /* 保定华创  有载分接开关   仪器主动上报数据*/
 #include "HCYZ_iv.h"
-static char returnJsonDataBuff[1000];
+#include "time.h"
+static char returnJsonDataBuff[5000];
 HCYZ_ivMessageValueType HCYZ_ivMessageValue[3];
 
 char *HCYZ_ivBleSend(void);
@@ -59,37 +60,53 @@ char *HCYZ_ivRecvMessage(uint8_t *buff, uint16_t size)
  */
 char *HCYZ_ivBleSend(void)
 {
-    char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    time_t current_time;
+    char *c_time_string;
+    /* 获取当前时间 */
+    current_time = time(NULL);
+    /* 转换为本地时间格式 */
+    c_time_string = ctime(&current_time);
 
+    char *str;
+    cJSON *cjson_all = NULL;
+    cJSON *cjson_array = NULL;
+    cJSON *cjson_request = NULL;
+    cJSON *cjson_services = NULL;
+    cJSON *cjson_data = NULL;
+    cJSON *cjson_data1 = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
     cjson_data = cJSON_CreateObject();
+    cjson_data1 = cJSON_CreateObject();
+    cjson_all = cJSON_CreateObject();
+    cjson_request = cJSON_CreateObject();
     cjson_array = cJSON_CreateArray();
+    cjson_services = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_data, "device", "HCYZ_IV");
+    cJSON_AddStringToObject(cjson_request, "deviceId", "DS_2000D");
+    cJSON_AddItemToObject(cjson_all, "devices", cjson_array);
+    cJSON_AddItemToObject(cjson_array, "request", cjson_request);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMod_A", "int", "null", HCYZ_ivMessageValue[0].Type, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_A", "double", "Ω", HCYZ_ivMessageValue[0].Resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "switchingTime_A", "double", "ms", HCYZ_ivMessageValue[0].SwitchingTime, "null");
+    cJSON_AddNumberToObject(cjson_data1, "transitionResistance1_A", HCYZ_ivMessageValue[0].Resistance);
+    cJSON_AddNumberToObject(cjson_data1, "transitionResistance1_B", HCYZ_ivMessageValue[1].Resistance);
+    cJSON_AddNumberToObject(cjson_data1, "transitionResistance1_C", HCYZ_ivMessageValue[2].Resistance);
+    cJSON_AddNumberToObject(cjson_data1, "transitionTime_t1_A", HCYZ_ivMessageValue[0].SwitchingTime);
+    cJSON_AddNumberToObject(cjson_data1, "transitionTime_t1_B", HCYZ_ivMessageValue[1].SwitchingTime);
+    cJSON_AddNumberToObject(cjson_data1, "transitionTime_t1_C", HCYZ_ivMessageValue[2].SwitchingTime);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "testMode_B", "int", "null", HCYZ_ivMessageValue[1].Type, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "resistance_B", "double", "Ω", HCYZ_ivMessageValue[1].Resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "switchingTime_B", "double", "ms", HCYZ_ivMessageValue[1].SwitchingTime, "null");
+    cJSON_AddItemToArray(cjson_services, cjson_data);
+    cJSON_AddItemToObject(cjson_data, "data", cjson_data1);
+    cJSON_AddStringToObject(cjson_data, "eventTime", c_time_string);
+    cJSON_AddStringToObject(cjson_data, "serviceId", "dynamicAttribute");
+    cJSON_AddItemToObject(cjson_request, "services", cjson_services);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "testMode_C", "int", "null", HCYZ_ivMessageValue[2].Type, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "resistance_C", "double", "Ω", HCYZ_ivMessageValue[2].Resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "switchingTime_C", "double", "ms", HCYZ_ivMessageValue[2].SwitchingTime, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
+
     return returnJsonDataBuff;
 }

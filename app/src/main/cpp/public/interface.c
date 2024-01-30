@@ -7,8 +7,9 @@
  * @LastEditors:
  */
 #include "interface.h"
-
+#include <time.h>
 #include "public.h"
+#include "md5.h"
 #include "../Protocol/DS_2000D.h"
 #include "../Protocol/FH_ai_6000h.h"
 #include "../Protocol/FH_ai_6000hl.h"
@@ -53,7 +54,8 @@
 #include "../Protocol/QGDW_5_19.h"
 #include "../Protocol/QGDW_5_8.h"
 #include "../Protocol/JD11.h"
-
+#include "../Protocol/CVT2301.h"
+#include "../Protocol/DB_8001.h"
 
 INTERFACE_InfoType INTERFACE_Info;
 static char returnJsonDataBuff1[2000];
@@ -66,13 +68,13 @@ void InterfaceJsonBuff(char *jsonBuff)
     } else if (NULL != strstr((char *)jsonBuff, "AI_6106S")) {    /* 泛华 避雷器*/
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6103Z")) {    /* 泛华 避雷器*/
-        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6103Z;
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6103S")) {    /* 泛华 避雷器*/
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6109S")) {    /* 泛华 避雷器*/
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6106S;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6310LD")) {   /* 泛华 回来电阻 */
-        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6310LD;
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6310L;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6301")) {     /* 泛华 地阻 */
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_FH_AI_6301;
     } else if (NULL != strstr((char *)jsonBuff, "AI_6000K")) {    /* 泛华 介损 */
@@ -173,7 +175,12 @@ void InterfaceJsonBuff(char *jsonBuff)
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_QGDW_5_8;
     } else if (NULL != strstr((char *)jsonBuff, "JD11")) {
         INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_JD11;
+    } else if (NULL != strstr((char *)jsonBuff, "CVT2301")) {
+        INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_CVT2301;
     }
+    //  else if (NULL != strstr((char *)jsonBuff, "DB_8001")) {
+    //     INTERFACE_Info.DeviceCode = INTERFACE_DEVICE_CODE_DB8001;
+    // }
 
 
     else {
@@ -186,15 +193,19 @@ void InterfaceJsonBuff(char *jsonBuff)
  * @brief           下发报文装载
  *
  * @param jsonBuff  仪器名称
- * @param cnt       采集次数
+ * @param cnt       采集命令
  * @return char*    下发报文内容
  */
 unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int baud)
 {
     // LOGE("InterfaceJsonMagLoading==  %d",cnt);
     char *str;
+    char *str1;
     cJSON *cjson_test = NULL;
     cJSON *cjson_data = NULL;
+    cJSON *cjson_request = NULL;
+    cJSON *cjson_params = NULL;
+    cJSON *cjson_channelConfig = NULL;
 
     char dataMsg[200];
 
@@ -285,7 +296,7 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
 
         case INTERFACE_DEVICE_CODE_FH_AI_6310L:
             size = FH_ai_6310LReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
+            // INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             break;
 
         // case INTERFACE_DEVICE_CODE_HV9003:
@@ -375,11 +386,11 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
             break;
         case INTERFACE_DEVICE_CODE_TD_3310C_YZFJ:
             size = TD_3310C_YZFJ_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.baud = 115200;
+            INTERFACE_Info.sendMsg.baud = 9600;
             break;
         case INTERFACE_DEVICE_CODE_TD_3310C_ZK:
             size = TD_3310C_ZK_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.baud = 115200;
+            INTERFACE_Info.sendMsg.baud = 9600;
             break;
         case INTERFACE_DEVICE_CODE_TD_3310C_ZLDZ:
             size = TD_3310C_ZLDZ_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
@@ -427,7 +438,14 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
             INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             INTERFACE_Info.sendMsg.baud = 2400;
             break;
-
+        case INTERFACE_DEVICE_CODE_CVT2301:
+            size = JD11ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+            INTERFACE_Info.sendMsg.baud = baud;
+            break;
+        // case INTERFACE_DEVICE_CODE_DB8001:
+        //     size = DB_8001_ReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
+        //     // INTERFACE_Info.sendMsg.baud = baud;
+        //     break;
 
         default:
             return NULL;
@@ -435,33 +453,57 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
 
     INTERFACE_Info.sendMsg.dataSize = size;
 
+    int a = 0;
+    srand(time(0));
+    a = rand() % 90000 + 10000;
+    printf("%d\n", a);
+
     /* 创建一个JSON数据对象(链表头结点) */
     cjson_test = cJSON_CreateObject();
 
-    /* 添加一条整数类型的JSON数据(添加一个链表节点) */
-    cJSON_AddNumberToObject(cjson_test, "all", 1);
-
-    /* 添加一条整数类型的JSON数据(添加一个链表节点) */
-    cJSON_AddNumberToObject(cjson_test, "cur", 1);
-
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
     cjson_data = cJSON_CreateObject();
+    cjson_request = cJSON_CreateObject();
+    cjson_params = cJSON_CreateObject();
+    cjson_channelConfig = cJSON_CreateObject();
 
-    cJSON_AddStringToObject(cjson_data, "comMode", INTERFACE_Info.sendMsg.comMode);
-    cJSON_AddNumberToObject(cjson_data, "baud", INTERFACE_Info.sendMsg.baud);
-    cJSON_AddNumberToObject(cjson_data, "stopBit", INTERFACE_Info.sendMsg.stopBit);
-    cJSON_AddNumberToObject(cjson_data, "dataBits", INTERFACE_Info.sendMsg.dataBits);
-    cJSON_AddStringToObject(cjson_data, "checkDigit", INTERFACE_Info.sendMsg.checkDigit);
+    cJSON_AddStringToObject(cjson_channelConfig, "comMode", INTERFACE_Info.sendMsg.comMode);
+    cJSON_AddNumberToObject(cjson_channelConfig, "baud", INTERFACE_Info.sendMsg.baud);
+    cJSON_AddNumberToObject(cjson_channelConfig, "stopBit", INTERFACE_Info.sendMsg.stopBit);
+    cJSON_AddNumberToObject(cjson_channelConfig, "dataBits", INTERFACE_Info.sendMsg.dataBits);
+    cJSON_AddStringToObject(cjson_channelConfig, "checkDigit", INTERFACE_Info.sendMsg.checkDigit);
     cJSON_AddStringToObject(cjson_data, "dataMsg", INTERFACE_Info.sendMsg.dataMsg);
     cJSON_AddStringToObject(cjson_data, "dataFormat", INTERFACE_Info.sendMsg.dataFormat);
     cJSON_AddNumberToObject(cjson_data, "dataSize", INTERFACE_Info.sendMsg.dataSize);
+    cJSON_AddNumberToObject(cjson_data, "timeout", 5000);
 
+    cJSON_AddStringToObject(cjson_request, "method", "transmission");
 
-    cJSON_AddItemToObject(cjson_test, "data", cjson_data);
+    cJSON_AddItemToObject(cjson_request, "params", cjson_params);
+
+    cJSON_AddItemToObject(cjson_params, "channelConfig", cjson_channelConfig);
+    cJSON_AddItemToObject(cjson_params, "data", cjson_data);
+
+    cJSON_AddItemToObject(cjson_test, "request", cjson_request);
     /* 添加一条整数类型的JSON数据(添加一个链表节点) */
-    cJSON_AddNumberToObject(cjson_test, "code", 1);
+
+    str1 = cJSON_PrintUnformatted(cjson_request);
+
+    md5_state_t state;
+    md5_byte_t digest[16];
+    char hex_output[16 * 2 + 1];
+    int di;
+    md5_init(&state);
+    md5_append(&state, (const md5_byte_t *)str1, strlen(str1));
+    md5_finish(&state, digest);
+    for (di = 0; di < 16; ++di)
+        sprintf(hex_output + di * 2, "%02x", digest[di]);
+
+    cJSON_AddNumberToObject(cjson_test, "mid", a);
+    cJSON_AddStringToObject(cjson_test, "sign", hex_output);
 
     str = cJSON_PrintUnformatted(cjson_test);
+
 //    printf("%s\r\n", str);
 
     memcpy(INTERFACE_Info.sendDataBuff, str, strlen(str));
@@ -469,7 +511,6 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
     /* 一定要释放内存 */
     free(str);
     cJSON_Delete(cjson_test);
-
     return INTERFACE_Info.sendDataBuff;
 }
 
@@ -490,6 +531,19 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
     // {
     //     printf("InterfaceDeviceDataAnalysis %x\n", dataBuff[i]);
     // }
+    // unsigned char dataBuff[5000];
+    // memset(dataBuff, 0, 5000);
+    // cJSON *cjson_all = NULL;
+    // cJSON *cjson_result = NULL;
+    // cJSON *cjson_data = NULL;
+    // cJSON *cjson_payload = NULL;
+    // cjson_all = cJSON_Parse(Buff);
+    // cjson_result = cJSON_GetObjectItem(cjson_all, "result");
+    // cjson_data = cJSON_GetObjectItem(cjson_result, "data");
+    // cjson_payload = cJSON_GetObjectItem(cjson_data, "payload");
+
+    // memcpy(dataBuff, cjson_payload->valuestring, strlen(cjson_payload->valuestring));
+
     unsigned char hexbuff[500];
     if (strstr(INTERFACE_Info.sendMsg.dataFormat, "HEX") != NULL) {
         PUBLIC_AscllToHex(hexbuff, dataBuff, strlen(dataBuff));
@@ -549,7 +603,7 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
             return FH_ai_6310bRecvMessage(dataBuff, size);
 
         case INTERFACE_DEVICE_CODE_FH_AI_6310L:
-            return FH_ai_6310LRecvMessage(dataBuff, size);
+            return FH_ai_6310LRecvMessage(hexbuff, size);
 
         // case INTERFACE_DEVICE_CODE_HV9003:
         // //return HV9003RecvMessage(dataBuff, size);
@@ -646,6 +700,9 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
 
         case INTERFACE_DEVICE_CODE_TD_3310C_ZK:
             return TD_3310C_ZK_RecvMessage(hexbuff, size);
+
+        case INTERFACE_DEVICE_CODE_CVT2301:
+            return CVT2003RecvMessage(hexbuff, size);
         default:
             break;
     }

@@ -69,10 +69,12 @@ add_library(
         Protocol/HV9003.c
         Protocol/JYR_40D.c
         Protocol/FH_ai_6103z.c
+        Protocol/CVT2301.c
         public/cJSON.c
         public/interface.c
         public/mycrc16.c
         public/public.c
+        public/md5.c
         )
 
 # Searches for a specified prebuilt library and stores the path as a

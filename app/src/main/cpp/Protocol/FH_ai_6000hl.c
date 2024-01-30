@@ -223,15 +223,25 @@ char *FH_ai_6000hlWifiSend(void)
 
     cJSON_AddStringToObject(cjson_data, "device", "AI_6000HL");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  FH_ai_6000hlValue.Mode, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "capacitance", "double", FH_ai_6000hlValue.Param[0].Cu, FH_ai_6000hlValue.Param[0].C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "Dielectric_loss", "double", "%", FH_ai_6000hlValue.Param[0].DF, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "C2_capacitance", "double", FH_ai_6000hlValue.Param[1].Cu, FH_ai_6000hlValue.Param[1].C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "C2_dielectric_loss", "double", "%", FH_ai_6000hlValue.Param[1].DF, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  FH_ai_6000hlValue.Mode, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 2, "capacitance", "double", FH_ai_6000hlValue.Param[0].Cu, FH_ai_6000hlValue.Param[0].C, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 3, "Dielectric_loss", "double", "%", FH_ai_6000hlValue.Param[0].DF, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 4, "C2_capacitance", "double", FH_ai_6000hlValue.Param[1].Cu, FH_ai_6000hlValue.Param[1].C, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 5, "C2_dielectric_loss", "double", "%", FH_ai_6000hlValue.Param[1].DF, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 6, "capacitance_C", "double", FH_ai_6000hlValue.Param[2].Cu, FH_ai_6000hlValue.Param[2].C, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 7, "dielectricLoss_C", "double", "%", FH_ai_6000hlValue.Param[2].DF, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 8, "capacitance_D", "double", FH_ai_6000hlValue.Param[3].Cu, FH_ai_6000hlValue.Param[3].C, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 9, "dielectricLoss_D", "double", "%", FH_ai_6000hlValue.Param[3].DF, "null");
+
+    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  FH_ai_6000hlValue.Mode, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 2, "capacitance_A", "double", FH_ai_6000hlValue.Param[0].Cu, FH_ai_6000hlValue.Param[0].C, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "dielectricLoss_A", "double", "%", FH_ai_6000hlValue.Param[0].DF, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "capacitance_B", "double", FH_ai_6000hlValue.Param[1].Cu, FH_ai_6000hlValue.Param[1].C, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 5, "dielectricLoss_B", "double", "%", FH_ai_6000hlValue.Param[1].DF, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 6, "capacitance_C", "double", FH_ai_6000hlValue.Param[2].Cu, FH_ai_6000hlValue.Param[2].C, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 7, "dielectricLoss_C", "double", "%", FH_ai_6000hlValue.Param[2].DF, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 8, "capacitance_D", "double", FH_ai_6000hlValue.Param[3].Cu, FH_ai_6000hlValue.Param[3].C, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 9, "dielectricLoss_D", "double", "%", FH_ai_6000hlValue.Param[3].DF, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 
