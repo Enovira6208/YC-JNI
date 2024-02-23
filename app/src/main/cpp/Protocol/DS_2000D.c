@@ -151,51 +151,33 @@ char *DS_2000DWifiSend(void)
 
     char *str;
     cJSON *cjson_all = NULL;
-    cJSON *cjson_array = NULL;
-    cJSON *cjson_request = NULL;
-    cJSON *cjson_services = NULL;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_data1 = NULL;
+    cJSON *cjson_body = NULL;
+    cJSON *cjson_datas = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_data1 = cJSON_CreateObject();
     cjson_all = cJSON_CreateObject();
-    cjson_request = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-    cjson_services = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_request, "deviceId", "DS_2000D");
-    cJSON_AddItemToObject(cjson_all, "devices", cjson_array);
-    cJSON_AddItemToObject(cjson_array, "request", cjson_request);
-
-    cJSON_AddNumberToObject(cjson_data1, "X_scImpPercent_A", DS_2000DValue.ukj_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_scImpPercent_B", DS_2000DValue.ukj_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_scImpPercent_C", DS_2000DValue.ukj_c);
-    cJSON_AddNumberToObject(cjson_data1, "X_impedance_A", DS_2000DValue.zkj_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_impedance_B", DS_2000DValue.zkj_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_impedance_C", DS_2000DValue.zkj_c);
-    cJSON_AddNumberToObject(cjson_data1, "X_reactance_A", DS_2000DValue.xkj_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_reactance_B", DS_2000DValue.xkj_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_reactance_C", DS_2000DValue.xkj_c);
-    cJSON_AddNumberToObject(cjson_data1, "X_inductance_A", DS_2000DValue.lkj_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_inductance_B", DS_2000DValue.lkj_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_inductance_C", DS_2000DValue.lkj_c);
-    cJSON_AddNumberToObject(cjson_data1, "X_power_A", DS_2000DValue.power_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_power_B", DS_2000DValue.power_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_power_C", DS_2000DValue.power_c);
-    cJSON_AddNumberToObject(cjson_data1, "X_voltage_A", DS_2000DValue.voltage_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_voltage_B", DS_2000DValue.voltage_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_voltage_C", DS_2000DValue.voltage_c);
-    cJSON_AddNumberToObject(cjson_data1, "X_current_A", DS_2000DValue.current_a);
-    cJSON_AddNumberToObject(cjson_data1, "X_current_B", DS_2000DValue.current_b);
-    cJSON_AddNumberToObject(cjson_data1, "X_current_C", DS_2000DValue.current_c);
-
-    cJSON_AddItemToArray(cjson_services, cjson_data);
-    cJSON_AddItemToObject(cjson_data, "data", cjson_data1);
-    cJSON_AddStringToObject(cjson_data, "eventTime", c_time_string);
-    cJSON_AddStringToObject(cjson_data, "serviceId", "dynamicAttribute");
-    cJSON_AddItemToObject(cjson_request, "services", cjson_services);
+    cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_B", DS_2000DValue.ukj_b);
+    cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_C", DS_2000DValue.ukj_c);
+    cJSON_AddNumberToObject(cjson_all, "X_impedance_A", DS_2000DValue.zkj_a);
+    cJSON_AddNumberToObject(cjson_all, "X_impedance_B", DS_2000DValue.zkj_b);
+    cJSON_AddNumberToObject(cjson_all, "X_impedance_C", DS_2000DValue.zkj_c);
+    cJSON_AddNumberToObject(cjson_all, "X_reactance_A", DS_2000DValue.xkj_a);
+    cJSON_AddNumberToObject(cjson_all, "X_reactance_B", DS_2000DValue.xkj_b);
+    cJSON_AddNumberToObject(cjson_all, "X_reactance_C", DS_2000DValue.xkj_c);
+    cJSON_AddNumberToObject(cjson_all, "X_inductance_A", DS_2000DValue.lkj_a);
+    cJSON_AddNumberToObject(cjson_all, "X_inductance_B", DS_2000DValue.lkj_b);
+    cJSON_AddNumberToObject(cjson_all, "X_inductance_C", DS_2000DValue.lkj_c);
+    cJSON_AddNumberToObject(cjson_all, "X_power_A", DS_2000DValue.power_a);
+    cJSON_AddNumberToObject(cjson_all, "X_power_B", DS_2000DValue.power_b);
+    cJSON_AddNumberToObject(cjson_all, "X_power_C", DS_2000DValue.power_c);
+    cJSON_AddNumberToObject(cjson_all, "X_voltage_A", DS_2000DValue.voltage_a);
+    cJSON_AddNumberToObject(cjson_all, "X_voltage_B", DS_2000DValue.voltage_b);
+    cJSON_AddNumberToObject(cjson_all, "X_voltage_C", DS_2000DValue.voltage_c);
+    cJSON_AddNumberToObject(cjson_all, "X_current_A", DS_2000DValue.current_a);
+    cJSON_AddNumberToObject(cjson_all, "X_current_B", DS_2000DValue.current_b);
+    cJSON_AddNumberToObject(cjson_all, "X_current_C", DS_2000DValue.current_c);
 
     str = cJSON_PrintUnformatted(cjson_all);
 

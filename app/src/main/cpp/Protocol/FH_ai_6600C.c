@@ -139,7 +139,7 @@ char *FH_ai_6600CWifiSend(void)
     PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  0, FH_ai_6600CValue.testmode);
     PUBLIC_JsonArrayLoading(cjson_array, 2, "capacitance", "double", FH_ai_6600CValue.xUnit, FH_ai_6600CValue.x, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 3, "voltage", "double", FH_ai_6600CValue.uUnit, FH_ai_6600CValue.u, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "electricity", "double", FH_ai_6600CValue.iUnit, FH_ai_6600CValue.i, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 4, "current", "double", FH_ai_6600CValue.iUnit, FH_ai_6600CValue.i, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 5, "frequency", "double", FH_ai_6600CValue.fjUnit, FH_ai_6600CValue.fj, "null");
     PUBLIC_JsonArrayLoading(cjson_array, 6, "interferenceElectricity", "double", FH_ai_6600CValue.ijUnit,   FH_ai_6600CValue.ij, "null");
 

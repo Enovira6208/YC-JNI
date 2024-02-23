@@ -719,69 +719,41 @@ char *FH_ai_6106sRecvMessage(uint8_t *buff, uint16_t size)
  */
 char *FH_ai_6106sBleSend(void)
 {
-    time_t current_time;
-    char *c_time_string;
-    /* 获取当前时间 */
-    current_time = time(NULL);
-    /* 转换为本地时间格式 */
-    c_time_string = ctime(&current_time);
-
     char *str;
     cJSON *cjson_all = NULL;
-    cJSON *cjson_array = NULL;
-    cJSON *cjson_request = NULL;
-    cJSON *cjson_services = NULL;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_data1 = NULL;
-
-    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_data1 = cJSON_CreateObject();
     cjson_all = cJSON_CreateObject();
-    cjson_request = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-    cjson_services = cJSON_CreateArray();
+    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
 
-    cJSON_AddStringToObject(cjson_request, "deviceId", "FH_ai_6106s");
-    cJSON_AddItemToObject(cjson_all, "devices", cjson_array);
-    cJSON_AddItemToObject(cjson_array, "request", cjson_request);
+    cJSON_AddNumberToObject(cjson_all, "Ix_A", FH_ai_6106s_Part4Value.Data[0].ix);
+    cJSON_AddNumberToObject(cjson_all, "angle_A", FH_ai_6106s_Part4Value.Data[0].A);
+    cJSON_AddNumberToObject(cjson_all, "Ir1p_A", FH_ai_6106s_Part4Value.Data[0].irlp);
+    cJSON_AddNumberToObject(cjson_all, "Ixp_A", FH_ai_6106s_Part4Value.Data[0].ixp);
+    cJSON_AddNumberToObject(cjson_all, "Ir_A", FH_ai_6106s_Part4Value.Data[0].ir);
+    cJSON_AddNumberToObject(cjson_all, "Irp_A", FH_ai_6106s_Part4Value.Data[0].irp);
+    cJSON_AddNumberToObject(cjson_all, "Ic1p_A", FH_ai_6106s_Part4Value.Data[0].iclp);
+    cJSON_AddNumberToObject(cjson_all, "Ir3p_A", FH_ai_6106s_Part4Value.Data[0].i3);
 
-    cJSON_AddNumberToObject(cjson_data1, "Ix_A", FH_ai_6106s_Part4Value.Data[0].ix);
-    cJSON_AddNumberToObject(cjson_data1, "angle_A", FH_ai_6106s_Part4Value.Data[0].A);
-    cJSON_AddNumberToObject(cjson_data1, "Irlp_A", FH_ai_6106s_Part4Value.Data[0].irlp);
-    cJSON_AddNumberToObject(cjson_data1, "Ixp_A", FH_ai_6106s_Part4Value.Data[0].ixp);
-    cJSON_AddNumberToObject(cjson_data1, "Ir_A", FH_ai_6106s_Part4Value.Data[0].ir);
-    cJSON_AddNumberToObject(cjson_data1, "Irp_A", FH_ai_6106s_Part4Value.Data[0].irp);
-    cJSON_AddNumberToObject(cjson_data1, "Iclp_A", FH_ai_6106s_Part4Value.Data[0].iclp);
-    cJSON_AddNumberToObject(cjson_data1, "Ir3p_A", FH_ai_6106s_Part4Value.Data[0].i3);
+    cJSON_AddNumberToObject(cjson_all, "Ix_B", FH_ai_6106s_Part4Value.Data[1].ix);
+    cJSON_AddNumberToObject(cjson_all, "Ixp_B", FH_ai_6106s_Part4Value.Data[1].A);
+    cJSON_AddNumberToObject(cjson_all, "Ir_B", FH_ai_6106s_Part4Value.Data[1].irlp);
+    cJSON_AddNumberToObject(cjson_all, "Ir1p_B", FH_ai_6106s_Part4Value.Data[1].ixp);
+    cJSON_AddNumberToObject(cjson_all, "Irp_B", FH_ai_6106s_Part4Value.Data[1].ir);
+    cJSON_AddNumberToObject(cjson_all, "Ic1p_B", FH_ai_6106s_Part4Value.Data[1].irp);
+    cJSON_AddNumberToObject(cjson_all, "Ir3p_B", FH_ai_6106s_Part4Value.Data[1].iclp);
+    cJSON_AddNumberToObject(cjson_all, "angle_B", FH_ai_6106s_Part4Value.Data[1].i3);
 
-    cJSON_AddNumberToObject(cjson_data1, "Ix_B", FH_ai_6106s_Part4Value.Data[1].ix);
-    cJSON_AddNumberToObject(cjson_data1, "Ixp_B", FH_ai_6106s_Part4Value.Data[1].A);
-    cJSON_AddNumberToObject(cjson_data1, "Ir_B", FH_ai_6106s_Part4Value.Data[1].irlp);
-    cJSON_AddNumberToObject(cjson_data1, "Irlp_B", FH_ai_6106s_Part4Value.Data[1].ixp);
-    cJSON_AddNumberToObject(cjson_data1, "Irp_B", FH_ai_6106s_Part4Value.Data[1].ir);
-    cJSON_AddNumberToObject(cjson_data1, "Iclp_B", FH_ai_6106s_Part4Value.Data[1].irp);
-    cJSON_AddNumberToObject(cjson_data1, "Ir3p_B", FH_ai_6106s_Part4Value.Data[1].iclp);
-    cJSON_AddNumberToObject(cjson_data1, "angle_B", FH_ai_6106s_Part4Value.Data[1].i3);
+    cJSON_AddNumberToObject(cjson_all, "Ix_C", FH_ai_6106s_Part4Value.Data[2].ix);
+    cJSON_AddNumberToObject(cjson_all, "Ixp_C", FH_ai_6106s_Part4Value.Data[2].A);
+    cJSON_AddNumberToObject(cjson_all, "Ir_C", FH_ai_6106s_Part4Value.Data[2].irlp);
+    cJSON_AddNumberToObject(cjson_all, "Ir1p_C", FH_ai_6106s_Part4Value.Data[2].ixp);
+    cJSON_AddNumberToObject(cjson_all, "Irp_C", FH_ai_6106s_Part4Value.Data[2].ir);
+    cJSON_AddNumberToObject(cjson_all, "Ic1p_C", FH_ai_6106s_Part4Value.Data[2].irp);
+    cJSON_AddNumberToObject(cjson_all, "Ir3p_C", FH_ai_6106s_Part4Value.Data[2].iclp);
+    cJSON_AddNumberToObject(cjson_all, "angle_C", FH_ai_6106s_Part4Value.Data[2].i3);
 
-    cJSON_AddNumberToObject(cjson_data1, "Ix_C", FH_ai_6106s_Part4Value.Data[2].ix);
-    cJSON_AddNumberToObject(cjson_data1, "Ixp_C", FH_ai_6106s_Part4Value.Data[2].A);
-    cJSON_AddNumberToObject(cjson_data1, "Ir_C", FH_ai_6106s_Part4Value.Data[2].irlp);
-    cJSON_AddNumberToObject(cjson_data1, "Irlp_C", FH_ai_6106s_Part4Value.Data[2].ixp);
-    cJSON_AddNumberToObject(cjson_data1, "Irp_C", FH_ai_6106s_Part4Value.Data[2].ir);
-    cJSON_AddNumberToObject(cjson_data1, "Iclp_C", FH_ai_6106s_Part4Value.Data[2].irp);
-    cJSON_AddNumberToObject(cjson_data1, "Ir3p_C", FH_ai_6106s_Part4Value.Data[2].iclp);
-    cJSON_AddNumberToObject(cjson_data1, "angle_C", FH_ai_6106s_Part4Value.Data[2].i3);
-
-    cJSON_AddNumberToObject(cjson_data1, "power_A", FH_ai_6106s_Part4Value.Data[0].pl);
-    cJSON_AddNumberToObject(cjson_data1, "power_B", FH_ai_6106s_Part4Value.Data[1].pl);
-    cJSON_AddNumberToObject(cjson_data1, "power_C", FH_ai_6106s_Part4Value.Data[2].pl);
-
-    cJSON_AddItemToArray(cjson_services, cjson_data);
-    cJSON_AddItemToObject(cjson_data, "data", cjson_data1);
-    cJSON_AddStringToObject(cjson_data, "eventTime", c_time_string);
-    cJSON_AddStringToObject(cjson_data, "serviceId", "dynamicAttribute");
-    cJSON_AddItemToObject(cjson_request, "services", cjson_services);
+    cJSON_AddNumberToObject(cjson_all, "power_A", FH_ai_6106s_Part4Value.Data[0].pl);
+    cJSON_AddNumberToObject(cjson_all, "power_B", FH_ai_6106s_Part4Value.Data[1].pl);
+    cJSON_AddNumberToObject(cjson_all, "power_C", FH_ai_6106s_Part4Value.Data[2].pl);
 
     str = cJSON_PrintUnformatted(cjson_all);
 

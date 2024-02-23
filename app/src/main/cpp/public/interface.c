@@ -203,7 +203,6 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
     char *str1;
     cJSON *cjson_test = NULL;
     cJSON *cjson_data = NULL;
-    cJSON *cjson_request = NULL;
     cJSON *cjson_params = NULL;
     cJSON *cjson_channelConfig = NULL;
 
@@ -463,8 +462,6 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
     cjson_data = cJSON_CreateObject();
-    cjson_request = cJSON_CreateObject();
-    cjson_params = cJSON_CreateObject();
     cjson_channelConfig = cJSON_CreateObject();
 
     cJSON_AddStringToObject(cjson_channelConfig, "comMode", INTERFACE_Info.sendMsg.comMode);
@@ -477,30 +474,9 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
     cJSON_AddNumberToObject(cjson_data, "dataSize", INTERFACE_Info.sendMsg.dataSize);
     cJSON_AddNumberToObject(cjson_data, "timeout", 5000);
 
-    cJSON_AddStringToObject(cjson_request, "method", "transmission");
-
-    cJSON_AddItemToObject(cjson_request, "params", cjson_params);
-
-    cJSON_AddItemToObject(cjson_params, "channelConfig", cjson_channelConfig);
-    cJSON_AddItemToObject(cjson_params, "data", cjson_data);
-
-    cJSON_AddItemToObject(cjson_test, "request", cjson_request);
+    cJSON_AddItemToObject(cjson_test, "channelConfig", cjson_channelConfig);
+    cJSON_AddItemToObject(cjson_test, "data", cjson_data);
     /* 添加一条整数类型的JSON数据(添加一个链表节点) */
-
-    str1 = cJSON_PrintUnformatted(cjson_request);
-
-    md5_state_t state;
-    md5_byte_t digest[16];
-    char hex_output[16 * 2 + 1];
-    int di;
-    md5_init(&state);
-    md5_append(&state, (const md5_byte_t *)str1, strlen(str1));
-    md5_finish(&state, digest);
-    for (di = 0; di < 16; ++di)
-        sprintf(hex_output + di * 2, "%02x", digest[di]);
-
-    cJSON_AddNumberToObject(cjson_test, "mid", a);
-    cJSON_AddStringToObject(cjson_test, "sign", hex_output);
 
     str = cJSON_PrintUnformatted(cjson_test);
 
