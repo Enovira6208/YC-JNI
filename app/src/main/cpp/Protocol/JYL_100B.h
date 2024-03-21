@@ -11,16 +11,14 @@
 
 #include "../public/public.h"
 
-typedef struct
-{
+typedef struct {
     uint8_t I_Info;
     uint8_t I_Data[5];
     uint8_t R_Data[7];
 } JYL_100BDataType;
 
 
-typedef struct
-{
+typedef struct {
     uint8_t Head;
     uint8_t Addr[2];
     uint8_t Length[2];
@@ -30,10 +28,8 @@ typedef struct
     uint8_t Tail;
 } JYL_100BMessageType;
 
-typedef struct
-{
+typedef struct {
     double R;
-    uint8_t Ruint[2];                                  /* 单位 */
 } JYL_100BValueType;
 
 uint16_t JYL_100BReadData(uint8_t *buff);

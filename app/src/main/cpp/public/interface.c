@@ -271,12 +271,12 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
 
         /* 设备主动上报数据 所以不用发命令 */
         case INTERFACE_DEVICE_CODE_HCYZ_IV:
+            // INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             size = 0;
             break;
 
         case INTERFACE_DEVICE_CODE_DS_2000D:
             size = DS_2000DReadData(INTERFACE_Info.sendMsg.dataMsg, cnt);
-            INTERFACE_Info.sendMsg.dataFormat = "ASCLL";
             break;
 
         case INTERFACE_DEVICE_CODE_JYR_20S:
@@ -472,7 +472,7 @@ unsigned char *InterfaceJsonMagLoading(unsigned char *jsonBuff, int32_t cnt, int
     cJSON_AddStringToObject(cjson_data, "dataMsg", INTERFACE_Info.sendMsg.dataMsg);
     cJSON_AddStringToObject(cjson_data, "dataFormat", INTERFACE_Info.sendMsg.dataFormat);
     cJSON_AddNumberToObject(cjson_data, "dataSize", INTERFACE_Info.sendMsg.dataSize);
-    cJSON_AddNumberToObject(cjson_data, "timeout", 5000);
+    cJSON_AddNumberToObject(cjson_data, "timeout", 10000);
 
     cJSON_AddItemToObject(cjson_test, "channelConfig", cjson_channelConfig);
     cJSON_AddItemToObject(cjson_test, "data", cjson_data);
@@ -520,7 +520,7 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
 
     // memcpy(dataBuff, cjson_payload->valuestring, strlen(cjson_payload->valuestring));
 
-    unsigned char hexbuff[500];
+    unsigned char hexbuff[4000];
     if (strstr(INTERFACE_Info.sendMsg.dataFormat, "HEX") != NULL) {
         PUBLIC_AscllToHex(hexbuff, dataBuff, strlen(dataBuff));
         printf("InterfaceDeviceDataAnalysis HEX %d \n", strlen(dataBuff) / 2);
@@ -567,7 +567,7 @@ unsigned char *InterfaceDeviceDataAnalysis(unsigned char *dataBuff, int32_t size
             return HCYZ_ivRecvMessage(hexbuff, size);
 
         case INTERFACE_DEVICE_CODE_DS_2000D:
-            return DS_2000DRecvMessage(dataBuff, size);
+            return DS_2000DRecvMessage(hexbuff, size);
 
         case INTERFACE_DEVICE_CODE_JYR_20S:
             return JYR_20sRecvMessage(hexbuff, size);

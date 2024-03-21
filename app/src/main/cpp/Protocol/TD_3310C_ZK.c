@@ -29,10 +29,9 @@ uint16_t TD_3310C_ZK_ReadData(uint8_t *ascllBuff, uint8_t cnt)
 
 char *TD_3310C_ZK_SendData(ZK_DataValue value)
 {
-    char *str;
+    char *str = NULL;
     char time[20];
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     sprintf(&time[0], "%04d", (int)(value.time[0] | (value.time[1] << 8)));
     sprintf(&time[4], "%02d", (int)(value.time[2]));
@@ -75,49 +74,23 @@ char *TD_3310C_ZK_SendData(ZK_DataValue value)
         sprintf(Shorting_winding, "%s", "低压");
     }
 
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
 
-    cJSON_AddStringToObject(cjson_data, "device", "TD_3310C_ZK");
+    cJSON_AddStringToObject(cjson_all, "testTime", time);
+    cJSON_AddStringToObject(cjson_all, "testMethod", testMethod);
+    cJSON_AddStringToObject(cjson_all, "testWay", testWay);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
+    // cJSON_AddNumberToObject(cjson_all, "X_scImpPercent_A", DS_2000DValue.ukj_a);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "null", 0, time);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "testMethod", "string", "null",  0, testMethod);
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "testWay", "string", "null",  0, testWay);
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "Pressure_winding", "string", "null",  0, Pressure_winding);
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "Shorting_winding", "string", "null",  0, Shorting_winding);
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "position", "int", "null",  (int)value.position, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "frequency", "double", "null",  value.frequency, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "AX_electricity", "double", "null",  value.AX_electricity, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "AX_impedance", "double", "null",  value.AX_impedance, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 10, "AX_percent", "double", "null",  value.AX_percent, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 11, "AX_phase_position", "double", "null",  value.AX_phase_position, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 12, "AX_power", "double", "null",  value.AX_power, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 13, "AX_reactance", "double", "null",  value.AX_reactance, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 14, "AX_voltage", "double", "null",  value.AX_voltage, "");
+    // cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 15, "BX_electricity", "double", "null",  value.BX_electricity, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 16, "BX_impedance", "double", "null",  value.BX_impedance, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 17, "BX_percent", "double", "null",  value.BX_percent, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 18, "BX_phase_position", "double", "null",  value.BX_phase_position, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 19, "BX_power", "double", "null",  value.BX_power, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 20, "BX_reactance", "double", "null",  value.BX_reactance, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 21, "BX_voltage", "double", "null",  value.BX_voltage, "");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 22, "CX_electricity", "double", "null",  value.CX_electricity, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 23, "CX_impedance", "double", "null",  value.CX_impedance, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 24, "CX_percent", "double", "null",  value.CX_percent, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 25, "CX_phase_position", "double", "null",  value.CX_phase_position, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 26, "CX_power", "double", "null",  value.CX_power, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 27, "CX_reactance", "double", "null",  value.CX_reactance, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 28, "CX_voltage", "double", "null",  value.CX_voltage, "");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 29, "three_phrase_loss", "double", "null",  value.three_phrase_loss, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 30, "Three_phase_impedance_voltage", "double", "null",  value.Three_phase_impedance_voltage, "");
-    PUBLIC_JsonArrayLoading(cjson_array, 31, "Three_phase_impedance", "double", "null",  value.Three_phase_impedance, "");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
+    // str = cJSON_PrintUnformatted(cjson_data);
 //    printf("%s\r\n", str);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
@@ -125,7 +98,7 @@ char *TD_3310C_ZK_SendData(ZK_DataValue value)
 
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

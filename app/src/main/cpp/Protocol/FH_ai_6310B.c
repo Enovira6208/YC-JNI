@@ -93,9 +93,18 @@ double FH_ai_6310bStrAnaly(uint8_t *buff)
  */
 char *FH_ai_6310bRecvMessage(uint8_t *buff, uint16_t size)
 {
-
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == '#') {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != '#') {
+        return NULL;
+    }
     char read[] = "READ";
-    FH_ai_6310bMessageType *recv = (FH_ai_6310bMessageType *) buff;
+    FH_ai_6310bMessageType *recv = (FH_ai_6310bMessageType *) (buff + dd);
     FH_ai_6310bMessageDataType messageData;
 
     memcpy(messageData.Name, recv->Data, sizeof(FH_ai_6310bMessageDataType));
@@ -137,9 +146,9 @@ char *FH_ai_6310bwifiSend(void)
 
     // PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", FH_ai_6310bValue.Uuint, FH_ai_6310bValue.U, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 2, "electricity", "double", FH_ai_6310bValue.Iuint, FH_ai_6310bValue.I, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6310bValue.Ruint, FH_ai_6310bValue.R, "null");
 
     PUBLIC_JsonArrayLoading(cjson_array, 1, "current", "double", FH_ai_6310bValue.Iuint, FH_ai_6310bValue.I, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance", "double", FH_ai_6310bValue.Ruint, FH_ai_6310bValue.R, "null");
 
     cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
     str = cJSON_PrintUnformatted(cjson_data);

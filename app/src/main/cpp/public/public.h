@@ -15,7 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
- #include <android/log.h>
+#include <android/log.h>
 #include "cJSON.h"
 
 #define LOG_TAG "CPPLOG"
@@ -107,4 +107,9 @@ void PUBLIC_JsonArrayLoading(cJSON *array, uint8_t cnt, char *name, char *dataty
                              char *unit, double value, char *valueStr);
 
 char *PUBLIC_SD_ProtocolUnitAnalysis(uint8_t value);
+
+float Char2Float2(unsigned char *chReceive);
+float Char2Float(unsigned char *chReceive);
+void Float2Char (float fSend, unsigned char *chSend);
+unsigned short CRC16(unsigned char *Frame, int Length);
 #endif // _PUBLIC_H_

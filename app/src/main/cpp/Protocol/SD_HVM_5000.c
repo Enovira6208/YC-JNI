@@ -11,7 +11,7 @@ static char returnJsonDataBuff[1000];
 
 /* 苏州海沃绝缘电阻 */
 #include "SD_HVM_5000.h"
-
+#include <string.h>
 SD_HVM_5000ValueType SD_HVM_5000Value;
 
 char *SD_HVM_5000Send(void);
@@ -54,7 +54,25 @@ uint16_t SD_HVM_5000ReadData(uint8_t *ascllBuff)
  */
 char *SD_HVM_5000RecvMessage(uint8_t *buff, uint16_t size)
 {
-    SD_HVM_5000MessageType *recv = (SD_HVM_5000MessageType *) buff;
+    /*去除包前面的干扰数据*/
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x42 && buff[k + 1] == 0x45 && buff[k + 2] == 0x47) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x42) {
+        return NULL;
+    }
+    SD_HVM_5000MessageType *recv = (SD_HVM_5000MessageType *) (buff + dd);
+    /*判断crc是否正确*/
+    uint32_t b;
+    b = (recv->DataLength[3] << 24) | (recv->DataLength[2] << 16) | (recv->DataLength[1] << 8) | recv->DataLength[0];
+    unsigned short crc = CRC16(buff + dd, 13 + b);
+
+    if ((buff + dd)[(int)b + 14] != ((crc & 0xff00) >> 8) || (buff + dd)[(int)b + 13] != (crc & 0xff)) {
+        return NULL;
+    }
 
     if (recv->Head[0] != 0x42)
         return NULL;
@@ -71,21 +89,21 @@ char *SD_HVM_5000RecvMessage(uint8_t *buff, uint16_t size)
     if (recv->Cmd[1] != 0x00)
         return NULL;
 
-    SD_HVM_5000Value.voltage = PUBLIC_IEEE754_32(recv->Data[7], recv->Data[8], recv->Data[9], recv->Data[10]);
+    SD_HVM_5000Value.voltage = Char2Float(recv->Data + 7);
     memcpy(SD_HVM_5000Value.Vuint, PUBLIC_SD_ProtocolUnitAnalysis(recv->Data[11]), sizeof(SD_HVM_5000Value.Vuint));
 
-    SD_HVM_5000Value.resistance_15s = PUBLIC_IEEE754_32(recv->Data[12], recv->Data[13], recv->Data[14], recv->Data[15]);
+    SD_HVM_5000Value.resistance_15s = Char2Float(recv->Data + 12);
     memcpy(SD_HVM_5000Value.Ruint_15s, PUBLIC_SD_ProtocolUnitAnalysis(recv->Data[24]), sizeof(SD_HVM_5000Value.Ruint_15s));
 
-    SD_HVM_5000Value.resistance_60s = PUBLIC_IEEE754_32(recv->Data[16], recv->Data[17], recv->Data[18], recv->Data[19]);
+    SD_HVM_5000Value.resistance_60s = Char2Float(recv->Data + 16);
     memcpy(SD_HVM_5000Value.Ruint_60s, PUBLIC_SD_ProtocolUnitAnalysis(recv->Data[24]), sizeof(SD_HVM_5000Value.Ruint_60s));
 
-    SD_HVM_5000Value.resistance_10min = PUBLIC_IEEE754_32(recv->Data[20], recv->Data[21], recv->Data[22], recv->Data[23]);
+    SD_HVM_5000Value.resistance_10min = Char2Float(recv->Data + 20);
     memcpy(SD_HVM_5000Value.Ruint_10min, PUBLIC_SD_ProtocolUnitAnalysis(recv->Data[24]), sizeof(SD_HVM_5000Value.Ruint_10min));
 
-    SD_HVM_5000Value.absorptance = PUBLIC_IEEE754_32(recv->Data[25], recv->Data[26], recv->Data[27], recv->Data[28]);
+    SD_HVM_5000Value.absorptance = Char2Float(recv->Data + 25);
 
-    SD_HVM_5000Value.polarizationIndex = PUBLIC_IEEE754_32(recv->Data[29], recv->Data[30], recv->Data[31], recv->Data[32]);
+    SD_HVM_5000Value.polarizationIndex = Char2Float(recv->Data + 29);
 
     /* 发送数据 */
     return SD_HVM_5000Send();
@@ -97,40 +115,30 @@ char *SD_HVM_5000RecvMessage(uint8_t *buff, uint16_t size)
 char *SD_HVM_5000Send(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
 
-    cJSON_AddStringToObject(cjson_data, "device", "SD_HVM_5000");
+    if (strcmp(SD_HVM_5000Value.Ruint_15s, "GΩ") == 0) {
+        SD_HVM_5000Value.resistance_15s = SD_HVM_5000Value.resistance_15s * 1000;
+    } else if (strcmp(SD_HVM_5000Value.Ruint_15s, "TΩ") == 0) {
+        SD_HVM_5000Value.resistance_15s = SD_HVM_5000Value.resistance_15s * 1000000;
+    }
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "voltage", "double", SD_HVM_5000Value.Vuint, SD_HVM_5000Value.voltage, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "resistanceR15", "double", SD_HVM_5000Value.Ruint_15s, SD_HVM_5000Value.resistance_15s, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistanceR60", "double", SD_HVM_5000Value.Ruint_60s, SD_HVM_5000Value.resistance_60s, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "resistanceR600", "double", SD_HVM_5000Value.Ruint_10min, SD_HVM_5000Value.resistance_10min, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "absorptance", "double", "",   SD_HVM_5000Value.absorptance, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "polarizationIndex", "double", "", SD_HVM_5000Value.polarizationIndex, "null");
+    cJSON_AddNumberToObject(cjson_all, "testVoltage", SD_HVM_5000Value.voltage);
+    cJSON_AddNumberToObject(cjson_all, "resistanceR15", SD_HVM_5000Value.resistance_15s);
+    cJSON_AddNumberToObject(cjson_all, "resistanceR60", SD_HVM_5000Value.resistance_60s);
+    cJSON_AddNumberToObject(cjson_all, "resistanceR600", SD_HVM_5000Value.resistance_10min);
+    cJSON_AddNumberToObject(cjson_all, "absorptance", SD_HVM_5000Value.absorptance);
+    cJSON_AddNumberToObject(cjson_all, "polarizationIndex", SD_HVM_5000Value.polarizationIndex);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testing_voltage", "double", SD_HVM_5000Value.Vuint, SD_HVM_5000Value.voltage, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "resistanceR15", "double", SD_HVM_5000Value.Ruint_15s, SD_HVM_5000Value.resistance_15s, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistanceR60", "double", SD_HVM_5000Value.Ruint_60s, SD_HVM_5000Value.resistance_60s, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "resistanceR600", "double", SD_HVM_5000Value.Ruint_10min, SD_HVM_5000Value.resistance_10min, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "absorptance", "double", "",   SD_HVM_5000Value.absorptance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "Polarization_index", "double", "", SD_HVM_5000Value.polarizationIndex, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-    //printf("%s\r\n", str);
-
+    str = cJSON_PrintUnformatted(cjson_all);
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

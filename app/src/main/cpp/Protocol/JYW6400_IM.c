@@ -28,7 +28,16 @@ uint16_t JYW6400_IMReadData(uint8_t *ascllBuff)
  */
 char *JYW6400_IMRecvMessage(uint8_t *buff, uint16_t size)
 {
-    JYW6400_IMMessageType *recv = (JYW6400_IMMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x42 && buff[k + 1] == 0x45 && buff[k + 2] == 0x47) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x42) {
+        return NULL;
+    }
+    JYW6400_IMMessageType *recv = (JYW6400_IMMessageType *) (buff + dd);
 
     if ((recv->Head[0] != 0x42) || (recv->Head[1] != 0x45) || (recv->Head[2] != 0x47))
         return NULL;

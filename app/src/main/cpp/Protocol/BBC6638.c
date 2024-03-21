@@ -3,7 +3,7 @@
  * @Author:  chuhouzhong
  * @Copyright: 福建省亿鑫海信息科技有限公司
  * @Date: 2022-03-03 16:24:48
- * @LastEditTime: 2022-09-02 16:42:17
+ * @LastEditTime: 2024-03-21 09:24:12
  * @LastEditors:
  */
 
@@ -78,10 +78,21 @@ double BBC6638Count(uint8_t *buff, uint8_t cnt)
  */
 char *BBC6638RecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x9C) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0x9C) {
+        return NULL;
+    }
+
     char *index1, *index2;
     uint8_t value1;
 
-    BBC6638MessageType *recv = (BBC6638MessageType *) buff;
+    BBC6638MessageType *recv = (BBC6638MessageType *) (buff + dd);
 
     if (recv->Head == 0x0A)
         return "succeed";
@@ -156,36 +167,33 @@ char *BBC6638RecvMessage(uint8_t *buff, uint16_t size)
 char *BBC6638Send(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
-
-    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-
-    cJSON_AddStringToObject(cjson_data, "device", "BBC6638");
+    cJSON *cjson_all = NULL;
+    cjson_all = cJSON_CreateObject();
 
     // PUBLIC_JsonArrayLoading(cjson_array, 1, "voltageRatio_rated", "double", "%", BBC6638Value.voltageRatio_rated, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "voltageRatio_A", "double", "%", BBC6638Value.voltageRatio_A, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "difference_A", "double", "%", BBC6638Value.difference_A, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "voltageRatio_B", "double", "%", BBC6638Value.voltageRatio_B, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "difference_B", "double", "%", BBC6638Value.difference_B, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "voltageRatio_C", "double", "%", BBC6638Value.voltageRatio_C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "difference_C", "double", "%", BBC6638Value.difference_C, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 2, "voltageRatio_A", "double", "%", BBC6638Value.voltageRatio_A, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 3, "difference_A", "double", "%", BBC6638Value.difference_A, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 4, "voltageRatio_B", "double", "%", BBC6638Value.voltageRatio_B, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 5, "difference_B", "double", "%", BBC6638Value.difference_B, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 6, "voltageRatio_C", "double", "%", BBC6638Value.voltageRatio_C, "null");
+    // PUBLIC_JsonArrayLoading(cjson_array, 7, "difference_C", "double", "%", BBC6638Value.difference_C, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 7, "tranches", "int", "", BBC6638Value.tranches, "null");
     // PUBLIC_JsonArrayLoading(cjson_array, 8, "branching", "int", "", BBC6638Value.branching, "null");
 
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-    //printf("%s\r\n", str);
+    cJSON_AddNumberToObject(cjson_all, "change_AB", BBC6638Value.voltageRatio_A );
+    cJSON_AddNumberToObject(cjson_all, "error_AB", BBC6638Value.difference_A);
+    cJSON_AddNumberToObject(cjson_all, "change_BC", BBC6638Value.voltageRatio_B);
+    cJSON_AddNumberToObject(cjson_all, "error_BC", BBC6638Value.difference_B);
+    cJSON_AddNumberToObject(cjson_all, "change_AC", BBC6638Value.voltageRatio_C);
+    cJSON_AddNumberToObject(cjson_all, "error_AC", BBC6638Value.difference_C);
+
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

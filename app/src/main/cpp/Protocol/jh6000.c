@@ -143,9 +143,18 @@ char *JH6000_DataAnalysis(uint8_t *buffer, uint16_t size)
  */
 char *JH6000_RecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x65) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x65) {
+        return NULL;
+    }
     uint16_t crc, length;
     uint8_t tail;
-    JH6000_MessageType *recv = (JH6000_MessageType *)buff;
+    JH6000_MessageType *recv = (JH6000_MessageType *)(buff + dd);
 
     length = (recv->Length[0] << 8) | recv->Length[1];
     /* 防止数组越界 */
@@ -182,60 +191,40 @@ char *JH6000_RecvMessage(uint8_t *buff, uint16_t size)
 char *JH6000_SendData(void)
 {
     char *str;
-    char sendData[20];
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
-
-    for (uint8_t i = 0; i < 6; i++) {
-        sprintf(&sendData[i * 2], "%02X", JH6000_Value.DateTime[i]);
-    }
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
 
-    cJSON_AddStringToObject(cjson_data, "device", "JH6000");
+    cJSON_AddNumberToObject(cjson_all, "SO2", JH6000_Value.SO2);
+    cJSON_AddNumberToObject(cjson_all, "H2S", JH6000_Value.H2S);
+    cJSON_AddNumberToObject(cjson_all, "CO", JH6000_Value.CO);
+    cJSON_AddNumberToObject(cjson_all, "HF", JH6000_Value.HF);
+    cJSON_AddNumberToObject(cjson_all, "H2", JH6000_Value.H2);
+    cJSON_AddNumberToObject(cjson_all, "CF4", JH6000_Value.CF4);
+    cJSON_AddNumberToObject(cjson_all, "O2", JH6000_Value.O2);
+    cJSON_AddNumberToObject(cjson_all, "dewPoint", JH6000_Value.DewPoint);
+    cJSON_AddNumberToObject(cjson_all, "humidity", JH6000_Value.Humi);
+    cJSON_AddNumberToObject(cjson_all, "humidity_20C", JH6000_Value.Humi20);
+    cJSON_AddNumberToObject(cjson_all, "sf6PurityV", JH6000_Value.SF6_V);
+    cJSON_AddNumberToObject(cjson_all, "sf6purityW", JH6000_Value.SF6_W);
+    cJSON_AddNumberToObject(cjson_all, "cf4VolumeRatioV", JH6000_Value.CF4_V);
+    cJSON_AddNumberToObject(cjson_all, "cf4MassRatioW", JH6000_Value.CF4_W);
+    cJSON_AddNumberToObject(cjson_all, "airVolumeRatioV", JH6000_Value.AIR_V);
+    cJSON_AddNumberToObject(cjson_all, "airQualityRatioW", JH6000_Value.AIR_W);
+    cJSON_AddNumberToObject(cjson_all, "sf6Cf4PurityV", JH6000_Value.SF6_CF4_V);
+    cJSON_AddNumberToObject(cjson_all, "sf6Cf4PurityW", JH6000_Value.SF6_CF4_W);
+    cJSON_AddNumberToObject(cjson_all, "sf6N2PurityV", JH6000_Value.SF6_N2_V);
+    cJSON_AddNumberToObject(cjson_all, "sf6N2PurityW", JH6000_Value.SF6_N2_W);
+    cJSON_AddNumberToObject(cjson_all, "temperature", JH6000_Value.Temp);
+    cJSON_AddNumberToObject(cjson_all, "pressure_20C", JH6000_Value.MPA);
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "SerialNumber", "double", "null",  JH6000_Value.SerialNumber, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "DateTime", "string", "null",  0, sendData);
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "Status", "int", "null", JH6000_Value.Status, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "DeviceNumber", "string", "null",  0, JH6000_Value.DeviceNumber);
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "ExpertNumber", "int", "null",  JH6000_Value.ExpertNumber, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "SO2", "double", "null",   JH6000_Value.SO2, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "H2S", "double", "null",   JH6000_Value.H2S, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "CO", "double", "null", JH6000_Value.CO, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "HF", "double", "null", JH6000_Value.HF, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 10, "H2", "double", "null", JH6000_Value.H2, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 11, "CF4", "double", "null",   JH6000_Value.CF4, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 12, "NO", "double", "null", JH6000_Value.NO, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 13, "O2", "double", "null", JH6000_Value.O2, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 14, "Dew_point", "double", "null",  JH6000_Value.DewPoint, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 15, "humidity", "double", "RH%",   JH6000_Value.Humi, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 16, "Humidity_20_degrees", "double", "RH%", JH6000_Value.Humi20, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 17, "SF6_purity_V", "double", "null", JH6000_Value.SF6_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 18, "SF6_purity_W", "double", "null", JH6000_Value.SF6_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 19, "CF4_volume_ratio_V", "double", "null", JH6000_Value.CF4_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 20, "CF4_mass_ratio_W", "double", "null", JH6000_Value.CF4_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 21, "Temperature", "double", "℃",   JH6000_Value.Temp, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 22, "Pressure", "double", "null",   JH6000_Value.MPA, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 23, "Air_volume_ratio_V", "double", "null", JH6000_Value.AIR_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 24, "Air_quality_ratio_W", "double", "null", JH6000_Value.AIR_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 25, "SF6_CF4_purity_V", "double", "null", JH6000_Value.SF6_CF4_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 26, "SF6_CF4_purity_W", "double", "null", JH6000_Value.SF6_CF4_W, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 27, "SF6_N2_purity_V", "double", "null",  JH6000_Value.SF6_N2_V, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 28, "SF6_N2_purity_W", "double", "null",  JH6000_Value.SF6_N2_W, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
-//    printf("%s\r\n", str);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
-
+    cJSON_Delete(cjson_all);
     return returnJsonDataBuff;
 }

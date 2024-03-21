@@ -19,8 +19,7 @@
 #define JYR_40S_MEG_ADDRL           (0x46)
 
 
-typedef enum
-{
+typedef enum {
     JYR_40_ANALY_1 = 1,                         /* 单通道解析一个 */
     JYR_40_ANALY_2,                             /* 解析不带平衡率 */
     JYR_40_ANALY_3,                             /* 解析带平衡率参数 */
@@ -28,8 +27,7 @@ typedef enum
 }
 JYR_40sAnalyEnum;
 
-typedef enum
-{
+typedef enum {
     JYR_40S_WAY_SUNGLE_CHANNEL = 0x30,          /* 单通道 */
     JYR_40S_WAY_YN_THREE_PHASE,                 /* 三相 */
     JYR_40S_WAY_YN_THREE_PHASE_COMPEN,          /* 三相补偿 */
@@ -38,8 +36,7 @@ typedef enum
     JYR_40S_WAY_DY_PHASE_SELECTION,             /* DY选相 */
 } JYR_40sWayEnum;
 
-typedef struct
-{
+typedef struct {
     uint8_t AoSign;                             /* 标记 */
     uint8_t Ao[9];                              /* 电阻 */
     uint8_t BoSign;
@@ -59,8 +56,7 @@ typedef struct
 } JYR_40sDataType;
 
 
-typedef struct
-{
+typedef struct {
     uint8_t Head;
     uint8_t Addr[2];
     uint8_t Length[2];
@@ -73,8 +69,7 @@ typedef struct
     uint8_t Tail;
 } JYR_40sMessageType;
 
-typedef struct
-{
+typedef struct {
     uint8_t Way;                                    /* 实验方式 */
     uint8_t Sign;                                   /* 三相补偿中的阶段标志 */
     JYR_40sAnalyEnum AnalyEnum;

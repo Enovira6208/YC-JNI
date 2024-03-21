@@ -77,11 +77,11 @@ char *BYKC_2003Send(BYKC_2003ValueType *recv)
     cJSON_AddStringToObject(cjson_data, "device", "BYKC_2003");
 
     for (int i = 0; i < 3; i++) {
-        PUBLIC_JsonArrayLoading(cjson_array, i * 6, "electricity_A_state", "double", "", recv[i].electricity_A_state, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 1, "voltage_B_state", "double", "", recv[i].voltage_B_state, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 2, "electricity_B_state", "double", "", recv[i].electricity_B_state, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6, "current_A", "double", "", recv[i].electricity_A_state, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 1, "voltage_B", "double", "", recv[i].voltage_B_state, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 2, "current_B", "double", "", recv[i].electricity_B_state, "null");
         PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 3, "voltage_C", "double", "", recv[i].voltage_C, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 4, "electricity_C", "double", "", recv[i].electricity_C, "null");
+        PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 4, "current_C", "double", "", recv[i].electricity_C, "null");
         PUBLIC_JsonArrayLoading(cjson_array, i * 6 + 5, "voltage_A", "double", "", recv[i].voltage_A, "null");
     }
 
@@ -131,8 +131,19 @@ char *BYKC_2003DataAnalysis(BYKC_2003MessageType *recv)
  */
 char *BYKC_2003RecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0xAA || buff[k] == 0x55 ) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if ((dd == 0 && buff[0] != 0xAA) || (dd == 0 && buff[0] != 0x55)) {
+        return NULL;
+    }
+
     int length = 0;
-    BYKC_2003MessageType *recv = (BYKC_2003MessageType *)buff;
+    BYKC_2003MessageType *recv = (BYKC_2003MessageType *)(buff + dd);
 
     if (recv->sync[0] != 0xAA || recv->sync[0] != 0x55)
         printf("首字节不匹配\n");

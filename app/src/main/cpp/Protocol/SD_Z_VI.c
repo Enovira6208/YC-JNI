@@ -55,7 +55,16 @@ uint16_t SD_Z_VIReadData(uint8_t *ascllBuff)
  */
 char *SD_Z_VIRecvMessage(uint8_t *buff, uint16_t size)
 {
-    SD_Z_VIMessageType *recv = (SD_Z_VIMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x42 && buff[k + 1] == 0x45 && buff[k + 2] == 0x47) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x42) {
+        return NULL;
+    }
+    SD_Z_VIMessageType *recv = (SD_Z_VIMessageType *) (buff + dd);
 
     if (recv->Head[0] != 0x42)
         return NULL;
@@ -104,40 +113,21 @@ char *SD_Z_VIRecvMessage(uint8_t *buff, uint16_t size)
 char *SD_Z_VISend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
+    cJSON_AddNumberToObject(cjson_all, "testVoltage", SD_Z_VIValue.testVoltage);
+    cJSON_AddNumberToObject(cjson_all, "testCurrent", SD_Z_VIValue.testElectricity);
+    cJSON_AddNumberToObject(cjson_all, "voltagePercent75", SD_Z_VIValue.voltage_75);
+    cJSON_AddNumberToObject(cjson_all, "currentPercent75", SD_Z_VIValue.electricity_75);
 
-    cJSON_AddStringToObject(cjson_data, "device", "SD_Z_VI");
-
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "testTime", "string", "", 0, SD_Z_VIValue.testTime);
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "testVoltage", "double", SD_Z_VIValue.testVuint, SD_Z_VIValue.testVoltage, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "testElectricity", "double", SD_Z_VIValue.testEuint, SD_Z_VIValue.testElectricity, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage_75", "double", SD_Z_VIValue.Vuint_75, SD_Z_VIValue.voltage_75, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "electricity_75", "double", SD_Z_VIValue.Iuint_75,   SD_Z_VIValue.electricity_75, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "sustainTime", "double", SD_Z_VIValue.sustainTuint_75, SD_Z_VIValue.sustainTime, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "", 0, SD_Z_VIValue.testTime);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "testing_voltage", "double", SD_Z_VIValue.testVuint, SD_Z_VIValue.testVoltage, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "test_current", "double", SD_Z_VIValue.testEuint, SD_Z_VIValue.testElectricity, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "voltage_75_percent_value", "double", SD_Z_VIValue.Vuint_75, SD_Z_VIValue.voltage_75, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "current_75_percent_value", "double", SD_Z_VIValue.Iuint_75,   SD_Z_VIValue.electricity_75, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "Test_duration", "double", SD_Z_VIValue.sustainTuint_75, SD_Z_VIValue.sustainTime, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-    //printf("%s\r\n", str);
-
+    str = cJSON_PrintUnformatted(cjson_all);
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

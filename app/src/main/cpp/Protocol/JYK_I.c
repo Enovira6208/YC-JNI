@@ -85,8 +85,18 @@ double JYK_ICount(uint8_t *buff)
  */
 char *JYK_IRecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
 
-    JYK_IMessageType *recv = (JYK_IMessageType *) buff;
+    JYK_IMessageType *recv = (JYK_IMessageType *) (buff + dd);
     JYK_IData1Type Data1;
     JYK_IData2Type Data2;
 
@@ -124,33 +134,23 @@ char *JYK_IRecvMessage(uint8_t *buff, uint16_t size)
 char *JYK_ISend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
+    cJSON_AddNumberToObject(cjson_all, "transitionResistance1_A", JYK_IValue2.Ra);
+    cJSON_AddNumberToObject(cjson_all, "transitionResistance1_B", JYK_IValue2.Rb);
+    cJSON_AddNumberToObject(cjson_all, "transitionResistance1_C", JYK_IValue2.Rc);
+    cJSON_AddNumberToObject(cjson_all, "transitionTime_t1_A", JYK_IValue2.Time_a);
+    cJSON_AddNumberToObject(cjson_all, "transitionTime_t1_B", JYK_IValue2.Time_b);
+    cJSON_AddNumberToObject(cjson_all, "transitionTime_t1_C", JYK_IValue2.Time_c);
 
-    cJSON_AddStringToObject(cjson_data, "device", "JYK_I");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance_A", "double", "Ω", JYK_IValue2.Ra, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_B", "double", "Ω", JYK_IValue2.Rb, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance_C", "double", "Ω", JYK_IValue2.Rc, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "time_A", "double", "ms", JYK_IValue2.Time_a, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "time_B", "double", "ms", JYK_IValue2.Time_b, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "time_C", "double", "ms", JYK_IValue2.Time_c, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-    //printf("%s\r\n", str);
-
+    str = cJSON_PrintUnformatted(cjson_all);
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

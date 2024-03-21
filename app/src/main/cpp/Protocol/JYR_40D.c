@@ -57,8 +57,17 @@ double JYR_40DCount(uint8_t *buff)
 
 char *JYR_40DRecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
 
-    JYR_40DMessageType *recv = (JYR_40DMessageType *) buff;
+    JYR_40DMessageType *recv = (JYR_40DMessageType *) (buff + dd);
 
     // value.status = JYR_40DCount(recv->status);
     // value.mode = JYR_40DCount(recv->mode);

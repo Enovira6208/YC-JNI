@@ -46,7 +46,16 @@ double jd11_count2(uint8_t *buf)
  */
 char *JD11RecvMessage(uint8_t *buff, uint16_t size)
 {
-    JD11_MessageType *recv = (JD11_MessageType *)buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x99) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x99) {
+        return NULL;
+    }
+    JD11_MessageType *recv = (JD11_MessageType *)(buff + dd);
 
     if (recv->Head != 0x99)
         return NULL;

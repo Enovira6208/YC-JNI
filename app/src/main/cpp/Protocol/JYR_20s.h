@@ -18,15 +18,13 @@
 #define JYR_20s_MEG_ADDRL           (0x46)
 
 
-typedef enum
-{
+typedef enum {
     JYR_20_ANALY_1 = 1,                         /* 单通道解析一个 */
     JYR_20_ANALY_2,                             /* 解析不带平衡率 */
     JYR_20_ANALY_3,                             /* 解析带平衡率参数 */
 } JYR_20sAnalyEnum;
 
-typedef enum
-{
+typedef enum {
     JYR_20s_WAY_YN_THREE_PHASE = 0x30,          /* YN三相同测 */
     JYR_20s_WAY_YN_CHASE_PHASE,                 /* YN逐相测试 */
     JYR_20s_WAY_D_CHASE_PHASE,                  /* D逐相测试 */
@@ -37,8 +35,7 @@ typedef enum
     JYR_20s_WAY_MAGNETISM_CHASE_PHASE,          /* 助磁逐相测试 */
 } JYR_20sWayEnum;
 
-typedef struct
-{
+typedef struct {
     uint8_t Ao[7];                              /* 电阻 */
     uint8_t Bo[7];
     uint8_t Co[7];
@@ -46,8 +43,7 @@ typedef struct
 } JYR_20sDataType;
 
 
-typedef struct
-{
+typedef struct {
     uint8_t Head;
     uint8_t Addr[2];
     uint8_t Length[2];
@@ -59,8 +55,7 @@ typedef struct
     uint8_t Tail;
 } JYR_20sMessageType;
 
-typedef struct
-{
+typedef struct {
     JYR_20sAnalyEnum AnalyEnum;
     double Ao;
     uint8_t AoU[5];                                 /* 单位 */

@@ -77,8 +77,9 @@ char *JYL_100BRecvMessage(uint8_t *buff, uint16_t size)
         return NULL;
 
     JYL_100BValue.R = JYL_100BCount(Data.R_Data);
-    JYL_100BValue.Ruint[0] = Data.R_Data[6];
-
+    if (Data.R_Data[6] == 0x6D) {
+        JYL_100BValue.R = JYL_100BValue.R * 1000;
+    }
     /* 发送数据 */
     return JYL_100BSend();
 }
@@ -89,29 +90,18 @@ char *JYL_100BRecvMessage(uint8_t *buff, uint16_t size)
 char *JYL_100BSend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
+    cJSON_AddNumberToObject(cjson_all, "resistance", JYL_100BValue.R);
 
-    cJSON_AddStringToObject(cjson_data, "device", "JYL_100B");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance", "double", JYL_100BValue.Ruint, JYL_100BValue.R, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-    //printf("%s\r\n", str);
-
-
+    str = cJSON_PrintUnformatted(cjson_all);
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

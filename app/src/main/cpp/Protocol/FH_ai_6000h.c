@@ -9,7 +9,8 @@
 
 /* 泛华介损6000H */
 #include "FH_ai_6000h.h"
-static char returnJsonDataBuff[1000];
+#include <string.h>
+static char returnJsonDataBuff[2000];
 FH_ai_6000hValueType FH_ai_6000hValue;
 
 char *FH_ai_6000hWifiSend(void);
@@ -149,8 +150,18 @@ double FH_ai_6000hStrAnaly_four(uint8_t *buff)
  */
 char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == '#') {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != '#') {
+        return NULL;
+    }
     char cD[] = "CD";
-    FH_ai_6000hMessageType *recv = (FH_ai_6000hMessageType *) buff;
+    FH_ai_6000hMessageType *recv = (FH_ai_6000hMessageType *) (buff + dd);
     FH_ai_6000hMessageDataType messageData;
 
     memcpy(messageData.Name, recv->Data, sizeof(FH_ai_6000hMessageDataType));
@@ -187,6 +198,12 @@ char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
             FH_ai_6000hValue.Param[0].DF = FH_ai_6000hStrAnaly(messageData.Array[1].str);
             FH_ai_6000hStrAnaly_Cu(messageData.Array[0].str[1], 0);
             FH_ai_6000hStrAnaly_DFu(messageData.Array[1].str[1], 0);
+
+            if (strcmp(FH_ai_6000hValue.Param[0].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[0].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000;
+            }
             break;
 
         /* 两通道 */
@@ -200,6 +217,18 @@ char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
             FH_ai_6000hValue.Param[1].DF = FH_ai_6000hStrAnaly(messageData.Array[3].str);
             FH_ai_6000hStrAnaly_Cu(messageData.Array[2].str[1], 1);
             FH_ai_6000hStrAnaly_DFu(messageData.Array[3].str[1], 1);
+
+            if (strcmp(FH_ai_6000hValue.Param[0].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[0].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000;
+            }
+
+            if (strcmp(FH_ai_6000hValue.Param[1].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[1].C = FH_ai_6000hValue.Param[1].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[1].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[1].C = FH_ai_6000hValue.Param[1].C * 1000;
+            }
             break;
 
         /* 三通道 */
@@ -218,6 +247,24 @@ char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
             FH_ai_6000hValue.Param[2].DF = FH_ai_6000hStrAnaly(messageData.Array[5].str);
             FH_ai_6000hStrAnaly_Cu(messageData.Array[4].str[1], 2);
             FH_ai_6000hStrAnaly_DFu(messageData.Array[5].str[1], 2);
+
+            if (strcmp(FH_ai_6000hValue.Param[0].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[0].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000;
+            }
+
+            if (strcmp(FH_ai_6000hValue.Param[1].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[1].C = FH_ai_6000hValue.Param[1].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[1].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[1].C = FH_ai_6000hValue.Param[1].C * 1000;
+            }
+
+            if (strcmp(FH_ai_6000hValue.Param[2].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[2].C = FH_ai_6000hValue.Param[2].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[2].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[2].C = FH_ai_6000hValue.Param[2].C * 1000;
+            }
             break;
 
         /* 四通道 */
@@ -241,6 +288,30 @@ char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
             FH_ai_6000hValue.Param[3].DF = FH_ai_6000hStrAnaly_four(messageData.Array[7].str);
             FH_ai_6000hStrAnaly_Cu(messageData.Array[6].str[1], 3);
             FH_ai_6000hStrAnaly_DFu(messageData.Array[7].str[1], 3);
+
+            if (strcmp(FH_ai_6000hValue.Param[0].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[0].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[0].C = FH_ai_6000hValue.Param[0].C * 1000;
+            }
+
+            if (strcmp(FH_ai_6000hValue.Param[1].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[1].C = FH_ai_6000hValue.Param[1].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[1].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[1].C = FH_ai_6000hValue.Param[1].C * 1000;
+            }
+
+            if (strcmp(FH_ai_6000hValue.Param[2].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[2].C = FH_ai_6000hValue.Param[2].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[2].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[2].C = FH_ai_6000hValue.Param[2].C * 1000;
+            }
+
+            if (strcmp(FH_ai_6000hValue.Param[3].Cu, "uF") == 0) {
+                FH_ai_6000hValue.Param[3].C = FH_ai_6000hValue.Param[3].C * 1000000;
+            } else if (strcmp(FH_ai_6000hValue.Param[3].Cu, "nF") == 0) {
+                FH_ai_6000hValue.Param[3].C = FH_ai_6000hValue.Param[3].C * 1000;
+            }
             break;
     }
     /* 发送数据 */
@@ -253,34 +324,44 @@ char *FH_ai_6000hRecvMessage(uint8_t *buff, uint16_t size)
 char *FH_ai_6000hWifiSend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
-
+    cJSON *cjson_all = NULL;
+    cjson_all = cJSON_CreateObject();
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-
-    cJSON_AddStringToObject(cjson_data, "device", "AI_6000H");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  FH_ai_6000hValue.Mode, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "capacitance_A", "double", FH_ai_6000hValue.Param[0].Cu, FH_ai_6000hValue.Param[0].C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "dielectricLoss_A", "double", "%", FH_ai_6000hValue.Param[0].DF, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "capacitance_B", "double", FH_ai_6000hValue.Param[1].Cu, FH_ai_6000hValue.Param[1].C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "dielectricLoss_B", "double", "%", FH_ai_6000hValue.Param[1].DF, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "capacitance_C", "double", FH_ai_6000hValue.Param[2].Cu, FH_ai_6000hValue.Param[2].C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 7, "dielectricLoss_C", "double", "%", FH_ai_6000hValue.Param[2].DF, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 8, "capacitance_D", "double", FH_ai_6000hValue.Param[3].Cu, FH_ai_6000hValue.Param[3].C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 9, "dielectricLoss_D", "double", "%", FH_ai_6000hValue.Param[3].DF, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
-
+    if (FH_ai_6000hValue.Mode == FH_AI_6000H_SINGLE) {
+        cJSON_AddNumberToObject(cjson_all, "capacitance", FH_ai_6000hValue.Param[0].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss", FH_ai_6000hValue.Param[0].DF);
+    } else if (FH_ai_6000hValue.Mode == FH_AI_6000H_TWO) {
+        cJSON_AddNumberToObject(cjson_all, "capacitance", FH_ai_6000hValue.Param[0].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss", FH_ai_6000hValue.Param[0].DF);
+        cJSON_AddNumberToObject(cjson_all, "capacitance_C2", FH_ai_6000hValue.Param[1].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss_C2", FH_ai_6000hValue.Param[1].DF);
+    } else if (FH_ai_6000hValue.Mode == FH_AI_6000H_THREE) {
+        cJSON_AddNumberToObject(cjson_all, "capacitance", FH_ai_6000hValue.Param[0].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss", FH_ai_6000hValue.Param[0].DF);
+        cJSON_AddNumberToObject(cjson_all, "capacitance_C2", FH_ai_6000hValue.Param[1].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss_C2", FH_ai_6000hValue.Param[1].DF);
+        cJSON_AddNumberToObject(cjson_all, "capacitance_C3", FH_ai_6000hValue.Param[2].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss_C3", FH_ai_6000hValue.Param[2].DF);
+    } else if (FH_ai_6000hValue.Mode == FH_AI_6000H_FOUR) {
+        cJSON_AddNumberToObject(cjson_all, "capacitance", FH_ai_6000hValue.Param[0].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss", FH_ai_6000hValue.Param[0].DF);
+        cJSON_AddNumberToObject(cjson_all, "capacitance_C2", FH_ai_6000hValue.Param[1].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss_C2", FH_ai_6000hValue.Param[1].DF);
+        cJSON_AddNumberToObject(cjson_all, "capacitance_C3", FH_ai_6000hValue.Param[2].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss_C3", FH_ai_6000hValue.Param[2].DF);
+        cJSON_AddNumberToObject(cjson_all, "capacitance_C4", FH_ai_6000hValue.Param[3].C);
+        cJSON_AddNumberToObject(cjson_all, "dielectricLoss_C4", FH_ai_6000hValue.Param[3].DF);
+    }
+    str = cJSON_PrintUnformatted(cjson_all);
+    if (str == NULL) {
+        return "false";
+    }
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
+
     return returnJsonDataBuff;
 }

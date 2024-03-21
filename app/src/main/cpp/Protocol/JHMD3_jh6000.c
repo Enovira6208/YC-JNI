@@ -142,9 +142,20 @@ char *JHMD3_jh6000_DataAnalysis(uint8_t *buffer, uint16_t size)
  */
 char *JHMD3_jh6000_RecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x65) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0x65) {
+        return NULL;
+    }
+
     uint16_t crc, length;
     uint8_t tail;
-    JHMD3_jh6000_MessageType *recv = (JHMD3_jh6000_MessageType *)buff;
+    JHMD3_jh6000_MessageType *recv = (JHMD3_jh6000_MessageType *)(buff + dd);
 
     length = (recv->Length[0] << 8) | recv->Length[1];
 

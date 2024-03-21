@@ -3,7 +3,7 @@
  * @Author:  chuhouzhong
  * @Copyright: 福建省亿鑫海信息科技有限公司
  * @Date: 2021-12-29 11:47:14
- * @LastEditTime: 2022-11-02 15:25:54
+ * @LastEditTime: 2024-03-21 09:31:51
  * @LastEditors:
  */
 
@@ -67,7 +67,6 @@ double FH_ai_6600CStr_8_Analy(uint8_t *buff)
     }
 
     for (uint8_t i = 1; i <= 5; i++) {
-        printf("******%c\n", buff[i]);
         if (buff[i] == '.') {
             cnt = i - 1;
         } else {
@@ -89,11 +88,22 @@ double FH_ai_6600CStr_8_Analy(uint8_t *buff)
  */
 char *FH_ai_6600CRecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == '#') {
+            dd = k;
+            break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != '#') {
+        return NULL;
+    }
     char read[] = "READ";
     int sign;
     uint8_t j = 0, cnt = 0;
     uint8_t array[6];
-    FH_ai_6600CMessageType *recv = (FH_ai_6600CMessageType *) buff;
+    FH_ai_6600CMessageType *recv = (FH_ai_6600CMessageType *) (buff + dd);
     FH_ai_6600CMessageDataType msgData;
 
     memcpy(msgData.Name, recv->Data, sizeof(FH_ai_6600CMessageDataType));
@@ -127,31 +137,21 @@ char *FH_ai_6600CRecvMessage(uint8_t *buff, uint16_t size)
 char *FH_ai_6600CWifiSend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
+    cjson_all = cJSON_CreateObject();
 
-    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cJSON_AddNumberToObject(cjson_all, "capacitance", FH_ai_6600CValue.x);
+    cJSON_AddNumberToObject(cjson_all, "voltageValue", FH_ai_6600CValue.u);
+    cJSON_AddNumberToObject(cjson_all, "currentValue", FH_ai_6600CValue.i);
+    cJSON_AddNumberToObject(cjson_all, "frequency", FH_ai_6600CValue.fj);
 
-    cJSON_AddStringToObject(cjson_data, "device", "AI_6600C");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  0, FH_ai_6600CValue.testmode);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "capacitance", "double", FH_ai_6600CValue.xUnit, FH_ai_6600CValue.x, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "voltage", "double", FH_ai_6600CValue.uUnit, FH_ai_6600CValue.u, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "current", "double", FH_ai_6600CValue.iUnit, FH_ai_6600CValue.i, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "frequency", "double", FH_ai_6600CValue.fjUnit, FH_ai_6600CValue.fj, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "interferenceElectricity", "double", FH_ai_6600CValue.ijUnit,   FH_ai_6600CValue.ij, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

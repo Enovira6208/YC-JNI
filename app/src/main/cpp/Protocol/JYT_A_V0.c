@@ -79,8 +79,16 @@ double JYT_A_V0Count(uint8_t *buff, uint8_t cnt)
  */
 char *JYT_A_V0RecvMessage(uint8_t *buff, uint16_t size)
 {
-
-    JYT_A_V0MessageType *recv = (JYT_A_V0MessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
+    JYT_A_V0MessageType *recv = (JYT_A_V0MessageType *) (buff + dd);
     /*
     *   旧版协议 ：报文头  地址高  地址低 数据长度高 数据长度低 状态 命令(分类三相或是单向相) 数据(N位) 校验 尾
     */

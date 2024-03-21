@@ -88,7 +88,16 @@ double JYW6100Count(uint8_t *buff, uint8_t cnt)
 
 char *JYW6100RecvMessage(uint8_t *buff, uint16_t size)
 {
-    JYW6100MessageType *recv = (JYW6100MessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
+    JYW6100MessageType *recv = (JYW6100MessageType *) (buff + dd);
 
     if (recv->head != 0x7E)
         return NULL;

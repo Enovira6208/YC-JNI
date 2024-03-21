@@ -82,32 +82,17 @@ char *TD_3310C_YZFJ_SendData(YZFJ_DataVALUE value)
 
     PUBLIC_JsonArrayLoading(cjson_array, 12, "TT_unit", "string", "null", 0, TT_unit);
 
+    PUBLIC_JsonArrayLoading(cjson_array, 16, "transitionResistance1_A", "double", "null", value.TR[0].A_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 17, "transitionResistance2_A", "double", "null", value.TR[0].B_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 18, "bridgeResistance_A", "double", "null", value.TR[0].A_transient_resistance, "null");
 
-    // for (int j = 0; j < 3; j++) {
-    //     char temp_A[30], temp_B[30], temp_C[30];
-    //     sprintf(&temp_A[0], "%s", "A_transient_resistance");
-    //     sprintf(&temp_A[22], "%d", j);
-    //     sprintf(&temp_B[0], "%s", "B_transient_resistance");
-    //     sprintf(&temp_B[22], "%d", j);
-    //     sprintf(&temp_C[0], "%s", "C_transient_resistance");
-    //     sprintf(&temp_C[22], "%d", j);
+    PUBLIC_JsonArrayLoading(cjson_array, 19, "transitionResistance1_B", "double", "null", value.TR[1].A_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 20, "transitionResistance2_B", "double", "null", value.TR[1].B_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 21, "bridgeResistance_B", "double", "null", value.TR[1].B_transient_resistance, "null");
 
-    //     PUBLIC_JsonArrayLoading(cjson_array, 13 + j * 3, temp_A, "double", "null", value.TR[j].A_transient_resistance, "null");
-    //     PUBLIC_JsonArrayLoading(cjson_array, 14 + j * 3, temp_B, "double", "null", value.TR[j].B_transient_resistance, "null");
-    //     PUBLIC_JsonArrayLoading(cjson_array, 15 + j * 3, temp_C, "double", "null", value.TR[j].C_transient_resistance, "null");
-    // }
-
-    PUBLIC_JsonArrayLoading(cjson_array, 16, "A_transient_resistance1", "double", "null", value.TR[0].A_transient_resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 17, "A_transient_resistance2", "double", "null", value.TR[0].B_transient_resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 18, "A_bridging_resistance", "double", "null", value.TR[0].C_transient_resistance, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 19, "B_transient_resistance1", "double", "null", value.TR[1].A_transient_resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 20, "B_transient_resistance2", "double", "null", value.TR[1].B_transient_resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 21, "B_bridging_resistance", "double", "null", value.TR[1].C_transient_resistance, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 22, "C_transient_resistance1", "double", "null", value.TR[2].A_transient_resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 23, "C_transient_resistance2", "double", "null", value.TR[2].B_transient_resistance, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 24, "C_bridging_resistance", "double", "null", value.TR[2].C_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 22, "transitionResistance1_C", "double", "null", value.TR[2].A_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 23, "transitionResistance2_C", "double", "null", value.TR[2].B_transient_resistance, "null");
+    PUBLIC_JsonArrayLoading(cjson_array, 24, "bridgeResistance_C", "double", "null", value.TR[2].C_transient_resistance, "null");
 
 
     char TR_unit[5] = "";

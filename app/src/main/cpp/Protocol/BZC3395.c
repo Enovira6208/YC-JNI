@@ -87,10 +87,21 @@ double BZC3395Count(uint8_t *buff, uint8_t cnt, uint8_t type)
  */
 char *BZC3395RecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x23) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0x23) {
+        return NULL;
+    }
+
     char *index1, *index2, *index3, *index4;
     uint8_t value1, value2, value3;
 
-    BZC3395MessageType *recv = (BZC3395MessageType *) buff;
+    BZC3395MessageType *recv = (BZC3395MessageType *) (buff + dd);
 
     if (recv->Head != 0x0A)
         return "succeed";

@@ -82,7 +82,17 @@ double HLC5501Count(uint8_t *buff)
  */
 char *HLC5501RecvMessage(uint8_t *buff, uint16_t size)
 {
-    HLC5501MessageType *recv = (HLC5501MessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x23) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0x23) {
+        return NULL;
+    }
+    HLC5501MessageType *recv = (HLC5501MessageType *) (buff + dd);
     HLC5501DataType Data;
 
     memcpy(&Data.R_Data, recv->Data, sizeof(HLC5501DataType));

@@ -63,8 +63,16 @@ double JYR_40CCount(uint8_t *buff)
  */
 char *JYR_40CRecvMessage(uint8_t *buff, uint16_t size)
 {
-
-    JYR_40CMessageType *recv = (JYR_40CMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
+    JYR_40CMessageType *recv = (JYR_40CMessageType *) (buff + dd);
     JYR_40CDataType Data;
 
     memcpy(&Data.I_Info, recv->Data, sizeof(JYR_40CDataType));

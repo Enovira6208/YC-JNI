@@ -1,6 +1,6 @@
 #include "CVT2301.h"
 
-static char returnJsonDataBuff[1000];
+static char returnJsonDataBuff[2000];
 char *CVT2301Send(void);
 CVT2003_single_ValueType single_ValueType;
 CVT2003_three_ValueType three_ValueType;
@@ -34,9 +34,6 @@ int hexToint(uint8_t a)
 
 char *CVT2003RecvMessage(uint8_t *buff, uint16_t size)
 {
-    if (buff[0] == 0x23) {
-        return "success";
-    }
     if (recv_cnt == 2) {
         CVT2003_single_MessageType *recv = (CVT2003_single_MessageType *)buff;
         int ratio1 = hexToint(recv->rated_variable_ratio[0]);
@@ -174,48 +171,42 @@ char *CVT2003RecvMessage(uint8_t *buff, uint16_t size)
 char *CVT2301Send(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-
-    cJSON_AddStringToObject(cjson_data, "device", "CVT2301");
+    cjson_all = cJSON_CreateObject();
 
     if (recv_cnt == 2) {
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "rated_variable_ratio", "double", "", single_ValueType.rated_variable_ratio, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 3, "result", "double", "", single_ValueType.result, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 4, "test_error", "double", "%", single_ValueType.test_error, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "polarity", "string", "null", 0, single_ValueType.polarity);
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "sign", "string", "null", 0, single_ValueType.sign);
+        cJSON_AddNumberToObject(cjson_all, "ratedVariableRatio", single_ValueType.rated_variable_ratio);
+        cJSON_AddNumberToObject(cjson_all, "result", single_ValueType.result);
+        cJSON_AddNumberToObject(cjson_all, "test_error", single_ValueType.test_error);
+        cJSON_AddStringToObject(cjson_all, "polarity", single_ValueType.sign);
+        cJSON_AddNumberToObject(cjson_all, "sign", single_ValueType.rated_variable_ratio);
     } else if (recv_cnt == 3) {
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "rated_variable_ratio", "double", "", three_ValueType.rated_variable_ratio, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "link_way", "string", "null", 0, three_ValueType.link_way);
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "group", "double", "", three_ValueType.group, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "tap_mid", "double", "", three_ValueType.tap_mid, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "tap_sum", "double", "", three_ValueType.tap_sum, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "tap_position", "double", "", three_ValueType.tap_position, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "Pressure_adjustment_at_each_stage", "double", "%", three_ValueType.Pressure_adjustment_at_each_stage, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "change_AB", "double", "", three_ValueType.change_AB, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "change_BC", "double", "", three_ValueType.change_BC, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "change_AC", "double", "", three_ValueType.change_AC, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "error_AB", "double", "", three_ValueType.error_AB, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "error_BC", "double", "", three_ValueType.error_BC, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "error_AC", "double", "", three_ValueType.error_AC, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "sign_AB", "string", "null", 0, three_ValueType.sign_AB);
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "sign_BC", "string", "null", 0, three_ValueType.sign_BC);
-        PUBLIC_JsonArrayLoading(cjson_array, 1, "sign_AC", "string", "null", 0, three_ValueType.sign_AC);
+        cJSON_AddNumberToObject(cjson_all, "ratedVariableRatio", three_ValueType.rated_variable_ratio);
+        // cJSON_AddStringToObject(cjson_all, "link_way", three_ValueType.link_way);
+        // cJSON_AddNumberToObject(cjson_all, "group", three_ValueType.group);
+        // cJSON_AddNumberToObject(cjson_all, "tapMid", three_ValueType.tap_mid);
+        // cJSON_AddNumberToObject(cjson_all, "tapSum", three_ValueType.tap_sum);
+        // cJSON_AddNumberToObject(cjson_all, "tapPosition", three_ValueType.tap_position);
+        // cJSON_AddNumberToObject(cjson_all, "Pressure_adjustment_at_each_stage", single_ValueType.rated_variable_ratio);
+        cJSON_AddNumberToObject(cjson_all, "change_AB", three_ValueType.change_AB);
+        cJSON_AddNumberToObject(cjson_all, "change_BC", three_ValueType.change_BC);
+        cJSON_AddNumberToObject(cjson_all, "change_AC", three_ValueType.change_AC);
+        cJSON_AddNumberToObject(cjson_all, "error_AB", three_ValueType.error_AB);
+        cJSON_AddNumberToObject(cjson_all, "error_BC", three_ValueType.error_BC);
+        cJSON_AddNumberToObject(cjson_all, "error_AC", three_ValueType.error_AC);
+        cJSON_AddStringToObject(cjson_all, "sign_AB", three_ValueType.sign_AB);
+        cJSON_AddStringToObject(cjson_all, "sign_BC", three_ValueType.sign_BC);
+        cJSON_AddStringToObject(cjson_all, "sign_AC", three_ValueType.sign_AC);
     }
 
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
     return returnJsonDataBuff;
 }

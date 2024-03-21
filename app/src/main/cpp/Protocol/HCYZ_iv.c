@@ -23,13 +23,27 @@ char *HCYZ_ivBleSend(void);
 char *HCYZ_ivRecvMessage(uint8_t *buff, uint16_t size)
 {
 //  uint16_t len;
-    HCYZ_ivMessageType *buffer = (HCYZ_ivMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x68) {
+            dd = k;
+            break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0x68) {
+        return NULL;
+    }
+    printf("dd:%d\n", dd);
+    HCYZ_ivMessageType *buffer = (HCYZ_ivMessageType *) (buff + dd);
     HCYZ_ivMessageDataType *recv = (HCYZ_ivMessageDataType *) buffer;
 
+    printf("%x\n", recv->APDU[0].Head);
+    printf("%x\n", recv->APDU[0].Len);
     if (recv->Head != 0x68)
         return NULL;
 
-//  len = (recv->Len[0] << 8) | recv->Len[1];
+    //  len = (recv->Len[0] << 8) | recv->Len[1];
     /* 判断尾 */
     if (recv->Tail != 0x16)
         return NULL;
@@ -44,11 +58,11 @@ char *HCYZ_ivRecvMessage(uint8_t *buff, uint16_t size)
                                       | (recv->APDU[i].Obj[1].Value[1] << 18) | (recv->APDU[i].Obj[1].Value[2] << 8)
                                       | (recv->APDU[i].Obj[1].Value[3]);
 
-        HCYZ_ivMessageValue[i].Resistance = PUBLIC_IEEE754_32(recv->APDU[i].Obj[2].Value[3],
-                                            recv->APDU[i].Obj[2].Value[2], recv->APDU[i].Obj[2].Value[1], recv->APDU[i].Obj[2].Value[0]);
-
-        HCYZ_ivMessageValue[i].SwitchingTime = PUBLIC_IEEE754_32(recv->APDU[i].Obj[3].Value[3],
-                                               recv->APDU[i].Obj[3].Value[2], recv->APDU[i].Obj[3].Value[1], recv->APDU[i].Obj[3].Value[0]);
+        HCYZ_ivMessageValue[i].Resistance = Char2Float2(recv->APDU[i].Obj[2].Value);
+        for (int k = 0; k < 4; k++) {
+            printf("va:%x\n", recv->APDU[i].Obj[2].Value[k]);
+        }
+        HCYZ_ivMessageValue[i].SwitchingTime = Char2Float2(recv->APDU[i].Obj[3].Value);
     }
 
     /* 发送数据 */
@@ -60,45 +74,16 @@ char *HCYZ_ivRecvMessage(uint8_t *buff, uint16_t size)
  */
 char *HCYZ_ivBleSend(void)
 {
-    time_t current_time;
-    char *c_time_string;
-    /* 获取当前时间 */
-    current_time = time(NULL);
-    /* 转换为本地时间格式 */
-    c_time_string = ctime(&current_time);
-
     char *str;
     cJSON *cjson_all = NULL;
-    cJSON *cjson_array = NULL;
-    cJSON *cjson_request = NULL;
-    cJSON *cjson_services = NULL;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_data1 = NULL;
-
-    /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_data1 = cJSON_CreateObject();
     cjson_all = cJSON_CreateObject();
-    cjson_request = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-    cjson_services = cJSON_CreateArray();
 
-    cJSON_AddStringToObject(cjson_request, "deviceId", "DS_2000D");
-    cJSON_AddItemToObject(cjson_all, "devices", cjson_array);
-    cJSON_AddItemToObject(cjson_array, "request", cjson_request);
-
-    cJSON_AddNumberToObject(cjson_data1, "transitionResistance1_A", HCYZ_ivMessageValue[0].Resistance);
-    cJSON_AddNumberToObject(cjson_data1, "transitionResistance1_B", HCYZ_ivMessageValue[1].Resistance);
-    cJSON_AddNumberToObject(cjson_data1, "transitionResistance1_C", HCYZ_ivMessageValue[2].Resistance);
-    cJSON_AddNumberToObject(cjson_data1, "transitionTime_t1_A", HCYZ_ivMessageValue[0].SwitchingTime);
-    cJSON_AddNumberToObject(cjson_data1, "transitionTime_t1_B", HCYZ_ivMessageValue[1].SwitchingTime);
-    cJSON_AddNumberToObject(cjson_data1, "transitionTime_t1_C", HCYZ_ivMessageValue[2].SwitchingTime);
-
-    cJSON_AddItemToArray(cjson_services, cjson_data);
-    cJSON_AddItemToObject(cjson_data, "data", cjson_data1);
-    cJSON_AddStringToObject(cjson_data, "eventTime", c_time_string);
-    cJSON_AddStringToObject(cjson_data, "serviceId", "dynamicAttribute");
-    cJSON_AddItemToObject(cjson_request, "services", cjson_services);
+    cJSON_AddNumberToObject(cjson_all, "transitionResistance1_A", HCYZ_ivMessageValue[0].Resistance);
+    cJSON_AddNumberToObject(cjson_all, "transitionResistance1_B", HCYZ_ivMessageValue[1].Resistance);
+    cJSON_AddNumberToObject(cjson_all, "transitionResistance1_C", HCYZ_ivMessageValue[2].Resistance);
+    cJSON_AddNumberToObject(cjson_all, "transitionTime_t1_A", HCYZ_ivMessageValue[0].SwitchingTime);
+    cJSON_AddNumberToObject(cjson_all, "transitionTime_t1_B", HCYZ_ivMessageValue[1].SwitchingTime);
+    cJSON_AddNumberToObject(cjson_all, "transitionTime_t1_C", HCYZ_ivMessageValue[2].SwitchingTime);
 
     str = cJSON_PrintUnformatted(cjson_all);
 

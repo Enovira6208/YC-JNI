@@ -81,8 +81,16 @@ double JYT_A_V1Count(uint8_t *buff, uint8_t cnt)
  */
 char *JYT_A_V1RecvMessage(uint8_t *buff, uint16_t size)
 {
-
-    JYT_A_V1MessageType *recv = (JYT_A_V1MessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
+    JYT_A_V1MessageType *recv = (JYT_A_V1MessageType *) (buff + dd);
     /*
     *   v1.0/1.1版本 ：报文头  地址高  地址低 数据长度高 数据长度低 仪器类型 状态 提示信息 电量码 命令（分类三相或是单向相） 数据(N位) 校验 尾
     */

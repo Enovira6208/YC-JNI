@@ -93,8 +93,18 @@ double FH_ai_6310LStrAnaly(uint8_t *buff)
  */
 char *FH_ai_6310LRecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == '#') {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != '#') {
+        return NULL;
+    }
     char read[] = "READ";
-    FH_ai_6310LMessageType *recv = (FH_ai_6310LMessageType *) buff;
+    FH_ai_6310LMessageType *recv = (FH_ai_6310LMessageType *) (buff + dd);
     FH_ai_6310LMessageDataType messageData;
 
     memcpy(messageData.Name, recv->Data, sizeof(FH_ai_6310LMessageDataType));

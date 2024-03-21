@@ -1052,11 +1052,13 @@ static unsigned char *print(const cJSON *const item, cJSON_bool format, const in
     buffer->format = format;
     buffer->hooks = *hooks;
     if (buffer->buffer == NULL) {
+        printf("11111111\n");
         goto fail;
     }
 
     /* print the value */
     if (!print_value(item, buffer)) {
+        printf("222222222222\n");
         goto fail;
     }
     update_offset(buffer);
@@ -1065,12 +1067,14 @@ static unsigned char *print(const cJSON *const item, cJSON_bool format, const in
     if (hooks->reallocate != NULL) {
         printed = (unsigned char *) hooks->reallocate(buffer->buffer, buffer->offset + 1);
         if (printed == NULL) {
+            printf("3333333333333\n");
             goto fail;
         }
         buffer->buffer = NULL;
     } else { /* otherwise copy the JSON over to a new buffer */
         printed = (unsigned char *) hooks->allocate(buffer->offset + 1);
         if (printed == NULL) {
+            printf("444444444\n");
             goto fail;
         }
         memcpy(printed, buffer->buffer, cjson_min(buffer->length, buffer->offset + 1));

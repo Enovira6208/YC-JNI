@@ -111,7 +111,17 @@ void FH_IDCE_2415CT_count2(uint8_t *buff1, uint8_t *buff2, uint8_t cnt) /*1å¼€å§
  */
 char *FH_IDCE_2415CTRecvMessage(uint8_t *buff, uint16_t size)
 {
-    FH_IDCE_2415CTMessageType *recv = (FH_IDCE_2415CTMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0xAA) {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != 0xAA) {
+        return NULL;
+    }
+    FH_IDCE_2415CTMessageType *recv = (FH_IDCE_2415CTMessageType *) (buff + dd);
     FH_IDCE_2415CTMessageDataType messageData;
 
     memcpy(messageData.online_voltage, recv->Data, sizeof(FH_IDCE_2415CTMessageDataType));

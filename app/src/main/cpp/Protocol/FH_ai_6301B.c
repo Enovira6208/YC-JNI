@@ -134,7 +134,17 @@ double FH_ai_6301B_count2(uint8_t *buff)
  */
 char *FH_ai_6301BRecvMessage(uint8_t *buff, uint16_t size)
 {
-    FH_ai_6301BMessageType *recv = (FH_ai_6301BMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == '#') {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != '#') {
+        return NULL;
+    }
+    FH_ai_6301BMessageType *recv = (FH_ai_6301BMessageType *) (buff + dd);
     FH_ai_6301BMessageDataType messageData;
 
     memcpy(messageData.Name, recv->Data, sizeof(FH_ai_6301BMessageDataType));
@@ -182,44 +192,26 @@ char *FH_ai_6301BRecvMessage(uint8_t *buff, uint16_t size)
 char *FH_ai_6301BwifiSend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
+    cJSON *cjson_body = NULL;
+    cJSON *cjson_datas = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
 
-    cJSON_AddStringToObject(cjson_data, "device", "AI_6301B");
+    cJSON_AddNumberToObject(cjson_all, "current", FH_ai_6301BValue.I);
+    cJSON_AddNumberToObject(cjson_all, "impedance", FH_ai_6301BValue.Z);
+    cJSON_AddNumberToObject(cjson_all, "resistance", FH_ai_6301BValue.R);
+    cJSON_AddNumberToObject(cjson_all, "voltage", FH_ai_6301BValue.U);
+    cJSON_AddNumberToObject(cjson_all, "frequency", FH_ai_6301BValue.F);
 
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "name", "string", "null", 0, FH_ai_6301BValue.Name);
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "time", "string", "null", 0, FH_ai_6301BValue.Time);
-
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "testMode", "double", "null", FH_ai_6301BValue.TestMode, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "rab", "double", "null", FH_ai_6301BValue.Rab, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 5, "timeMode", "double", "null", FH_ai_6301BValue.TimeMode, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 6, "aaa", "double", "null", FH_ai_6301BValue.AAA, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "bbb", "double", "null", FH_ai_6301BValue.BBB, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "jam", "double", "null", FH_ai_6301BValue.Jam, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 9, "impedance", "double", FH_ai_6301BValue.Zuint, FH_ai_6301BValue.Z, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 10, "resistance", "double", FH_ai_6301BValue.Ruint, FH_ai_6301BValue.R, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 11, "voltage", "double", FH_ai_6301BValue.Uuint, FH_ai_6301BValue.U, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 12, "electricity", "double", FH_ai_6301BValue.Iuint, FH_ai_6301BValue.I, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 13, "interference_voltage", "double", FH_ai_6301BValue.Nuint, FH_ai_6301BValue.N, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 14, "frequency", "double", FH_ai_6301BValue.Fuint, FH_ai_6301BValue.F, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 15, "angle", "double", "°", FH_ai_6301BValue.Fai, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "Test_time", "string", "null", 0, FH_ai_6301BValue.Time);
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "Current_I0", "double", FH_ai_6301BValue.Iuint, FH_ai_6301BValue.I, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

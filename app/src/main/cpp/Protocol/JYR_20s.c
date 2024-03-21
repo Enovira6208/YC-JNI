@@ -95,8 +95,16 @@ double JYR_20sCount_2(uint8_t *buff)
  */
 char *JYR_20sRecvMessage(uint8_t *buff, uint16_t size)
 {
-
-    JYR_20sMessageType *recv = (JYR_20sMessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
+    JYR_20sMessageType *recv = (JYR_20sMessageType *) (buff + dd);
     JYR_20sDataType Data;
 
     memcpy(&Data.Ao, recv->Data, sizeof(JYR_20sDataType));

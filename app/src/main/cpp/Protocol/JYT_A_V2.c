@@ -81,8 +81,16 @@ double JYT_A_V2Count(uint8_t *buff, uint8_t cnt)
  */
 char *JYT_A_V2RecvMessage(uint8_t *buff, uint16_t size)
 {
-
-    JYT_A_V2MessageType *recv = (JYT_A_V2MessageType *) buff;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
+    JYT_A_V2MessageType *recv = (JYT_A_V2MessageType *) (buff + dd);
 
     if (recv->Head != 0x7E)
         return NULL;
@@ -128,35 +136,24 @@ char *JYT_A_V2RecvMessage(uint8_t *buff, uint16_t size)
 char *JYT_A_V2Send(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
+    cjson_all = cJSON_CreateObject();
+    cJSON_AddNumberToObject(cjson_all, "change_AB", JYT_A_V2Value.voltageRatio_A);
+    cJSON_AddNumberToObject(cjson_all, "change_BC", JYT_A_V2Value.voltageRatio_B);
+    cJSON_AddNumberToObject(cjson_all, "change_AC", JYT_A_V2Value.voltageRatio_C);
+    cJSON_AddNumberToObject(cjson_all, "error_AB", JYT_A_V2Value.difference_A);
+    cJSON_AddNumberToObject(cjson_all, "error_BC", JYT_A_V2Value.difference_B);
+    cJSON_AddNumberToObject(cjson_all, "error_AC", JYT_A_V2Value.difference_C);
 
-    cJSON_AddStringToObject(cjson_data, "device", "JYT_A_V2");
 
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "voltageRatio_A", "double", "%",   JYT_A_V2Value.voltageRatio_A, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "voltageRatio_B", "double", "%",   JYT_A_V2Value.voltageRatio_B, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "voltageRatio_C", "double", "%",   JYT_A_V2Value.voltageRatio_C, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "difference_A", "double", "%", JYT_A_V2Value.difference_A, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "difference_B", "double", "%", JYT_A_V2Value.difference_B, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "difference_C", "double", "%", JYT_A_V2Value.difference_C, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "tranches", "int", "", JYT_A_V2Value.tranches, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 8, "branching", "int", "", JYT_A_V2Value.branching, "null");
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
-    //printf("%s\r\n", str);
-
+    str = cJSON_PrintUnformatted(cjson_all);
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
-
     /* 一定要释放内存 */
     free(str);
-
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

@@ -28,7 +28,17 @@ uint16_t JYW6400_DCReadData(uint8_t *ascllBuff)
  */
 char *JYW6400_DCRecvMessage(uint8_t *buff, uint16_t size)
 {
-    JYW6400_DCMessageType *recv = (JYW6400_DCMessageType *) buff;
+    /*去除包前面的干扰数据*/
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x42 && buff[k + 1] == 0x45 && buff[k + 2] == 0x47) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x42) {
+        return NULL;
+    }
+    JYW6400_DCMessageType *recv = (JYW6400_DCMessageType *) (buff + dd);
 
     printf("JYW6400_DCRecvMessage  \r\n");
 

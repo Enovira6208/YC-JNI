@@ -70,9 +70,7 @@ double CTP_120count(uint8_t *buf)
 char *CTP_120RecvMessage(uint8_t *buff, uint16_t size)
 {
     CTP_120MessageType *recv = (CTP_120MessageType *)buff;
-    printf("%x\n", recv->Head[0]);
-    printf("%x\n", recv->Head[1]);
-    printf("%x\n", recv->Head[2]);
+
     if (recv->cmd[1] != 0x03)
         return NULL;
 

@@ -10,6 +10,7 @@
 /* 济南泛华 容性设备6000r */
 
 #include "FH_ai_6000r.h"
+#include <string.h>
 static char returnJsonDataBuff[1000];
 
 uint8_t FH_ai_6000r_ParamCnt = 0;
@@ -88,11 +89,21 @@ double FH_ai_6000rStr_8_Analy(uint8_t *buff)
  */
 char *FH_ai_6000rRecvMessage(uint8_t *buff, uint16_t size)
 {
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == '#') {
+            dd = k; break;
+        }
+    }
+    printf("%d\n", dd);
+    if (dd == 0 && buff[0] != '#') {
+        return NULL;
+    }
     char read[] = "READ";
     int sign;
     uint8_t j = 0, cnt = 0;
     uint8_t array[6];
-    FH_ai_6000rMessageType *recv = (FH_ai_6000rMessageType *) buff;
+    FH_ai_6000rMessageType *recv = (FH_ai_6000rMessageType *) (buff + dd);
     FH_ai_6000rMessageDataType msgData;
 
     memcpy(msgData.Name, recv->Data, sizeof(FH_ai_6000rMessageDataType));
@@ -139,6 +150,11 @@ char *FH_ai_6000rRecvMessage(uint8_t *buff, uint16_t size)
     FH_ai_6000rValue.df = FH_ai_6000rStr_8_Analy(msgData.df);
     FH_ai_6000rValue.ii = FH_ai_6000rStr_8_Analy(msgData.ii);
 
+    if (strcmp(FH_ai_6000rValue.cxu, "uF") == 0) {
+        FH_ai_6000rValue.cx = FH_ai_6000rValue.cx * 1000000;
+    } else if (strcmp(FH_ai_6000rValue.cxu, "nF") == 0) {
+        FH_ai_6000rValue.cx = FH_ai_6000rValue.cx * 1000;
+    }
     /* 发送数据 */
     return FH_ai_6000rWifiSend();
 }
@@ -149,33 +165,19 @@ char *FH_ai_6000rRecvMessage(uint8_t *buff, uint16_t size)
 char *FH_ai_6000rWifiSend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
+    cjson_all = cJSON_CreateObject();
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-
-    cJSON_AddStringToObject(cjson_data, "device", "AI_6000R");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "testMode", "int", "null",  FH_ai_6000rValue.Status, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "Loss_angle_difference", "double", "°", FH_ai_6000rValue.angl, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "reference_voltage_current", "double", FH_ai_6000rValue.refu, FH_ai_6000rValue.ref, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 4, "Sample_current", "double", "", FH_ai_6000rValue.ix, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 5, "capacitance", "double", FH_ai_6000rValue.cxu, FH_ai_6000rValue.cx, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 6, "Dielectric_loss", "double", "%",   FH_ai_6000rValue.df, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 7, "currentRatio", "double", "",  FH_ai_6000rValue.ii, "null");
-
-
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-
-    str = cJSON_PrintUnformatted(cjson_data);
+    cJSON_AddNumberToObject(cjson_all, "capacitance", FH_ai_6000rValue.cx);
+    cJSON_AddNumberToObject(cjson_all, "dielectricLoss", FH_ai_6000rValue.df);
+    str = cJSON_PrintUnformatted(cjson_all);
 
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }

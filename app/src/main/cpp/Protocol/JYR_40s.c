@@ -71,11 +71,17 @@ double JYR_40sCount(uint8_t *buff)
  */
 char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
 {
-//  uint8_t buffer[5];
-//  uint8_t cnt;
-//  int sign;
+    int dd = 0;
+    for (int k = 0; k < size; k++) {
+        if (buff[k] == 0x7e) {
+            dd = k; break;
+        }
+    }
+    if (dd == 0 && buff[0] != 0x7e) {
+        return NULL;
+    }
 
-    JYR_40sMessageType *recv = (JYR_40sMessageType *)buff;
+    JYR_40sMessageType *recv = (JYR_40sMessageType *)(buff + dd);
     JYR_40sDataType Data;
 
     JYR_40sValue.Way = recv->Way;
@@ -128,7 +134,7 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
 
     switch (JYR_40sAnaly) {
         case JYR_40_ANALY_1:
-            JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
+            JYR_40sValue.Ao = atof((char *)Data.Ao);
             JYR_40sValue.AoU[0] = Data.Ao[6];
             if (JYR_40sValue.AoU[0] == 0x6d) {
                 memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
@@ -140,9 +146,9 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             break;
 
         case JYR_40_ANALY_2:
-            JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
-            JYR_40sValue.Bo = JYR_40sCount(Data.Bo);
-            JYR_40sValue.Co = JYR_40sCount(Data.Co);
+            JYR_40sValue.Ao = atof((char *)Data.Ao);
+            JYR_40sValue.Bo = atof((char *)Data.Bo);
+            JYR_40sValue.Co = atof((char *)Data.Co);
             JYR_40sValue.AoU[0] = Data.Ao[6];
             if (JYR_40sValue.AoU[0] == 0x6d) {
                 memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
@@ -162,10 +168,10 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             break;
 
         case JYR_40_ANALY_3:
-            JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
-            JYR_40sValue.Bo = JYR_40sCount(Data.Bo);
-            JYR_40sValue.Co = JYR_40sCount(Data.Co);
-            JYR_40sValue.UnbalanceH = JYR_40sCount(Data.UnbalanceH);
+            JYR_40sValue.Ao = atof((char *)Data.Ao);
+            JYR_40sValue.Bo = atof((char *)Data.Bo);
+            JYR_40sValue.Co = atof((char *)Data.Co);
+            JYR_40sValue.UnbalanceH = atof((char *)Data.UnbalanceH);
             JYR_40sValue.AoU[0] = Data.Ao[6];
             if (JYR_40sValue.AoU[0] == 0x6d) {
                 memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
@@ -193,14 +199,14 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
             break;
 
         case JYR_40_ANALY_4:
-            JYR_40sValue.Ao = JYR_40sCount(Data.Ao);
-            JYR_40sValue.Bo = JYR_40sCount(Data.Bo);
-            JYR_40sValue.Co = JYR_40sCount(Data.Co);
-            JYR_40sValue.UnbalanceH = JYR_40sCount(Data.UnbalanceH);
-            JYR_40sValue.Ca = JYR_40sCount(Data.Ca);
-            JYR_40sValue.Ab = JYR_40sCount(Data.Ab);
-            JYR_40sValue.Bc = JYR_40sCount(Data.Bc);
-            JYR_40sValue.UnbalanceL = JYR_40sCount(Data.UnbalanceL);
+            JYR_40sValue.Ao = atof((char *)Data.Ao);
+            JYR_40sValue.Bo = atof((char *)Data.Bo);
+            JYR_40sValue.Co = atof((char *)Data.Co);
+            JYR_40sValue.UnbalanceH = atof((char *)Data.UnbalanceH);
+            JYR_40sValue.Ca = atof((char *)Data.Ca);
+            JYR_40sValue.Ab = atof((char *)Data.Ab);
+            JYR_40sValue.Bc = atof((char *)Data.Bc);
+            JYR_40sValue.UnbalanceL = atof((char *)Data.UnbalanceL);
             JYR_40sValue.AoU[0] = Data.Ao[6];
             if (JYR_40sValue.AoU[0] == 0x6d) {
                 memcpy(&JYR_40sValue.AoU[0], "mΩ", 4);
@@ -239,39 +245,31 @@ char *JYR_40sRecvMessage(uint8_t *buff, uint16_t size)
 char *JYR_40sSend(void)
 {
     char *str;
-    cJSON *cjson_data = NULL;
-    cJSON *cjson_array = NULL;
+    cJSON *cjson_all = NULL;
 
     /* 添加一个嵌套的JSON数据（添加一个链表节点） */
-    cjson_data = cJSON_CreateObject();
-    cjson_array = cJSON_CreateArray();
-
-    cJSON_AddStringToObject(cjson_data, "device", "JYR_40S");
-
-    // PUBLIC_JsonArrayLoading(cjson_array, 1, "resistance_Ao", "double", JYR_40sValue.AoU, JYR_40sValue.Ao, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 2, "resistance_Bo", "double", JYR_40sValue.BoU, JYR_40sValue.Bo, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 3, "resistance_Co", "double", JYR_40sValue.CoU, JYR_40sValue.Co, "null");
-    // PUBLIC_JsonArrayLoading(cjson_array, 4, "unbalanceRate", "double", "%", JYR_40sValue.UnbalanceH, "null");
-
-    PUBLIC_JsonArrayLoading(cjson_array, 1, "AN_AB_resistor", "double", JYR_40sValue.AoU, JYR_40sValue.Ao, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 2, "BN_BC_resistor", "double", JYR_40sValue.BoU, JYR_40sValue.Bo, "null");
-    PUBLIC_JsonArrayLoading(cjson_array, 3, "CN_CA_resistor", "double", JYR_40sValue.CoU, JYR_40sValue.Co, "null");
-
-    if (JYR_40sAnaly == JYR_40_ANALY_3) {
-        PUBLIC_JsonArrayLoading(cjson_array, 4, "UnbalanceL", "double", "", JYR_40sValue.UnbalanceH, "null");
-    } else if (JYR_40sAnaly == JYR_40_ANALY_4) {
-        PUBLIC_JsonArrayLoading(cjson_array, 4, "low_voltage_Unbalance", "double", "", JYR_40sValue.UnbalanceL, "null");
-        PUBLIC_JsonArrayLoading(cjson_array, 5, "high_voltage_Unbalance", "double", "", JYR_40sValue.UnbalanceH, "null");
+    cjson_all = cJSON_CreateObject();
+    if (JYR_40sAnaly == JYR_40_ANALY_1) {
+        cJSON_AddNumberToObject(cjson_all, "resistance_A", JYR_40sValue.Ao);
+    } else {
+        cJSON_AddNumberToObject(cjson_all, "resistance_A", JYR_40sValue.Ao);
+        cJSON_AddNumberToObject(cjson_all, "resistance_B", JYR_40sValue.Bo);
+        cJSON_AddNumberToObject(cjson_all, "resistance_C", JYR_40sValue.Co);
     }
 
-    cJSON_AddItemToObject(cjson_data, "properties", cjson_array);
-    str = cJSON_PrintUnformatted(cjson_data);
+    if (JYR_40sAnaly == JYR_40_ANALY_3) {
+        cJSON_AddNumberToObject(cjson_all, "unbalance", JYR_40sValue.UnbalanceH);
+    } else if (JYR_40sAnaly == JYR_40_ANALY_4) {
+        cJSON_AddNumberToObject(cjson_all, "low_voltage_Unbalance", JYR_40sValue.UnbalanceL);
+        cJSON_AddNumberToObject(cjson_all, "high_voltage_Unbalance", JYR_40sValue.UnbalanceH);
+    }
 
+    str = cJSON_PrintUnformatted(cjson_all);
     memset(returnJsonDataBuff, 0, sizeof(returnJsonDataBuff));
     memcpy(returnJsonDataBuff, str, strlen(str));
     /* 一定要释放内存 */
     free(str);
-    cJSON_Delete(cjson_data);
+    cJSON_Delete(cjson_all);
 
     return returnJsonDataBuff;
 }
